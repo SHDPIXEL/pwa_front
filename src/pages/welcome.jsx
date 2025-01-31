@@ -38,7 +38,7 @@ const Welcome = () => {
             {/* Welcome Text */}
             <div className="text-center mt-6">
                 <h2 className="text-lg font-bold">Welcome back</h2>
-                <p className="text-4xl text-black font-semibold">Guddi !</p>
+                <p className="text-4xl text-black font-bold">Guddi !</p>
             </div>
 
             {/* Action Buttons */}
@@ -59,7 +59,8 @@ const Welcome = () => {
                         <div className="w-25 h-25 flex items-center justify-center bg-[#F7941C] text-white rounded-full">
                             <User className="w-10 h-10" />
                         </div>
-                        <p className="mt-2 text-base text-gray-500">Privilefe Member Program</p>
+                        <p className="mt-2 text-base text-gray-500">Privilefe Member</p>
+                        <p className="text-base text-gray-500">Program</p>
                     </div>
                 </Link>
 
@@ -68,7 +69,8 @@ const Welcome = () => {
                     <div className="w-25 h-25 flex items-center justify-center bg-[#F7941C] text-white rounded-full">
                         <User className="w-10 h-10" />
                     </div>
-                    <p className="mt-2 text-base text-gray-500">Free Diet Consultation</p>
+                    <p className="mt-2 text-base text-gray-500">Free Diet</p>
+                    <p className="text-base text-gray-500">Consultation</p>
                 </div>
             </div>
         </div>

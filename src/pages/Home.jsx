@@ -49,7 +49,7 @@ const Home = () => {
                             <img 
                             src={brebootLogo} 
                             alt="logo"
-                            className="w-auto h-20"
+                            className="w-auto h-26"
                             />
                             <h2 className="font-bold capitalize text-sm">Let's create your account</h2>
 
@@ -104,12 +104,12 @@ const Home = () => {
                                 <div className="px-5 border-r-1 border-gray-300">
                                     <img className="w-6 h-auto" src={google} alt="google-logo" />
                                 </div>
-                                <div className="px-5 border-r-1 border-gray-300">
+                                <div className="px-5 border-gray-300">
                                     <img className="w-6 h-auto" src={facebook} alt="facebook-logo" />
                                 </div>
                         </div>
 
-                        <p className="text-gray-500 text-[7px]">By signing up I agree to the Terms of Services and privacy Policy, including usage of cookies </p>
+                        <p className="text-gray-500 text-[11px] text-center">By signing up I agree to the Terms of Services and privacy Policy, including usage of cookies </p>
 
                     </div>
                 </div>
