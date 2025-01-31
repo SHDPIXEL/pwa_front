@@ -23,9 +23,9 @@ const featuredBrands = [
 ];
 
 const products = [
-    { id: 1, name: 'Vitamin C Serum', price: '$29', image: dumy_1 },
-    { id: 2, name: 'Collagen Booster', price: '$39', image: dumy_1 },
-    { id: 3, name: 'Herbal Shampoo', price: '$19', image: dumy_1 },
+    { id: 1, name: 'Vitamin C Serum', price: '29 INR', image: dumy_1 },
+    { id: 2, name: 'Collagen Booster', price: '39 INR', image: dumy_1 },
+    { id: 3, name: 'Herbal Shampoo', price: '19 INR', image: dumy_1 },
 ];
 
 const MemberProgramPage = () => {
