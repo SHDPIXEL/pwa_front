@@ -1,11 +1,24 @@
+import { useState } from "react";
 import { ChevronLeft, EllipsisVertical, User } from "lucide-react";
-import profile from "../assets/images/profile.jpg"
-import { Link } from "react-router-dom";
-import brebootLogo from "../assets/images/Breboot.png"
+import profile from "../assets/images/profile.jpg";
+import { Link, useNavigate } from "react-router-dom";
+import brebootLogo from "../assets/images/Breboot.png";
+import ConsentModal from "../components/Modal";
 
 const Welcome = () => {
+    const [showModal, setShowModal] = useState(false);
+    const navigate = useNavigate();
+
+    // Handle consent action
+    const handleConsent = (accepted) => {
+        setShowModal(false);
+        if (accepted) {
+            navigate("/challenges"); // Navigate only if user accepts
+        }
+    };
+
     return (
-        <div className="min-h-[100dvh] bg-gray-100 flex flex-col items-center">
+        <div className="min-h-[100dvh] flex flex-col items-center">
             {/* Header */}
             <div className="w-full bg-[#F7941C] text-white flex items-center justify-between py-6 text-sm px-4 z-50">
                 <div className="flex items-center space-x-2">
@@ -20,17 +33,10 @@ const Welcome = () => {
 
             {/* Logo */}
             <div className="text-center mt-5">
-                {/* <h1 className="font-semibold text-[#F7941C] text-3xl">
-                    B<span className="text-black">reb</span>oo<span className="text-black">t</span>
-                </h1> */}
-                <img
-                    src={brebootLogo}
-                    alt="logo"
-                    className="w-auto h-10"
-                />
+                <img src={brebootLogo} alt="logo" className="w-auto h-10" />
             </div>
 
-            {/* Person Icon */}
+            {/* Profile Icon */}
             <div className="mt-3 rounded-full overflow-hidden">
                 <img src={profile} className="w-24 h-24 text-gray-500" alt="profile-icon" />
             </div>
@@ -43,36 +49,41 @@ const Welcome = () => {
 
             {/* Action Buttons */}
             <div className="flex flex-col items-center gap-5 mt-10 w-full px-6">
-                {/* Action 1 */}
-                <Link to={"/challenges"}>
+                {/* Action 1 - Challenge (Triggers Modal) */}
+                <button onClick={() => setShowModal(true)}>
                     <div className="flex flex-col items-center">
-                        <div className="w-25 h-25 flex items-center justify-center bg-[#F7941C] text-white rounded-full">
+                        <div className="w-20 h-20 flex items-center justify-center bg-[#F7941C] text-white rounded-full">
                             <User className="w-10 h-10" />
                         </div>
                         <p className="mt-2 text-base text-gray-500">#B-reboot Challenge</p>
                     </div>
-                </Link>
+                </button>
 
-                {/* Action 2 */}
-                <Link to={"/memberprogram"}>
+                {/* Action 2 - Member Program */}
+                {/* <Link to={"/memberprogram"}> */}
                     <div className="flex flex-col items-center">
-                        <div className="w-25 h-25 flex items-center justify-center bg-[#F7941C] text-white rounded-full">
+                        <div className="w-20 h-20 flex items-center justify-center bg-[#F7941C] text-white rounded-full">
                             <User className="w-10 h-10" />
                         </div>
-                        <p className="mt-2 text-base text-gray-500">Privilefe Member</p>
+                        <p className="mt-2 text-base text-gray-500">Privileged Member</p>
                         <p className="text-base text-gray-500">Program</p>
                     </div>
-                </Link>
+                {/* </Link> */}
 
-                {/* Action 3 */}
-                <div className="flex flex-col items-center">
-                    <div className="w-25 h-25 flex items-center justify-center bg-[#F7941C] text-white rounded-full">
-                        <User className="w-10 h-10" />
+                {/* Action 3 - Free Diet Consultation */}
+                <Link to={"/dietconsultation"}>
+                    <div className="flex flex-col items-center">
+                        <div className="w-20 h-20 flex items-center justify-center bg-[#F7941C] text-white rounded-full">
+                            <User className="w-10 h-10" />
+                        </div>
+                        <p className="mt-2 text-base text-gray-500">Celebrity Diet</p>
+                        <p className="text-base text-gray-500">Consultation</p>
                     </div>
-                    <p className="mt-2 text-base text-gray-500">Free Diet</p>
-                    <p className="text-base text-gray-500">Consultation</p>
-                </div>
+                </Link>
             </div>
+
+            {/* Consent Modal */}
+            {showModal && <ConsentModal title={"Consent Required"} subtitleOne={"Challenges will be announced weekly"} subtitleTwo={"Doctors need to upload photos and videos and they will be rewarded with points"} onConsent={handleConsent} />}
         </div>
     );
 };

@@ -29,25 +29,10 @@ const ChallengesPage = () => {
   return (
     <div className="min-h-screen poppins-regular">
 
-      <Header title={"Challenges"}/>
+      <Header title={"Weekly Challenges"}/>
       
       <div className="px-4 py-4 pb-24">
-        <div className="flex items-center gap-2 mb-4 overflow-x-auto no-scrollbar">
-          <button 
-            className="px-4 py-1 rounded-full text-white text-sm whitespace-nowrap bg-[#F7941C]"
-          >
-            All Challenges
-          </button>
-          <button className="px-4 py-1 rounded-full bg-white text-gray-600 text-sm whitespace-nowrap border border-gray-200">
-            Fitness
-          </button>
-          <button className="px-4 py-1 rounded-full bg-white text-gray-600 text-sm whitespace-nowrap border border-gray-200">
-            Nutrition
-          </button>
-          <button className="px-4 py-1 rounded-full bg-white text-gray-600 text-sm whitespace-nowrap border border-gray-200">
-            Mindfulness
-          </button>
-        </div>
+        <h2 className='font-semibold text-lg pb-4 text-gray-700'>Strength and stability</h2>
 
         {challenges.map((challenge) => (
           <ChallengeCard key={challenge.id} {...challenge} />

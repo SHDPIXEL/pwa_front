@@ -5,7 +5,8 @@ import Home from "./pages/Home";
 import RedeemPage from "./pages/Redeem";
 import Layout from "./layout/Layout";
 import Welcome from "./pages/welcome";
-
+import ChallengeDetails from "./pages/ChallengeDetails";
+import DietConsultation from "./pages/DietConsultation";
 
 function App() {
   return (
@@ -18,6 +19,8 @@ function App() {
             <Route path="/memberprogram" element={<MemberProgramPage />} />
             <Route path="/redeem" element={<RedeemPage />}/>
             <Route path="/welcome" element={<Welcome />} />
+            <Route path="/challenges/:id" element={<ChallengeDetails />} />
+            <Route path="/dietconsultation" element={<DietConsultation />} />
           </Route>
         </Routes>
       </BrowserRouter>
