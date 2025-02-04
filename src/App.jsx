@@ -7,6 +7,7 @@ import Layout from "./layout/Layout";
 import Welcome from "./pages/welcome";
 import ChallengeDetails from "./pages/ChallengeDetails";
 import DietConsultation from "./pages/DietConsultation";
+import WeekChallengesPage from "./pages/WeekChallengesPage";
 
 function App() {
   return (
@@ -16,10 +17,11 @@ function App() {
           <Route path="/" element={<Layout />}>
           <Route index path="/" element={<Home/>} />
             <Route path="/Challenges" element={<ChallengesPage />} />
+            <Route path="/challenges/week/:weekId" element={<WeekChallengesPage />} />
             <Route path="/memberprogram" element={<MemberProgramPage />} />
             <Route path="/redeem" element={<RedeemPage />}/>
             <Route path="/welcome" element={<Welcome />} />
-            <Route path="/challenges/:id" element={<ChallengeDetails />} />
+            <Route path="/challenges/week/:weekId/:challengeId" element={<ChallengeDetails />} />
             <Route path="/dietconsultation" element={<DietConsultation />} />
           </Route>
         </Routes>

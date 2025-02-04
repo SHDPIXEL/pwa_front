@@ -34,11 +34,11 @@ const DietConsultation = () => {
                     <div className="mt-12 space-y-4">
                         <h3 className="text-lg font-semibold text-gray-800">Download our app to get started</h3>
                         <div className="flex flex-col items-center gap-4">
-                            <div className='flex items-center gap-2 border px-7 py-2 border-gray-400 rounded-md'>
+                            <div className='flex items-center gap-2 border px-7 py-2 border-gray-400 active:bg-gray-200 rounded-md'>
                                 <img src={appstore} alt="Download on the App Store" className="h-8 w-8" />
                                 <p className='text-gray-600 font-medium'>Open App Store</p>
                             </div>
-                            <div className='flex items-center gap-2 border px-7 py-2 border-gray-400 rounded-md'>
+                            <div className='flex items-center gap-2 border px-7 py-2 border-gray-400 active:bg-gray-200 rounded-md'>
                                 <img src={playstore} alt="Download on the Play Store" className="h-8 w-8" />
                                 <p className='text-gray-600 font-medium'>Open Play Store</p>
                             </div>
