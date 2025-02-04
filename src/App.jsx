@@ -8,6 +8,7 @@ import Welcome from "./pages/welcome";
 import ChallengeDetails from "./pages/ChallengeDetails";
 import DietConsultation from "./pages/DietConsultation";
 import WeekChallengesPage from "./pages/WeekChallengesPage";
+import Profile from "./pages/Profile";
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
             <Route path="/welcome" element={<Welcome />} />
             <Route path="/challenges/week/:weekId/:challengeId" element={<ChallengeDetails />} />
             <Route path="/dietconsultation" element={<DietConsultation />} />
+            <Route path="/profile" element={<Profile />} />
           </Route>
         </Routes>
       </BrowserRouter>

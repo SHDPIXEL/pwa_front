@@ -32,7 +32,7 @@ const Welcome = () => {
 
     const handleCopy = () => {
         const textToCopy = "436756";
-    
+
         if (navigator.clipboard && window.isSecureContext) {
             navigator.clipboard.writeText(textToCopy)
                 .then(() => {
@@ -58,18 +58,18 @@ const Welcome = () => {
             document.body.removeChild(textArea);
         }
     };
-    
+
 
     return (
         <div className="min-h-[100dvh] flex flex-col items-center">
             {/* Header */}
-            <div className="w-full bg-[#F7941C] text-white flex items-center justify-between py-6 text-sm px-4 z-50">
-                <div className="flex items-center space-x-2">
-                    <p> { state.activeTab === "Dr" ? "Doctor" : state.activeTab } </p>
+            <div className="w-full bg-[#F7941C] text-white flex items-center justify-between py-4 text-sm px-4 z-50">
+                <div className="flex items-center space-x-2 font-semibold">
+                    <p> {state.activeTab === "Dr" ? "Doctor" : state.activeTab} </p>
                 </div>
-                <div 
-                onClick={handleDropdown}
-                className="relative">
+                <div
+                    onClick={handleDropdown}
+                    className="relative">
                     <button onClick={() => setShowDropdown(!showDropdown)} className="focus:outline-none">
                         <EllipsisVertical className="w-4 h-5" />
                     </button>
@@ -77,12 +77,18 @@ const Welcome = () => {
                     {/* Dropdown Menu */}
                     {isDropDownOpen && (
                         <div className="absolute right-0 mt-2 w-40 bg-white shadow-lg rounded-lg rounded-tr-none overflow-hidden z-50">
-                             <button className="w-full text-left px-4 py-3 text-gray-700 active:bg-gray-100 flex items-center gap-2">
+                            <button
+                                onClick={() => navigate("/profile", {
+                                    state: {
+                                        activeTab: state.activeTab
+                                    }
+                                })}
+                                className="w-full text-left px-4 py-3 text-gray-700 active:bg-gray-100 flex items-center gap-2">
                                 <User className="w-4 h-4" /> Profile
                             </button>
-                            <button 
-                            onClick={handleLogout}
-                            className="w-full text-left px-4 py-3 text-gray-700 active:bg-gray-100 flex items-center gap-2">
+                            <button
+                                onClick={handleLogout}
+                                className="w-full text-left px-4 py-3 text-gray-700 active:bg-gray-100 flex items-center gap-2">
                                 <LogOut className="w-4 h-4" /> Logout
                             </button>
                         </div>
@@ -96,33 +102,34 @@ const Welcome = () => {
             </div>
 
             {/* Profile Icon */}
-            <div className="mt-3 rounded-full overflow-hidden">
+            <div className="mt-3 mb-3 rounded-full overflow-hidden">
                 <img src={profile} className="w-24 h-24 text-gray-500" alt="profile-icon" />
             </div>
 
             {/* Welcome Text */}
-            <div className="text-center mt-6">
-                <h2 className="text-lg font-bold">Welcome back</h2>
-                <p className="text-4xl text-black font-bold">Guddi !</p>
-                <button 
-                onClick={handleCopy}
-                className="flex items-center justify-center mt-3 bg-gray-100 active:bg-gray-200 text-gray-600 py-1 rounded-xl w-full gap-3 px-5">
+
+            <h2 className="text-lg font-bold">Welcome back</h2>
+            <p className="text-4xl text-black font-bold ">Guddi !</p>
+            {state.activeTab === "Dr" && <div className="text-center">
+                <button
+                    onClick={handleCopy}
+                    className="flex items-center justify-center mt-3 bg-gray-100 active:bg-gray-200 text-gray-600 py-1 rounded-xl w-full gap-3 px-5">
                     <p>436756</p>
-                    {copied ? <Check className="w-3.5 h-3.5 text-green-500" /> : <Copy className="w-3.5 h-3.5" />}
+                    {copied ? <Check className="w-3.5 h-3.5 text-green-600" /> : <Copy className="w-3.5 h-3.5" />}
                 </button>
-            </div>
+            </div>}
 
             {/* Action Buttons */}
             <div className="flex flex-col items-center gap-5 mt-5 w-full px-6">
                 {/* Action 1 - Challenge (Triggers Modal) */}
-                <button onClick={() => setShowModal(true)}>
+                {state.activeTab === "Dr" && <button onClick={() => setShowModal(true)}>
                     <div className="flex flex-col items-center">
                         <div className="w-20 h-20 flex items-center justify-center bg-[#F7941C] text-white rounded-full">
                             <User className="w-10 h-10" />
                         </div>
                         <p className="mt-2 text-base text-gray-500">#B-reboot Challenge</p>
                     </div>
-                </button>
+                </button>}
 
                 {/* Action 2 - Member Program */}
                 {/* <Link to={"/memberprogram"}> */}
