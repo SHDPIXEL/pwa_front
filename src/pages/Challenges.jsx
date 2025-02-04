@@ -2,6 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 import ProgressBar from "../components/ProgressBar";
+import { BottomNavBar } from "../components/BottomNavBar";
 
 const weeks = [
   { id: 1, name: "Week 1", progress: 40 },
@@ -45,6 +46,7 @@ const ChallengesPage = () => {
           </div>
         ))}
       </div>
+      <BottomNavBar />
     </div>
   );
 };

@@ -1,6 +1,6 @@
 import React from "react";
 
-const ConsentModal = ({ onConsent, title, subtitleOne, subtitleTwo}) => {
+const ConsentModal = ({ onAction, title, subtitleOne, subtitleTwo, action}) => {
     return (
         <div className="fixed inset-0 flex items-center justify-center bg-black/20 z-50">
             <div className="bg-white rounded-xl p-6 w-80 shadow-lg text-center">
@@ -12,14 +12,14 @@ const ConsentModal = ({ onConsent, title, subtitleOne, subtitleTwo}) => {
                 {/* Buttons */}
                 <div className="flex flex-col justify-between gap-4 mt-6">
                     <button 
-                        className="px-4 py-2 bg-[#F7941C] text-white rounded-lg"
-                        onClick={() => onConsent(true)}
+                        className="px-4 py-2 bg-[#F7941C] text-white rounded-lg active:bg-[#F7941C]/70"
+                        onClick={() => onAction(true)}
                     >
-                        Accept & Continue
+                        {action}
                     </button>
                     <button 
-                        className="px-4 py-2 border border-gray-400 text-gray-500 rounded-lg"
-                        onClick={() => onConsent(false)}
+                        className="px-4 py-2 border border-gray-400 active:bg-gray-200 text-gray-500 rounded-lg"
+                        onClick={() => onAction(false)}
                     >
                         Cancel
                     </button>

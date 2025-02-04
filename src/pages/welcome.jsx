@@ -1,23 +1,24 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ChevronLeft, EllipsisVertical, User, LogOut, Copy, Check } from "lucide-react";
 import profile from "../assets/images/profile.jpg";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import brebootLogo from "../assets/images/Breboot.png";
 import ConsentModal from "../components/Modal";
 
 const Welcome = () => {
 
-    const { state } = useLocation();
     const [showModal, setShowModal] = useState(false);
+    const [showLogoutModal, setShowLogoutModal] = useState(false);
     const [isDropDownOpen, setIsDropDownOpen] = useState(false);
     const [copied, setCopied] = useState(false);
     const navigate = useNavigate();
+    const user = localStorage.getItem("userType");
 
-    // Handle consent action
+
     const handleConsent = (accepted) => {
         setShowModal(false);
         if (accepted) {
-            navigate("/challenges"); // Navigate only if user accepts
+            navigate("/challenges");
         }
     };
 
@@ -26,9 +27,15 @@ const Welcome = () => {
     };
 
     const handleLogout = () => {
-        navigate("/")
+        setShowLogoutModal(true);
     }
 
+    const handleModalAction = (confirm) => {
+        setShowLogoutModal(false);
+        if (confirm) {
+            navigate("/");
+        }
+    };
 
     const handleCopy = () => {
         const textToCopy = "436756";
@@ -65,7 +72,7 @@ const Welcome = () => {
             {/* Header */}
             <div className="w-full bg-[#F7941C] text-white flex items-center justify-between py-4 text-sm px-4 z-50">
                 <div className="flex items-center space-x-2 font-semibold">
-                    <p> {state.activeTab === "Dr" ? "Doctor" : state.activeTab} </p>
+                    <p> {user === "Dr" ? "Doctor" : user} </p>
                 </div>
                 <div
                     onClick={handleDropdown}
@@ -78,11 +85,7 @@ const Welcome = () => {
                     {isDropDownOpen && (
                         <div className="absolute right-0 mt-2 w-40 bg-white shadow-lg rounded-lg rounded-tr-none overflow-hidden z-50">
                             <button
-                                onClick={() => navigate("/profile", {
-                                    state: {
-                                        activeTab: state.activeTab
-                                    }
-                                })}
+                                onClick={() => navigate("/profile")}
                                 className="w-full text-left px-4 py-3 text-gray-700 active:bg-gray-100 flex items-center gap-2">
                                 <User className="w-4 h-4" /> Profile
                             </button>
@@ -92,6 +95,14 @@ const Welcome = () => {
                                 <LogOut className="w-4 h-4" /> Logout
                             </button>
                         </div>
+                    )}
+
+                    {showLogoutModal && (
+                        <ConsentModal
+                            onAction={handleModalAction}
+                            title="Are you sure you want to log out?"
+                            action="Logout"
+                        />
                     )}
                 </div>
             </div>
@@ -110,7 +121,7 @@ const Welcome = () => {
 
             <h2 className="text-lg font-bold">Welcome back</h2>
             <p className="text-4xl text-black font-bold ">Guddi !</p>
-            {state.activeTab === "Dr" && <div className="text-center">
+            {user === "Dr" && <div className="text-center">
                 <button
                     onClick={handleCopy}
                     className="flex items-center justify-center mt-3 bg-gray-100 active:bg-gray-200 text-gray-600 py-1 rounded-xl w-full gap-3 px-5">
@@ -122,7 +133,7 @@ const Welcome = () => {
             {/* Action Buttons */}
             <div className="flex flex-col items-center gap-5 mt-5 w-full px-6">
                 {/* Action 1 - Challenge (Triggers Modal) */}
-                {state.activeTab === "Dr" && <button onClick={() => setShowModal(true)}>
+                {user === "Dr" && <button onClick={() => setShowModal(true)}>
                     <div className="flex flex-col items-center">
                         <div className="w-20 h-20 flex items-center justify-center bg-[#F7941C] text-white rounded-full">
                             <User className="w-10 h-10" />
@@ -132,15 +143,15 @@ const Welcome = () => {
                 </button>}
 
                 {/* Action 2 - Member Program */}
-                {/* <Link to={"/memberprogram"}> */}
-                <div className="flex flex-col items-center">
-                    <div className="w-20 h-20 flex items-center justify-center bg-[#F7941C] text-white rounded-full">
-                        <User className="w-10 h-10" />
+                <Link to={"/memberprogram"}>
+                    <div className="flex flex-col items-center">
+                        <div className="w-20 h-20 flex items-center justify-center bg-[#F7941C] text-white rounded-full">
+                            <User className="w-10 h-10" />
+                        </div>
+                        <p className="mt-2 text-base text-gray-500">Privileged Member</p>
+                        <p className="text-base text-gray-500">Program</p>
                     </div>
-                    <p className="mt-2 text-base text-gray-500">Privileged Member</p>
-                    <p className="text-base text-gray-500">Program</p>
-                </div>
-                {/* </Link> */}
+                </Link>
 
                 {/* Action 3 - Free Diet Consultation */}
                 <Link to={"/dietconsultation"}>
@@ -155,7 +166,7 @@ const Welcome = () => {
             </div>
 
             {/* Consent Modal */}
-            {showModal && <ConsentModal title={"Consent Required"} subtitleOne={"Challenges will be announced weekly"} subtitleTwo={"Doctors need to upload photos and videos and they will be rewarded with points"} onConsent={handleConsent} />}
+            {showModal && <ConsentModal title={"Consent Required"} subtitleOne={"Challenges will be announced weekly"} subtitleTwo={"Doctors need to upload photos and videos and they will be rewarded with points"} onAction={handleConsent} action={"Accept & Continue"} />}
         </div>
     );
 };

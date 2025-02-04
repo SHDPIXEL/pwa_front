@@ -9,6 +9,8 @@ import ChallengeDetails from "./pages/ChallengeDetails";
 import DietConsultation from "./pages/DietConsultation";
 import WeekChallengesPage from "./pages/WeekChallengesPage";
 import Profile from "./pages/Profile";
+import ProductPage from "./pages/ProductPage";
+import ThankYouPage from "./pages/Thankyou";
 
 function App() {
   return (
@@ -25,6 +27,8 @@ function App() {
             <Route path="/challenges/week/:weekId/:challengeId" element={<ChallengeDetails />} />
             <Route path="/dietconsultation" element={<DietConsultation />} />
             <Route path="/profile" element={<Profile />} />
+            <Route path="/product/:id" element={<ProductPage />} />
+            <Route path="/thankyou" element={<ThankYouPage />} />
           </Route>
         </Routes>
       </BrowserRouter>

@@ -1,4 +1,6 @@
+
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const CategoryCard = ({ title, icon }) => (
     <div className="flex flex-col items-center gap-3 min-w-[90px] group cursor-pointer">
@@ -11,7 +13,7 @@ const CategoryCard = ({ title, icon }) => (
 );
 
 const BrandCard = ({ name, bgImage }) => (
-    <div 
+    <div
         className="relative cursor-pointer group rounded-2xl overflow-hidden min-w-[180px] h-[110px]"
     >
         <img src={bgImage} alt={name} className="absolute inset-0 w-full h-full object-cover" />
@@ -22,32 +24,39 @@ const BrandCard = ({ name, bgImage }) => (
 );
 
 
-const ProductCard = ({ name, price, originalPrice,image }) => (
-    <div className="bg-white rounded-2xl shadow-sm group active:shadow-lg transition-all duration-300 min-w-[150px] cursor-pointer">
-        <div className="relative overflow-hidden rounded-t-2xl">
-            <img
-                src={image}
-                alt={name}
-                className="w-full h-[160px] object-cover transform group-active:scale-105 transition-transform duration-500"
-            />
-            <div className="absolute top-3 right-3">
-                <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-white shadow-sm">
-                    🔥 Popular
-                </span>
+const ProductCard = ({ id, name, price, originalPrice, image }) => {
+    const navigate = useNavigate();
+
+    return (
+        <div
+            className="bg-white rounded-2xl shadow-sm group active:shadow-lg transition-all duration-300 min-w-[150px] cursor-pointer"
+            onClick={() => navigate(`/product/${id}`)}
+        >
+            <div className="relative overflow-hidden rounded-t-2xl">
+                <img
+                    src={image}
+                    alt={name}
+                    className="w-full h-[160px] object-cover transform group-active:scale-105 transition-transform duration-500"
+                />
+                <div className="absolute top-3 right-3">
+                    <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-white shadow-sm">
+                        🔥 Popular
+                    </span>
+                </div>
             </div>
-        </div>
-        <div className="p-4">
-            <h3 className="font-medium text-gray-900 line-clamp-2">{name}</h3>
-            <div className="flex items-center justify-between">
-                <div>
-                    <span className="text-lg font-bold text-[#F7941C]">{price}</span>
-                    {originalPrice && (
-                        <span className="ml-2 text-sm text-gray-400 line-through">{originalPrice}</span>
-                    )}
+            <div className="p-4">
+                <h3 className="font-medium text-gray-900 line-clamp-2">{name}</h3>
+                <div className="flex items-center justify-between">
+                    <div>
+                        <span className="text-lg font-bold text-[#F7941C]">₹ {price}</span>
+                        {originalPrice && (
+                            <span className="ml-2 text-sm text-gray-400 line-through">₹ {originalPrice}</span>
+                        )}
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-);
+    );
+};
 
 export { ProductCard, BrandCard, CategoryCard };

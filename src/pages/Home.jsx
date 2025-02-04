@@ -20,6 +20,12 @@ const Home = () => {
     return () => clearTimeout(timer);
   }, []);
 
+  const handleLogin = () => {
+    localStorage.setItem("userType", activeTab)
+    navigate('/welcome')
+  }
+
+
   return (
     <>
       {isSplashVisible ? (
@@ -111,9 +117,7 @@ const Home = () => {
 
                 {/* Continue Button */}
                 <button
-                  onClick={() => navigate("/welcome", {
-                    state: { activeTab }
-                  })}
+                  onClick={handleLogin}
                   className="w-full bg-black text-white py-3 rounded-xl mb-4 active:bg-gray-900 transition-opacity"
                 >
                   Continue

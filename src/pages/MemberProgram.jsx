@@ -23,9 +23,9 @@ const featuredBrands = [
 ];
 
 const products = [
-    { id: 1, name: 'Vitamin C Serum', price: '29 INR', image: dumy_1 },
-    { id: 2, name: 'Collagen Booster', price: '39 INR', image: dumy_1 },
-    { id: 3, name: 'Herbal Shampoo', price: '19 INR', image: dumy_1 },
+    { id: 1, name: 'Vitamin C Serum', price: '1499',originalPrice:"2999", image: dumy_1 },
+    // { id: 2, name: 'Collagen Booster', price: '39 INR', image: dumy_1 },
+    // { id: 3, name: 'Herbal Shampoo', price: '19 INR', image: dumy_1 },
 ];
 
 const MemberProgramPage = () => {
@@ -33,45 +33,14 @@ const MemberProgramPage = () => {
         <div className="min-h-screen text-gray-900 font-poppins">
 
             <div>
-            <Header title={"Member Program"} icon ={<ShoppingCart />} />
-
+                <Header title={"Member Program"} />
             </div>
 
             <div className="px-4 py-4 pb-24">
-                {/* Categories */}
-                <div className="mb-8">
-                    <div className="flex justify-between items-center mb-4">
-                        <h2 className="text-lg font-semibold">Shop by Category</h2>
-                        <button className="flex items-center text-sm text-primary text-[#F7941C]">
-                            View All <ChevronRight size={16} />
-                        </button>
-                    </div>
-                    <div className="flex gap-4 overflow-x-auto no-scrollbar pb-2">
-                        {categories.map((category) => (
-                            <CategoryCard key={category.id} {...category} />
-                        ))}
-                    </div>
-                </div>
-
-                {/* Featured Brands */}
-                <div className="mb-8">
-                    <div className="flex justify-between items-center mb-4">
-                        <h2 className="text-lg font-semibold">Featured Brands</h2>
-                        <button className="flex items-center text-sm text-primary text-[#F7941C]">
-                            View All <ChevronRight size={16} />
-                        </button>
-                    </div>
-                    <div className="flex gap-4 overflow-x-auto no-scrollbar pb-2">
-                        {featuredBrands.map((brand) => (
-                            <BrandCard key={brand.id} {...brand} />
-                        ))}
-                    </div>
-                </div>
-
                 {/* Products */}
                 <div>
                     <div className="flex justify-between items-center mb-4">
-                        <h2 className="text-lg font-semibold">Exclusive Member Offers</h2>
+                        <h2 className="text-lg font-semibold text-gray-700">Exclusive Member Offers</h2>
                     </div>
                     <div className="grid grid-cols-2 gap-4 overflow-x-auto no-scrollbar pb-2">
                         {products.map((product) => (
