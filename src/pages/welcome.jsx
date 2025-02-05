@@ -166,7 +166,7 @@ const Welcome = () => {
             </div>
 
             {/* Consent Modal */}
-            {showModal && <ConsentModal title={"Consent Required"} subtitleOne={"Challenges will be announced weekly"} subtitleTwo={"Doctors need to upload photos and videos and they will be rewarded with points"} onAction={handleConsent} action={"Accept & Continue"} />}
+            {showModal && <ConsentModal title={"Consent Required"} subtitleOne={"By joining weekly challenges in the Breboot app, you consent to the app accessing your submitted photos and videos, which will remain confidential and not be shared without your permission"} onAction={handleConsent} action={"Accept & Continue"} />}
         </div>
     );
 };

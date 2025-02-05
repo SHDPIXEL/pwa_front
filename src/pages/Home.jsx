@@ -6,6 +6,7 @@ import apple from "../assets/images/apple_logo.png";
 import google from "../assets/Google_logo.svg";
 import { useNavigate } from "react-router-dom";
 import brebootLogo from "../assets/images/Breboot.png";
+import { Link } from "react-router-dom";
 
 const Home = () => {
   const [isSplashVisible, setIsSplashVisible] = useState(true);
@@ -22,7 +23,7 @@ const Home = () => {
 
   const handleLogin = () => {
     localStorage.setItem("userType", activeTab)
-    navigate('/welcome')
+    navigate('/firstlogin')
   }
 
 
@@ -136,11 +137,13 @@ const Home = () => {
                 </button>
 
                 {/* Social Login */}
-                <div className="flex justify-center gap-8 mb-8">
-                  <button>
-                    <img className="w-6 h-6" src={google} alt="google-logo" />
-                  </button>
-                </div>
+                {/* <Link to={"/firstlogin"}>
+                  <div className="flex justify-center gap-8 mb-8">
+                    <button >
+                      <img className="w-6 h-6" src={google} alt="google-logo" />
+                    </button>
+                  </div>
+                </Link> */}
 
                 {/* Terms */}
                 <p className="text-center text-xs text-gray-500 px-6 mb-10">

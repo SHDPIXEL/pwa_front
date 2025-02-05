@@ -10,6 +10,8 @@ import DietConsultation from "./pages/DietConsultation";
 import WeekChallengesPage from "./pages/WeekChallengesPage";
 import Profile from "./pages/Profile";
 import ProductPage from "./pages/ProductPage";
+import RewardPage from "./pages/RewardPage";
+import FirstLogin from "./pages/FirstLoginPage";
 import ThankYouPage from "./pages/Thankyou";
 
 function App() {
@@ -28,7 +30,9 @@ function App() {
             <Route path="/dietconsultation" element={<DietConsultation />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/product/:id" element={<ProductPage />} />
+            <Route path="/reward/:id" element={<RewardPage />} />
             <Route path="/thankyou" element={<ThankYouPage />} />
+            <Route path="firstlogin" element={ <FirstLogin/> } />
           </Route>
         </Routes>
       </BrowserRouter>

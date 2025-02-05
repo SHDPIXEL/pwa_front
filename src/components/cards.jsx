@@ -30,7 +30,7 @@ const ProductCard = ({ id, name, price, originalPrice, image }) => {
     return (
         <div
             className="bg-white rounded-2xl shadow-sm group active:shadow-lg transition-all duration-300 min-w-[150px] cursor-pointer"
-            onClick={() => navigate(`/product/${id}`)}
+            onClick={() => navigate(`/product/${id}`, {state: {id, name, price, originalPrice, image}})}
         >
             <div className="relative overflow-hidden rounded-t-2xl">
                 <img

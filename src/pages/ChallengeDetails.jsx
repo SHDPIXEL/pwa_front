@@ -223,7 +223,7 @@ const ChallengeDetails = () => {
                             <textarea
                                 className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm mb-4"
                                 rows="3"
-                                placeholder="Tell us anything..."
+                                placeholder="How was your experience? Let us Know!"
                                 value={formData.message}
                                 onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                             ></textarea>
