@@ -23,7 +23,8 @@ const Home = () => {
 
   const handleLogin = () => {
     localStorage.setItem("userType", activeTab)
-    navigate('/firstlogin')
+    const route = activeTab === "Dr" ? "/firstlogin" : "/welcome"
+    navigate(route)
   }
 
 

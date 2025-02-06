@@ -128,8 +128,8 @@ const Welcome = () => {
                     <p>436756</p>
                     {copied ? <Check className="w-3.5 h-3.5 text-green-600" /> : <Copy className="w-3.5 h-3.5" />}
                 </button>
+                <p className="font-medium text-gray-900 pt-1">Your referral code</p>
             </div>}
-            <p className="font-medium text-gray-900 pt-1">Your referral code</p>
 
             {/* Action Buttons */}
             <div className="flex flex-col items-center gap-5 mt-5 w-full px-6">

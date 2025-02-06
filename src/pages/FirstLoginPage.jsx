@@ -93,23 +93,25 @@ const FirstLogin = () => {
                     <h1 className="text-5xl font-bold text-gray-900 mb-4">Guddi!</h1>
 
                     {user === "Dr" && (
-                        <button
-                            onClick={handleCopy}
-                            className="inline-flex items-center px-4 py-2 rounded-lg bg-gray-100 active:bg-gray-200 text-gray-600 transition-colors gap-2"
-                        >
-                            436756
-                            {copied ? (
-                                <Check className="w-4 h-4 text-green-600" />
-                            ) : (
-                                <Copy className="w-4 h-4" />
-                            )}
-                        </button>
+                        <div>
+                            <button
+                                onClick={handleCopy}
+                                className="inline-flex items-center px-4 py-2 rounded-lg bg-gray-100 active:bg-gray-200 text-gray-600 transition-colors gap-2"
+                            >
+                                436756
+                                {copied ? (
+                                    <Check className="w-4 h-4 text-green-600" />
+                                ) : (
+                                    <Copy className="w-4 h-4" />
+                                )}
+                            </button>
+                            <p className="font-medium text-gray-900 pt-1">Your referral code</p>
+                        </div>
                     )}
 
-                    <p className="font-medium text-gray-900 pt-1">Your referral code</p>
                 </div>
                 <div className="text-center text-5xl pt-5">
-                🎉
+                    🎉
                 </div>
 
                 <div className="rounded-lg text-3xl font-semibold  p-3 text-center text-[#F7941C]">
@@ -117,9 +119,9 @@ const FirstLogin = () => {
                     <p>500 Points!</p>
                 </div>
 
-                <button 
-                onClick={() => navigate("/welcome")}
-                className="flex items-center justify-center gap-3 border w-40 mt-5 border-[#F7941C] active:bg-amber-600/30 bg-amber-600/20 text-gray-700 font-semibold px-3 py-2 rounded-xl">
+                <button
+                    onClick={() => navigate("/welcome")}
+                    className="flex items-center justify-center gap-3 border w-40 mt-5 border-[#F7941C] active:bg-amber-600/30 bg-amber-600/20 text-gray-700 font-semibold px-3 py-2 rounded-xl">
                     <div>
                         Continue
                     </div>
