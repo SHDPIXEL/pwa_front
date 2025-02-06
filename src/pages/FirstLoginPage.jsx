@@ -105,6 +105,8 @@ const FirstLogin = () => {
                             )}
                         </button>
                     )}
+
+                    <p className="font-medium text-gray-900 pt-1">Your referral code</p>
                 </div>
                 <div className="text-center text-5xl pt-5">
                 🎉
