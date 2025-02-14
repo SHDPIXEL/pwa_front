@@ -1,7 +1,10 @@
 import { useState } from "react";
-import { ChevronLeft, EllipsisVertical, User, LogOut, Copy, Check, MoveRight } from "lucide-react";
+import { EllipsisVertical, User, LogOut, Copy, Check, MoveRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import brebootLogo from '../assets/images/Breboot.png'
+import Lottie from "lottie-react";
+import popperAnimations from "../assets/animations/popperAnimation.json"
+
 
 const FirstLogin = () => {
     const [showLogoutModal, setShowLogoutModal] = useState(false);
@@ -107,11 +110,19 @@ const FirstLogin = () => {
                             </button>
                             <p className="font-medium text-gray-900 pt-1">Your referral code</p>
                         </div>
+
                     )}
 
                 </div>
-                <div className="text-center text-5xl pt-5">
-                    🎉
+                <div className="text-center ml-8">
+                    <div>
+                    <Lottie
+                        animationData={popperAnimations}
+                        loop={true}
+                        autoplay={true}
+                        style={{ height: 100, width: 100 }}
+                    />
+                    </div>
                 </div>
 
                 <div className="rounded-lg text-3xl font-semibold  p-3 text-center text-[#F7941C]">

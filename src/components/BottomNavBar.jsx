@@ -47,7 +47,7 @@ const BottomNavBarMemberProgram = () => {
           <span className="text-xs mt-1">Member</span>
         </button>
 
-        <button
+        {/* <button
           onClick={() => {
             navigate('/redeem')
           }}
@@ -56,7 +56,7 @@ const BottomNavBarMemberProgram = () => {
           }`}>
           <TicketCheck size={20} />
           <span className="text-xs mt-1">Redeem</span>
-        </button>
+        </button> */}
 
       </div>
     </div>

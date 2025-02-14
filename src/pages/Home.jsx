@@ -12,6 +12,7 @@ const Home = () => {
   const [isSplashVisible, setIsSplashVisible] = useState(true);
   const [checked, setChecked] = useState(true);
   const [activeTab, setActiveTab] = useState("Dr");
+  const [gender, setGender] = useState("")
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -63,7 +64,7 @@ const Home = () => {
                       }`}
                     onClick={() => setActiveTab("Patient")}
                   >
-                    Patient
+                    Others
                   </button>
                 </div>
               </div>
@@ -73,7 +74,7 @@ const Home = () => {
                 <div className="space-y-6 mb-4 text-sm flex flex-col items-center">
                   <div className="flex items-center bg-gray-50 border border-gray-200 rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-[#F7941C]/20 focus-within:border-[#F7941C]">
                     <div className="flex items-center justify-center gap-2 px-4 py-3 border-r border-gray-200 w-20">
-                      <span className="text-gray-700 font-semibold">{activeTab}</span>
+                      <span className="text-gray-700 font-semibold">{activeTab === "Dr" ? activeTab : "Others"}</span>
                     </div>
                     <input
                       className="flex-1 bg-transparent px-4 py-3 focus:outline-none"
@@ -106,6 +107,38 @@ const Home = () => {
                       />
                     </div>
                   )}
+                  {/* Gender selection */}
+
+                  <div className="flex flex-col items-center w-full">
+                    {/* <span className="text-gray-700 font-semibold mb-2">Select Gender</span> */}
+                    <div className="flex gap-4">
+                      <label className="flex items-center gap-2 cursor-pointer">
+                        <input
+                          type="radio"
+                          name="gender"
+                          value="male"
+                          checked={gender === "male"}
+                          onChange={() => setGender("male")}
+                          className="hidden"
+                        />
+                        <div className={`w-4 h-4 rounded-full border border-[#F7941C] flex items-center justify-center transition-all ${gender === "male" ? "bg-[#F7941C]" : "bg-white"}`}></div>
+                        <span className="text-gray-600">Male</span>
+                      </label>
+                      <label className="flex items-center gap-2 cursor-pointer">
+                        <input
+                          type="radio"
+                          name="gender"
+                          value="female"
+                          checked={gender === "female"}
+                          onChange={() => setGender("female")}
+                          className="hidden"
+                        />
+                        <div className={`w-4 h-4 rounded-full border border-[#F7941C] flex items-center justify-center transition-all ${gender === "female" ? "bg-[#F7941C]" : "bg-white"}`}></div>
+                        <span className="text-gray-600">Female</span>
+                      </label>
+                    </div>
+                  </div>
+
 
                   {/* WhatsApp Checkbox */}
                   <label className="flex items-center gap-3 mb-8 cursor-pointer">

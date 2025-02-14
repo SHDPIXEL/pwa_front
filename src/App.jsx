@@ -13,6 +13,7 @@ import ProductPage from "./pages/ProductPage";
 import RewardPage from "./pages/RewardPage";
 import FirstLogin from "./pages/FirstLoginPage";
 import ThankYouPage from "./pages/Thankyou";
+import SplashScreen from "./pages/SplashScreen";
 
 function App() {
   return (
@@ -33,6 +34,8 @@ function App() {
             <Route path="/reward/:id" element={<RewardPage />} />
             <Route path="/thankyou" element={<ThankYouPage />} />
             <Route path="firstlogin" element={ <FirstLogin/> } />
+            <Route path="splash" element={ <SplashScreen/> } />
+            
           </Route>
         </Routes>
       </BrowserRouter>

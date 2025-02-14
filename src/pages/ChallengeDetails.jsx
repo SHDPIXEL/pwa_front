@@ -4,6 +4,7 @@ import { FileImage, FileVideo, User, Phone, Upload, X, Check } from "lucide-reac
 import challenge1 from "../assets/images/challenge1.png"
 import challenge2 from "../assets/images/challenge2.png"
 import challenge3 from "../assets/images/challenge3.png"
+import steps from "../assets/images/steps-rb.png"
 
 const ChallengeDetails = () => {
     // const { id } = useParams();
@@ -26,11 +27,11 @@ const ChallengeDetails = () => {
         details: [
             {
                 imagePlaceholder: challenge1,
-                text: "Challenge yourself to complete 10,000 steps daily. This helps improve your cardiovascular health and maintain an active lifestyle.",
+                text: "Challenge your self to complete 10000 steps daily. This helps to upregulate your UCP1 and improve your cardiovascular health and maintain an active lifestyle.",
                 side: "left"
             },
             {
-                imagePlaceholder: challenge3,
+                imagePlaceholder: steps,
                 text: "Track your progress using any fitness app of your choice. Make sure to capture daily screenshots of your achievement.",
                 side: "right"
             },
