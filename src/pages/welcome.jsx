@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { ChevronLeft, EllipsisVertical, User, LogOut, Copy, Check } from "lucide-react";
 import profile from "../assets/images/profile.jpg";
+import menProfile from "../assets/images/man.png";
+import womanProfile from "../assets/images/woman.png";
 import { Link, useNavigate } from "react-router-dom";
 import brebootLogo from "../assets/images/Breboot.png";
 import ConsentModal from "../components/Modal";
@@ -13,7 +15,7 @@ const Welcome = () => {
     const [copied, setCopied] = useState(false);
     const navigate = useNavigate();
     const user = localStorage.getItem("userType");
-
+    const gender = localStorage.getItem("GenderType");
 
     const handleConsent = (accepted) => {
         setShowModal(false);
@@ -114,7 +116,11 @@ const Welcome = () => {
 
             {/* Profile Icon */}
             <div className="mt-3 mb-3 rounded-full overflow-hidden">
-                <img src={profile} className="w-24 h-24 text-gray-500" alt="profile-icon" />
+                {
+                    gender === "male"
+                    ? <img src={menProfile} className="w-24 h-24" alt="man-profile-icom" />
+                    : <img src={womanProfile} className="w-24 h-24" alt="woman-prfile-icon" />
+                }
             </div>
 
             {/* Welcome Text */}

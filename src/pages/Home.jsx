@@ -12,7 +12,7 @@ const Home = () => {
   const [isSplashVisible, setIsSplashVisible] = useState(true);
   const [checked, setChecked] = useState(true);
   const [activeTab, setActiveTab] = useState("Dr");
-  const [gender, setGender] = useState("")
+  const [gender, setGender] = useState("female");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -23,7 +23,8 @@ const Home = () => {
   }, []);
 
   const handleLogin = () => {
-    localStorage.setItem("userType", activeTab)
+    localStorage.setItem("userType", activeTab);
+    localStorage.setItem("GenderType", gender);
     const route = activeTab === "Dr" ? "/firstlogin" : "/welcome"
     navigate(route)
   }
