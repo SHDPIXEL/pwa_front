@@ -1,29 +1,29 @@
 import { useEffect, useState } from "react";
-import brebootLogo from "../assets/Breboot.svg";
+import breebootLogo from "../assets/images/Breboot.png"
 
 const SplashScreen = ({ onFinish }) => {
   const [fadeOut, setFadeOut] = useState(false);
 
   useEffect(() => {
-    setTimeout(() => setFadeOut(true), 2000);
-    setTimeout(() => onFinish && onFinish(), 2500);
+    const fadeTimer = setTimeout(() => setFadeOut(true), 2000);
+    const finishTimer = setTimeout(() => onFinish && onFinish(), 2500);
+
+    return () => {
+      clearTimeout(fadeTimer);
+      clearTimeout(finishTimer);
+    };
   }, [onFinish]);
 
   return (
     <div
-      className={`fixed inset-0 flex flex-col items-center justify-center bg-white transition-opacity duration-500 ${
-        fadeOut ? "opacity-0 pointer-events-none" : "opacity-100"
-      }`}
+      className={`fixed inset-0 flex flex-col items-center justify-between bg-white transition-opacity duration-500 ${fadeOut ? "opacity-0 pointer-events-none" : "opacity-100"
+        }`}
     >
-      <img src={brebootLogo} alt="Logo" className="h-96 w-96 mb-4" />
-      {/* <h1 className="absolute top-[55%] text-2xl font-medium text-center poppins-regular">
-        <span className="font-bold">B{" "}</span> 
-        <span className="font-bold">R</span>eady{" "}
-        <span>{" "}to{" "}</span>
-        <span className="font-bold">R</span>eboot{" "}
-        <span>y</span>our{" "}
-        <span className="font-bold">B</span>ody
-      </h1> */}
+      {/* Centered Logo */}
+      <div className="flex flex-1 items-center justify-center">
+        <img src={breebootLogo} alt="Logo" className="w-48" />
+      </div>
+
     </div>
   );
 };

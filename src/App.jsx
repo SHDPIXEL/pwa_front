@@ -21,11 +21,11 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Layout />}>
-          <Route index path="/" element={<Home/>} />
+            <Route index path="/" element={<Home />} />
             <Route path="/Challenges" element={<ChallengesPage />} />
             <Route path="/challenges/week/:weekId" element={<WeekChallengesPage />} />
             <Route path="/memberprogram" element={<MemberProgramPage />} />
-            <Route path="/redeem" element={<RedeemPage />}/>
+            <Route path="/redeem" element={<RedeemPage />} />
             <Route path="/welcome" element={<Welcome />} />
             <Route path="/challenges/week/:weekId/:challengeId" element={<ChallengeDetails />} />
             <Route path="/dietconsultation" element={<DietConsultation />} />
@@ -33,9 +33,8 @@ function App() {
             <Route path="/product/:id" element={<ProductPage />} />
             <Route path="/reward/:id" element={<RewardPage />} />
             <Route path="/thankyou" element={<ThankYouPage />} />
-            <Route path="firstlogin" element={ <FirstLogin/> } />
-            <Route path="splash" element={ <SplashScreen/> } />
-            
+            <Route path="firstlogin" element={<FirstLogin />} />
+            <Route path="/splash" element={<SplashScreen />} />
           </Route>
         </Routes>
       </BrowserRouter>

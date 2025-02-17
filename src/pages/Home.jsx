@@ -43,7 +43,7 @@ const Home = () => {
           <div className="flex-1 overflow-hidden flex flex-col items-center justify-center px-10">
 
             {/* Content */}
-            <div className="w-full max-w-md flex flex-col">
+            <div className="w-full flex flex-col">
               {/* Logo and Title */}
               <div className="flex flex-col items-center mb-4">
                 <img src={brebootLogo} alt="logo" className="w-auto h-16 mb-8" />
@@ -71,7 +71,7 @@ const Home = () => {
               </div>
 
               {/* Scrollable Form Section */}
-              <div className="max-h-[100dvh] w-fit">
+              <div className="max-h-[100dvh]">
                 <div className="space-y-6 mb-4 text-sm flex flex-col items-center">
                   <div className="flex items-center bg-gray-50 border border-gray-200 rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-[#F7941C]/20 focus-within:border-[#F7941C]">
                     <div className="flex items-center justify-center gap-2 px-4 py-3 border-r border-gray-200 w-20">
