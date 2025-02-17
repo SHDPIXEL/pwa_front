@@ -16,14 +16,14 @@ const SplashScreen = ({ onFinish }) => {
       }`}
     >
       <img src={brebootLogo} alt="Logo" className="h-96 w-96 mb-4" />
-      <h1 className="absolute top-[55%] text-2xl font-medium text-center poppins-regular">
+      {/* <h1 className="absolute top-[55%] text-2xl font-medium text-center poppins-regular">
         <span className="font-bold">B{" "}</span> 
         <span className="font-bold">R</span>eady{" "}
         <span>{" "}to{" "}</span>
         <span className="font-bold">R</span>eboot{" "}
         <span>y</span>our{" "}
         <span className="font-bold">B</span>ody
-      </h1>
+      </h1> */}
     </div>
   );
 };

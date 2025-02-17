@@ -6,6 +6,8 @@ import womanProfile from "../assets/images/woman.png";
 import { Link, useNavigate } from "react-router-dom";
 import brebootLogo from "../assets/images/Breboot.png";
 import ConsentModal from "../components/Modal";
+import redeem from "../assets/images/redeem-bg.png";
+
 
 const Welcome = () => {
 
@@ -79,9 +81,15 @@ const Welcome = () => {
                 <div
                     onClick={handleDropdown}
                     className="relative">
-                    <button onClick={() => setShowDropdown(!showDropdown)} className="focus:outline-none">
-                        <EllipsisVertical className="w-4 h-5" />
-                    </button>
+
+                    <div className="flex items-center w-14">
+                        <button onClick={() => navigate("/redeem")} >
+                            <img src={redeem} alt="redeem-logo" />
+                        </button>
+                        <button onClick={() => setShowDropdown(!showDropdown)} className="focus:outline-none">
+                            <EllipsisVertical className="w-6 h-5" />
+                        </button>
+                    </div>
 
                     {/* Dropdown Menu */}
                     {isDropDownOpen && (
@@ -118,8 +126,8 @@ const Welcome = () => {
             <div className="mt-3 mb-3 rounded-full overflow-hidden">
                 {
                     gender === "male"
-                    ? <img src={menProfile} className="w-24 h-24" alt="man-profile-icom" />
-                    : <img src={womanProfile} className="w-24 h-24" alt="woman-prfile-icon" />
+                        ? <img src={menProfile} className="w-24 h-24" alt="man-profile-icom" />
+                        : <img src={womanProfile} className="w-24 h-24" alt="woman-prfile-icon" />
                 }
             </div>
 

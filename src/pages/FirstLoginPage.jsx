@@ -3,7 +3,8 @@ import { EllipsisVertical, User, LogOut, Copy, Check, MoveRight } from "lucide-r
 import { useNavigate } from "react-router-dom";
 import brebootLogo from '../assets/images/Breboot.png'
 import Lottie from "lottie-react";
-import popperAnimations from "../assets/animations/popperAnimation.json"
+import popperAnimations from "../assets/animations/popperAnimation.json";
+import redeem from "../assets/images/redeem-bg.png";
 
 
 const FirstLogin = () => {
@@ -55,9 +56,16 @@ const FirstLogin = () => {
                 <div
                     onClick={handleDropdown}
                     className="relative">
-                    <button onClick={() => setShowDropdown(!showDropdown)} className="focus:outline-none">
-                        <EllipsisVertical className="w-4 h-5" />
-                    </button>
+
+                    <div className="flex items-center w-14">
+                        <button onClick={() => navigate("/redeem")} >
+                            <img src={redeem} alt="redeem-logo" />
+                        </button>
+                        <button onClick={() => setShowDropdown(!showDropdown)} className="focus:outline-none">
+                            <EllipsisVertical className="w-6 h-5" />
+                        </button>
+                    </div>
+
 
                     {/* Dropdown Menu */}
                     {isDropDownOpen && (
@@ -87,13 +95,13 @@ const FirstLogin = () => {
 
 
             <main className="flex flex-col items-center justify-center max-w-md mx-auto px-4 pt-12 pb-8">
-                <div className="flex justify-center mb-8">
-                    <img src={brebootLogo} alt="logo" className="h-10" />
+                <div className="flex justify-center mb-10">
+                    <img src={brebootLogo} alt="logo" className="h-14 w-auto" />
                 </div>
 
-                <div className="text-center mb-8">
+                <div className="text-center mb-5">
                     <h2 className="text-gray-600 font-medium mb-2">Welcome</h2>
-                    <h1 className="text-5xl font-bold text-gray-900 mb-4">Guddi!</h1>
+                    <h1 className="text-4xl font-bold text-gray-900 mb-4">Guddi!</h1>
 
                     {user === "Dr" && (
                         <div>
@@ -116,12 +124,12 @@ const FirstLogin = () => {
                 </div>
                 <div className="text-center ml-8">
                     <div>
-                    <Lottie
-                        animationData={popperAnimations}
-                        loop={true}
-                        autoplay={true}
-                        style={{ height: 100, width: 100 }}
-                    />
+                        <Lottie
+                            animationData={popperAnimations}
+                            loop={true}
+                            autoplay={true}
+                            style={{ height: 100, width: 100 }}
+                        />
                     </div>
                 </div>
 
