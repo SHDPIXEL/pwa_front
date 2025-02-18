@@ -3,9 +3,10 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { Link } from 'react-router-dom';
 
 
+
 const BottomNavBar = () => {
   return (
-    <div className="fixed bottom-0 pb-8 left-0 right-0 bg-white shadow-lg border-t border-gray-100">
+    <div className="fixed bottom-0 left-0 right-0 bg-white shadow-lg border-t border-gray-100">
       <div className="flex justify-around items-center p-3 max-w-md mx-auto">
         <Link to={"/welcome"}>
           <button className="flex flex-col items-center text-gray-400">
@@ -28,7 +29,7 @@ const BottomNavBarMemberProgram = () => {
   const location = useLocation();
 
   return (
-    <div className="fixed bottom-0 pb-8 left-0 right-0 bg-white shadow-lg border-t border-gray-100">
+    <div className="fixed bottom-0 left-0 right-0 bg-white shadow-lg border-t border-gray-100">
       <div className="flex justify-around items-center p-3 max-w-md mx-auto">
 
         <button

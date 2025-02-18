@@ -7,6 +7,7 @@ import google from "../assets/Google_logo.svg";
 import { useNavigate } from "react-router-dom";
 import brebootLogo from "../assets/images/Breboot.png";
 import { Link } from "react-router-dom";
+import brebootSvg from "../assets/svg/BrebootLogo.svg";
 
 const Home = () => {
   const [isSplashVisible, setIsSplashVisible] = useState(true);
@@ -37,7 +38,7 @@ const Home = () => {
       ) : (
         <div className="min-h-[100dvh] flex flex-col overflow-hidden">
           {/* Header */}
-          <div className="w-full bg-[#F7941C] text-white flex items-center justify-between py-4 text-sm px-4 z-50"></div>
+          <div className="w-full bg-[#F7941C] text-white flex items-center justify-between py-4 text-sm px-4 z-50 mb-5"></div>
 
           {/* Main Content Wrapper */}
           <div className="flex-1 overflow-hidden flex flex-col items-center justify-center px-10">
@@ -46,7 +47,7 @@ const Home = () => {
             <div className="w-full flex flex-col">
               {/* Logo and Title */}
               <div className="flex flex-col items-center mb-4">
-                <img src={brebootLogo} alt="logo" className="w-auto h-16 mb-8" />
+                <img src={brebootSvg} alt="logo" className="w-auto h-26 mb-3" />
                 <h2 className="text-xl font-bold text-gray-800">Let's create your account</h2>
               </div>
 
@@ -73,7 +74,7 @@ const Home = () => {
               {/* Scrollable Form Section */}
               <div className="max-h-[100dvh]">
                 <div className="space-y-6 mb-4 text-sm flex flex-col items-center">
-                  <div className="flex items-center bg-gray-50 border border-gray-200 rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-[#F7941C]/20 focus-within:border-[#F7941C]">
+                  <div className="flex items-center max-w-80 bg-gray-50 border border-gray-200 rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-[#F7941C]/20 focus-within:border-[#F7941C]">
                     <div className="flex items-center justify-center gap-2 px-4 py-3 border-r border-gray-200 w-20">
                       <span className="text-gray-700 font-semibold">{activeTab === "Dr" ? activeTab : "Others"}</span>
                     </div>
@@ -84,7 +85,7 @@ const Home = () => {
                     />
                   </div>
 
-                  <div className="flex items-center bg-gray-50 border border-gray-200 rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-[#F7941C]/20 focus-within:border-[#F7941C]">
+                  <div className="flex items-center max-w-80 bg-gray-50 border border-gray-200 rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-[#F7941C]/20 focus-within:border-[#F7941C]">
                     <div className="flex items-center justify-center gap-2 px-4 py-3 border-r border-gray-200 w-20">
                       <span className="text-gray-700 font-semibold">+91</span>
                     </div>
@@ -97,7 +98,7 @@ const Home = () => {
 
                   {/* Referral Code for Patients */}
                   {activeTab === "Patient" && (
-                    <div className="flex items-center bg-gray-50 border border-gray-200 rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-[#F7941C]/20 focus-within:border-[#F7941C]">
+                    <div className="flex items-center max-w-80 bg-gray-50 border border-gray-200 rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-[#F7941C]/20 focus-within:border-[#F7941C]">
                       <div className="flex items-center justify-center gap-2 px-4 py-3 border-r border-gray-200 w-20">
                         <span className="text-gray-700 font-semibold">Code</span>
                       </div>
@@ -181,10 +182,10 @@ const Home = () => {
                 </Link> */}
 
                 {/* Terms */}
-                <p className="text-center text-xs text-gray-500 px-6 mb-10">
+                <p className="text-center text-xs text-gray-500 px-6 mb-5">
                   By signing up I agree to the Terms of Services and Privacy Policy, including usage of cookies
                 </p>
-                <p className="text-center text-xs px-6 text-[#F7941C] font-semibold tracking-wide">Already a user?</p>
+                <p className="text-center text-xs px-6 pb-10 text-[#F7941C] font-semibold tracking-wide">Already a user?</p>
               </div>
             </div>
           </div>

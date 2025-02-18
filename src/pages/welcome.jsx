@@ -7,6 +7,8 @@ import { Link, useNavigate } from "react-router-dom";
 import brebootLogo from "../assets/images/Breboot.png";
 import ConsentModal from "../components/Modal";
 import redeem from "../assets/images/redeem-bg.png";
+import brebootSvg from "../assets/svg/BrebootLogo.svg";
+
 
 
 const Welcome = () => {
@@ -119,7 +121,7 @@ const Welcome = () => {
 
             {/* Logo */}
             <div className="text-center mt-5">
-                <img src={brebootLogo} alt="logo" className="w-auto h-10" />
+                <img src={brebootSvg} alt="logo" className="w-auto h-14" />
             </div>
 
             {/* Profile Icon */}

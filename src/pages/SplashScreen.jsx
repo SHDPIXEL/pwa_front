@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
-import breebootLogo from "../assets/images/Breboot.png"
+// import breebootLogo from "../assets/images/Breboot.png"
+import brebootSvg from "../assets/svg/BrebootLogo.svg";
+
+
 
 const SplashScreen = ({ onFinish }) => {
   const [fadeOut, setFadeOut] = useState(false);
@@ -21,7 +24,7 @@ const SplashScreen = ({ onFinish }) => {
     >
       {/* Centered Logo */}
       <div className="flex flex-1 items-center justify-center">
-        <img src={breebootLogo} alt="Logo" className="w-48" />
+        <img src={brebootSvg} alt="Logo" className="w-52" />
       </div>
 
     </div>

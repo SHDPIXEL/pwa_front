@@ -10,7 +10,7 @@ const DietConsultation = () => {
             <Header title="Celebrity Diet Consultation" />
 
             {/* Center Content */}
-            <main className="flex-1 flex flex-col items-center justify-center px-4 text-center pt-24">
+            <main className="flex-1 flex flex-col items-center justify-center px-4 text-center pt-24 pb-20">
                 <div className="space-y-6">
                     <div>
                         <p className="font-semibold text-sm text-gray-800">Get a free diet consultation from</p>

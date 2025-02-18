@@ -5,6 +5,8 @@ import brebootLogo from '../assets/images/Breboot.png'
 import Lottie from "lottie-react";
 import popperAnimations from "../assets/animations/popperAnimation.json";
 import redeem from "../assets/images/redeem-bg.png";
+import brebootSvg from "../assets/svg/BrebootLogo.svg";
+
 
 
 const FirstLogin = () => {
@@ -96,7 +98,7 @@ const FirstLogin = () => {
 
             <main className="flex flex-col items-center justify-center max-w-md mx-auto px-4 pt-12 pb-8">
                 <div className="flex justify-center mb-10">
-                    <img src={brebootLogo} alt="logo" className="h-14 w-auto" />
+                    <img src={brebootSvg} alt="logo" className="h-24" />
                 </div>
 
                 <div className="text-center mb-5">
