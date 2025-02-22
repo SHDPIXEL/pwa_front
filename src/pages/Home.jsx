@@ -107,8 +107,8 @@ const Home = () => {
                           </span>
                         </div>
                         <input
-                          className="flex-1 bg-transparent px-4 py-3 focus:outline-none"
-                          type="text"
+                          className="flex-1 bg-transparent px-4 py-3 focus:outline-none no-spinner"
+                          type="number"
                           placeholder="Enter your phone number"
                         />
                       </>
