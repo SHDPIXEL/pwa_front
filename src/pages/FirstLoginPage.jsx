@@ -4,6 +4,8 @@ import { useNavigate } from "react-router-dom";
 import brebootLogo from '../assets/images/Breboot.png'
 import Lottie from "lottie-react";
 import popperAnimations from "../assets/animations/popperAnimation.json";
+import coin2 from "../assets/animations/coin2.json"
+import coinAnimation from "../assets/animations/coin.json"
 import redeem from "../assets/images/redeem-bg.png";
 import brebootSvg from "../assets/svg/BrebootLogo.svg";
 
@@ -124,10 +126,10 @@ const FirstLogin = () => {
                     )}
 
                 </div>
-                <div className="text-center ml-8">
+                <div className="text-center">
                     <div>
                         <Lottie
-                            animationData={popperAnimations}
+                            animationData={coin2}
                             loop={true}
                             autoplay={true}
                             style={{ height: 100, width: 100 }}
