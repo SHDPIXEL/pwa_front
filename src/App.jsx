@@ -14,32 +14,42 @@ import RewardPage from "./pages/RewardPage";
 import FirstLogin from "./pages/FirstLoginPage";
 import ThankYouPage from "./pages/Thankyou";
 import SplashScreen from "./pages/SplashScreen";
+import ProtectedRoute from "./components/ProtectedRoute";
+import { Toaster } from "react-hot-toast";
 
 function App() {
   return (
     <>
+      <Toaster />
       <BrowserRouter>
         <Routes>
+          {/* Public Route (Home) */}
           <Route path="/" element={<Layout />}>
             <Route index path="/" element={<Home />} />
-            <Route path="/Challenges" element={<ChallengesPage />} />
-            <Route path="/challenges/week/:weekId" element={<WeekChallengesPage />} />
-            <Route path="/memberprogram" element={<MemberProgramPage />} />
-            <Route path="/redeem" element={<RedeemPage />} />
-            <Route path="/welcome" element={<Welcome />} />
-            <Route path="/challenges/week/:weekId/:challengeId" element={<ChallengeDetails />} />
-            <Route path="/dietconsultation" element={<DietConsultation />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/product/:id" element={<ProductPage />} />
-            <Route path="/reward/:id" element={<RewardPage />} />
-            <Route path="/thankyou" element={<ThankYouPage />} />
-            <Route path="firstlogin" element={<FirstLogin />} />
-            <Route path="/splash" element={<SplashScreen />} />
+          </Route>
+
+          {/* Protected Routes */}
+          <Route element={<ProtectedRoute />}>
+            <Route path="/" element={<Layout />}>
+              <Route path="/Challenges" element={<ChallengesPage />} />
+              <Route path="/challenges/week/:weekId" element={<WeekChallengesPage />} />
+              <Route path="/memberprogram" element={<MemberProgramPage />} />
+              <Route path="/redeem" element={<RedeemPage />} />
+              <Route path="/welcome" element={<Welcome />} />
+              <Route path="/challenges/week/:weekId/:challengeId" element={<ChallengeDetails />} />
+              <Route path="/dietconsultation" element={<DietConsultation />} />
+              <Route path="/profile" element={<Profile />} />
+              <Route path="/product/:id" element={<ProductPage />} />
+              <Route path="/reward/:id" element={<RewardPage />} />
+              <Route path="/thankyou" element={<ThankYouPage />} />
+              <Route path="/firstlogin" element={<FirstLogin />} />
+              <Route path="/splash" element={<SplashScreen />} />
+            </Route>
           </Route>
         </Routes>
       </BrowserRouter>
     </>
-  )
+  );
 }
 
-export default App
+export default App;

@@ -8,6 +8,8 @@ import coin2 from "../assets/animations/coin2.json"
 import coinAnimation from "../assets/animations/coin.json"
 import redeem from "../assets/images/redeem-bg.png";
 import brebootSvg from "../assets/svg/BrebootLogo.svg";
+import coinSVG from "../assets/svg/Coin.svg"
+import coin from "../assets/images/Coin.png"
 
 
 
@@ -103,7 +105,7 @@ const FirstLogin = () => {
                     <img src={brebootSvg} alt="logo" className="h-24" />
                 </div>
 
-                <div className="text-center mb-5">
+                <div className="text-center mb-15">
                     <h2 className="text-gray-600 font-medium mb-2">Welcome</h2>
                     <h1 className="text-4xl font-bold text-gray-900 mb-4">Guddi!</h1>
 
@@ -128,12 +130,17 @@ const FirstLogin = () => {
                 </div>
                 <div className="text-center">
                     <div>
-                        <Lottie
+                        {/* <Lottie
                             animationData={coin2}
                             loop={true}
                             autoplay={true}
                             style={{ height: 100, width: 100 }}
-                        />
+                        /> */}
+                        <img
+                         src={coin} 
+                         alt="Coin-SVG"
+                         className="w-20 h-auto"
+                         />
                     </div>
                 </div>
 

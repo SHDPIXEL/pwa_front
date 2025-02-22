@@ -5,7 +5,7 @@ import menProfile from "../assets/images/man.png";
 import womanProfile from "../assets/images/woman.png";
 import { Link, useNavigate } from "react-router-dom";
 import brebootLogo from "../assets/images/Breboot.png";
-import ConsentModal from "../components/Modal";
+import {ConsentModal} from "../components/Modal";
 import redeem from "../assets/images/redeem-bg.png";
 import brebootSvg from "../assets/svg/BrebootLogo.svg";
 

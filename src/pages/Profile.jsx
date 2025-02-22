@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Header from "../components/Header";
 import { UserPen, Copy, Check, Mail, Phone, User, Camera, LogOut, Key, Dot } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import ConsentModal from "../components/Modal";
+import {ConsentModal} from "../components/Modal";
 
 const Profile = () => {
     const [copied, setCopied] = React.useState(false);
