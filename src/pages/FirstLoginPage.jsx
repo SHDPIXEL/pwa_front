@@ -10,8 +10,8 @@ import redeem from "../assets/images/redeem-bg.png";
 import brebootSvg from "../assets/svg/BrebootLogo.svg";
 import coinSVG from "../assets/svg/Coin.svg"
 import coin from "../assets/images/Coin.png"
-
-
+import { ConsentModal } from "../components/Modal";
+import useLogout from "../auth/Logout.Jsx";
 
 const FirstLogin = () => {
     const [showLogoutModal, setShowLogoutModal] = useState(false);
@@ -22,6 +22,8 @@ const FirstLogin = () => {
 
     const handleDropdown = () => setIsDropDownOpen(!isDropDownOpen);
     const handleLogout = () => setShowLogoutModal(true);
+
+    const logout = useLogout();
 
     const handleCopy = () => {
         const textToCopy = "436756";
@@ -67,7 +69,7 @@ const FirstLogin = () => {
                         <button onClick={() => navigate("/redeem")} >
                             <img src={redeem} alt="redeem-logo" />
                         </button>
-                        <button onClick={() => setShowDropdown(!showDropdown)} className="focus:outline-none">
+                        <button onClick={() => setIsDropDownOpen(!isDropDownOpen)} className="focus:outline-none">
                             <EllipsisVertical className="w-6 h-5" />
                         </button>
                     </div>
@@ -91,7 +93,7 @@ const FirstLogin = () => {
 
                     {showLogoutModal && (
                         <ConsentModal
-                            onAction={handleModalAction}
+                            onAction={logout}
                             title="Are you sure you want to log out?"
                             action="Logout"
                         />
@@ -161,13 +163,13 @@ const FirstLogin = () => {
                 </button>
             </main>
 
-            {showLogoutModal && (
+            {/* {showLogoutModal && (
                 <ConsentModal
-                    onAction={handleModalAction}
+                    onAction={logout}
                     title="Are you sure you want to log out?"
                     action="Logout"
                 />
-            )}
+            )} */}
         </div>
     );
 };

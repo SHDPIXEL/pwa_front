@@ -5,6 +5,7 @@ import brebootSvg from "../assets/svg/BrebootLogo.svg";
 import { FormModal } from "../components/Modal";
 import api from "../utils/Api";
 import toast from "react-hot-toast";
+import { Link } from "react-router-dom";
 
 const Home = () => {
   const [isSplashVisible, setIsSplashVisible] = useState(true);
@@ -27,6 +28,10 @@ const Home = () => {
   });
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    localStorage.setItem("userType", activeTab)
+  },[activeTab])
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -449,7 +454,12 @@ const Home = () => {
                   By signing up I agree to the Terms of Services and Privacy
                   Policy, including usage of cookies
                 </p>
-                <p className="text-center text-xs px-6 pb-10 text-[#F7941C] font-semibold tracking-wide">
+                <p
+                   onClick={() => {
+                    console.log("Navigation to login")
+                    navigate("/login")
+                   }}
+                  className="text-center text-xs px-6 pb-10 text-[#F7941C] font-semibold tracking-wide cursor-pointer">
                   Already a user?
                 </p>
               </div>

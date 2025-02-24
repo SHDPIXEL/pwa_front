@@ -16,6 +16,7 @@ import ThankYouPage from "./pages/Thankyou";
 import SplashScreen from "./pages/SplashScreen";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { Toaster } from "react-hot-toast";
+import Login from "./pages/Login";
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
           {/* Public Route (Home) */}
           <Route path="/" element={<Layout />}>
             <Route index path="/" element={<Home />} />
+            <Route path="/login" element={<Login />} />
           </Route>
 
           {/* Protected Routes */}

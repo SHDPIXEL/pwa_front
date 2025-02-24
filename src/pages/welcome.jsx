@@ -8,6 +8,7 @@ import brebootLogo from "../assets/images/Breboot.png";
 import {ConsentModal} from "../components/Modal";
 import redeem from "../assets/images/redeem-bg.png";
 import brebootSvg from "../assets/svg/BrebootLogo.svg";
+import useLogout from "../auth/Logout.Jsx";
 
 
 
@@ -21,6 +22,8 @@ const Welcome = () => {
     const user = localStorage.getItem("userType");
     const gender = localStorage.getItem("GenderType");
 
+    const logout = useLogout();
+
     const handleConsent = (accepted) => {
         setShowModal(false);
         if (accepted) {
@@ -31,10 +34,6 @@ const Welcome = () => {
     const handleDropdown = () => {
         setIsDropDownOpen(!isDropDownOpen)
     };
-
-    const handleLogout = () => {
-        setShowLogoutModal(true);
-    }
 
     const handleModalAction = (confirm) => {
         setShowLogoutModal(false);
@@ -102,7 +101,7 @@ const Welcome = () => {
                                 <User className="w-4 h-4" /> Profile
                             </button>
                             <button
-                                onClick={handleLogout}
+                                onClick={logout}
                                 className="w-full text-left px-4 py-3 text-gray-700 active:bg-gray-100 flex items-center gap-2">
                                 <LogOut className="w-4 h-4" /> Logout
                             </button>
