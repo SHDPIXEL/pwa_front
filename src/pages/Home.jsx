@@ -6,6 +6,7 @@ import { FormModal } from "../components/Modal";
 import api from "../utils/Api";
 import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
+import { useUser } from "../context/userContext";
 
 const Home = () => {
   const [isSplashVisible, setIsSplashVisible] = useState(true);
@@ -28,6 +29,7 @@ const Home = () => {
   });
 
   const navigate = useNavigate();
+  const { fetchUserDetails } = useUser();
 
   useEffect(() => {
     localStorage.setItem("userType", activeTab)
@@ -142,6 +144,7 @@ const Home = () => {
         toast.success("OTP verified successfully!");
         setShowOtpModal(false);
         localStorage.setItem("authToken", response.data.token)
+        await fetchUserDetails(); 
         const route = activeTab === "Dr" ? "/firstlogin" : "/welcome";
         navigate(route);
       } else {
@@ -176,6 +179,7 @@ const Home = () => {
       if (response.status === 201) {
         toast.success("Registration successful!");
         localStorage.setItem("authToken", response.data.token);
+        await fetchUserDetails(); 
         const route = activeTab === "Dr" ? "/firstlogin" : "/welcome";
         navigate(route);
       } else {
@@ -456,7 +460,6 @@ const Home = () => {
                 </p>
                 <p
                    onClick={() => {
-                    console.log("Navigation to login")
                     navigate("/login")
                    }}
                   className="text-center text-xs px-6 pb-10 text-[#F7941C] font-semibold tracking-wide cursor-pointer">

@@ -4,11 +4,13 @@ import { BottomNavBarMemberProgram } from '../components/BottomNavBar';
 import dumy_1 from "../assets/images/dumy_1.jpg";
 import Header from '../components/Header';
 import { useState, useEffect } from 'react';
+import api from '../utils/Api';
 
 
 const MemberProgramPage = () => {
 
     const [userType, setUserType] = useState(null);
+    const [productDetails, setProductDetails] = useState([])
 
     useEffect(() => {
         const user = localStorage.getItem("userType");
@@ -16,16 +18,17 @@ const MemberProgramPage = () => {
     }, []);
 
 
-    const products = [
-        {
-            id: 1,
-            name: 'Byzepta Pack',
-            price: userType === "Dr" ? 839.3 : 959.2, 
-            originalPrice: "1199",
-            image: dumy_1
-        },
-    ];
-
+    useEffect(() => {
+        const fetchProduct = async () => {
+            try {
+                const response = await api.get("user/products");
+                setProductDetails(response.data);
+            } catch (error) {
+                console.error("Error fetching products:", error);
+            }
+        };
+        fetchProduct();
+    }, []);
 
 
     return (
@@ -42,9 +45,23 @@ const MemberProgramPage = () => {
                         <h2 className="text-lg font-semibold text-gray-700">Exclusive Member Offers</h2>
                     </div>
                     <div className="grid grid-cols-2 gap-4 overflow-x-auto no-scrollbar pb-2">
-                        {products.map((product) => (
-                            <ProductCard key={product.id} {...product} />
-                        ))}
+                        {productDetails.map((product) => {
+                            const discountPercentage = product.oldPrice
+                                ? ((1 - product.newPrice / product.oldPrice) * 100).toFixed(2)
+                                : 0;
+
+                            return (
+                                <ProductCard
+                                    key={product.id}
+                                    id={product.id}
+                                    name={product.name}
+                                    price={userType === "Dr" ? product.newPrice * 0.9 : product.newPrice}
+                                    originalPrice={product.oldPrice}
+                                    image={product.product_image || dumy_1}
+                                    discount={discountPercentage + "% OFF"}
+                                />
+                            );
+                        })}
                     </div>
                 </div>
             </div>

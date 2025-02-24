@@ -9,7 +9,7 @@ import {ConsentModal} from "../components/Modal";
 import redeem from "../assets/images/redeem-bg.png";
 import brebootSvg from "../assets/svg/BrebootLogo.svg";
 import useLogout from "../auth/Logout.Jsx";
-
+import { useUser } from "../context/userContext";
 
 
 const Welcome = () => {
@@ -22,6 +22,7 @@ const Welcome = () => {
     const user = localStorage.getItem("userType");
     const gender = localStorage.getItem("GenderType");
 
+    const { userData, loading } = useUser();
     const logout = useLogout();
 
     const handleConsent = (accepted) => {
@@ -43,7 +44,7 @@ const Welcome = () => {
     };
 
     const handleCopy = () => {
-        const textToCopy = "436756";
+        const textToCopy = userData.code;
 
         if (navigator.clipboard && window.isSecureContext) {
             navigator.clipboard.writeText(textToCopy)
@@ -71,6 +72,13 @@ const Welcome = () => {
         }
     };
 
+    if (loading) {
+        return <div>Loading...</div>;
+      }
+    
+      if (!userData) {
+        return <div>No user data available. Please log in.</div>;
+      }
 
     return (
         <div className="min-h-[100dvh] flex flex-col items-center">
@@ -135,12 +143,12 @@ const Welcome = () => {
             {/* Welcome Text */}
 
             <h2 className="text-lg font-bold">Welcome back</h2>
-            <p className="text-4xl text-black font-bold ">Guddi !</p>
+            <p className="text-4xl text-black font-bold ">{userData.name} !</p>
             {user === "Dr" && <div className="text-center">
                 <button
                     onClick={handleCopy}
                     className="flex items-center justify-center mt-3 bg-gray-100 active:bg-gray-200 text-gray-600 py-1 rounded-xl w-full gap-3 px-5">
-                    <p>436756</p>
+                    <p>{userData.code}</p>
                     {copied ? <Check className="w-3.5 h-3.5 text-green-600" /> : <Copy className="w-3.5 h-3.5" />}
                 </button>
                 <p className="font-medium text-gray-900 pt-1">Your referral code</p>

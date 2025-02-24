@@ -1,17 +1,22 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 import ProgressBar from "../components/ProgressBar";
 import { BottomNavBar } from "../components/BottomNavBar";
+import api from "../utils/Api";
 
-const weeks = [
-  { id: 1, name: "Week 1", progress: 40 },
-  { id: 2, name: "Week 2", progress: 70 },
-  { id: 3, name: "Week 3", progress: 20 },
-];
 
 const ChallengesPage = () => {
   const navigate = useNavigate();
+  const [ weeks, setWeeks ] = useState([]);
+
+  useEffect(() => {
+    const fetchChallengs = async () => {
+      const response = await api.get("/user/weeks");
+      setWeeks(response.data)
+    } 
+    fetchChallengs();
+  },[])
 
   return (
     <div className="min-h-screen poppins-regular">

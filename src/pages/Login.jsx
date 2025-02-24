@@ -3,11 +3,14 @@ import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import brebootSvg from "../assets/svg/BrebootLogo.svg";
 import api from '../utils/Api';
+import { useUser } from '../context/userContext';
 
 const Login = () => {
   const navigate = useNavigate();
   const [loginWithPhone, setLoginWithPhone] = useState(true);
   const [showOtpInput, setShowOtpInput] = useState(false);
+
+  const { fetchUserDetails } = useUser();
   
   const [formData, setFormData] = useState({
     phone: '',
@@ -77,6 +80,7 @@ const Login = () => {
         if (response.status === 200) {
           // Store auth token
           localStorage.setItem("authToken", response.data.token);
+          await fetchUserDetails(); 
           toast.success("Login successful!");
           const userType = response.data.userType === "Doctor" ? "Dr" : response.data.userType
           localStorage.setItem("userType", userType)
@@ -111,6 +115,7 @@ const Login = () => {
       if (response.status === 200) {
         // Store auth token
         localStorage.setItem("authToken", response.data.token);
+        await fetchUserDetails(); 
         toast.success("Login successful!");
         const userType = response.data.userType === "Doctor" ? "Dr" : response.data.userType
         localStorage.setItem("userType", userType)

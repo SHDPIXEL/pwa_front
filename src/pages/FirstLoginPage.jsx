@@ -1,17 +1,12 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { EllipsisVertical, User, LogOut, Copy, Check, MoveRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import brebootLogo from '../assets/images/Breboot.png'
-import Lottie from "lottie-react";
-import popperAnimations from "../assets/animations/popperAnimation.json";
-import coin2 from "../assets/animations/coin2.json"
-import coinAnimation from "../assets/animations/coin.json"
 import redeem from "../assets/images/redeem-bg.png";
 import brebootSvg from "../assets/svg/BrebootLogo.svg";
-import coinSVG from "../assets/svg/Coin.svg"
-import coin from "../assets/images/Coin.png"
+import coin from "../assets/images/coin-br.gif"
 import { ConsentModal } from "../components/Modal";
 import useLogout from "../auth/Logout.Jsx";
+import { useUser } from "../context/userContext";
 
 const FirstLogin = () => {
     const [showLogoutModal, setShowLogoutModal] = useState(false);
@@ -22,11 +17,23 @@ const FirstLogin = () => {
 
     const handleDropdown = () => setIsDropDownOpen(!isDropDownOpen);
     const handleLogout = () => setShowLogoutModal(true);
+    // const [userData, setuserData] = useState("")
 
     const logout = useLogout();
+    const { userData, loading } = useUser();
+
+
+    // useEffect(() => {
+    //     const fetchUserDetails = async () => {
+    //         const response = await api.get("/user/getuserdetails");
+    //         // setuserData(response.data.user);
+    //         console.log("User Data user", response.data.user)
+    //     }
+    //     fetchUserDetails();
+    // },[])
 
     const handleCopy = () => {
-        const textToCopy = "436756";
+        const textToCopy = userData.code;
 
         if (navigator.clipboard && window.isSecureContext) {
             navigator.clipboard.writeText(textToCopy)
@@ -53,6 +60,10 @@ const FirstLogin = () => {
             document.body.removeChild(textArea);
         }
     };
+
+    if (loading) {
+        return <div>Loading...</div>; 
+      }
 
     return (
         <div className="min-h-screen">
@@ -107,9 +118,9 @@ const FirstLogin = () => {
                     <img src={brebootSvg} alt="logo" className="h-24" />
                 </div>
 
-                <div className="text-center mb-15">
+                <div className="text-center mb-10">
                     <h2 className="text-gray-600 font-medium mb-2">Welcome</h2>
-                    <h1 className="text-4xl font-bold text-gray-900 mb-4">Guddi!</h1>
+                    <h1 className="text-4xl font-bold text-gray-900 mb-4">{userData.name}</h1>
 
                     {user === "Dr" && (
                         <div>
@@ -117,7 +128,7 @@ const FirstLogin = () => {
                                 onClick={handleCopy}
                                 className="inline-flex items-center px-4 py-2 rounded-lg bg-gray-100 active:bg-gray-200 text-gray-600 transition-colors gap-2"
                             >
-                                436756
+                                {userData.code}
                                 {copied ? (
                                     <Check className="w-4 h-4 text-green-600" />
                                 ) : (
@@ -130,7 +141,7 @@ const FirstLogin = () => {
                     )}
 
                 </div>
-                <div className="text-center">
+                <div className="text-center mb-8">
                     <div>
                         {/* <Lottie
                             animationData={coin2}
@@ -141,14 +152,14 @@ const FirstLogin = () => {
                         <img
                          src={coin} 
                          alt="Coin-SVG"
-                         className="w-20 h-auto"
+                         className="w-60 h-auto"
                          />
                     </div>
                 </div>
 
                 <div className="rounded-lg text-3xl font-semibold  p-3 text-center text-[#F7941C]">
                     <p>You have earned  </p>
-                    <p>500 Points!</p>
+                    <p>{userData.points} Points!</p>
                 </div>
 
                 <button
