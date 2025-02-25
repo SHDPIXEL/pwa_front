@@ -1,9 +1,11 @@
 import { useParams, useNavigate, useLocation } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { CreditCard } from "lucide-react";
 // import dumy_1 from "../assets/images/dumy_1.jpg";
 import dumy_1 from "../assets/svg/Byzepta_Logo.svg"
-
+import { useUser } from "../context/userContext";
+import toast from "react-hot-toast";
+import AffordabilityWidget from "./AffordabilityWidget";
 
 
 const ProductPage = () => {
@@ -12,14 +14,39 @@ const ProductPage = () => {
     const [quantity, setQuantity] = useState(1);
     const [copied, setCopied] = useState(false);
     const userType = localStorage.getItem('userType') || 'Patient';
-    const doctorCode = "DOC123456";
-    
+    const [doctorCode, setDoctorCode] = useState("")
+
+    const { userData, fetchUserDetails } = useUser(); // Assuming fetchUserDetails exists
+
     const navigate = useNavigate();
 
     const location = useLocation();
-    const product = location.state || null; 
-    
+    const product = location.state || null;
+
     // const product = products.find((p) => p.id === parseInt(id));
+    useEffect(() => {
+        const initializeUserData = async () => {
+            try {
+                if (!userData) {
+                    await fetchUserDetails();  // Fetch user data
+                }
+            } catch (error) {
+                console.error("Error fetching user details:", error);
+                toast.error("Failed to load user data.");
+            }
+        };
+
+        initializeUserData();
+    }, [fetchUserDetails]);  // Removed userData dependency to prevent unnecessary re-renders
+
+    // Set doctorCode when userData updates
+    useEffect(() => {
+        if (userData?.code) {
+            setDoctorCode(userData.code);
+        }
+    }, [userData]);  // Runs only when userData changes
+
+
 
 
     if (!product) {
@@ -27,6 +54,7 @@ const ProductPage = () => {
     }
 
     const handlePruchase = () => {
+        return <AffordabilityWidget key={"A04Ozq"} />
         navigate("/thankyou")
     }
 
@@ -71,12 +99,12 @@ const ProductPage = () => {
                     {userType === 'Patient' && (
                         <div className="bg-orange-50 p-4 rounded-xl">
                             <h3 className="font-semibold text-gray-900 mb-2">Doctor's Referral Code</h3>
-                                <input
-                                    type="text"
-                                    value={doctorCode}
-                                    readOnly
-                                    className="flex-1 px-3 py-2 bg-white rounded-lg border border-blue-200 text-gray-700"
-                                />
+                            <input
+                                type="text"
+                                value={doctorCode}
+                                readOnly
+                                className="flex-1 px-3 py-2 bg-white rounded-lg border border-blue-200 text-gray-700"
+                            />
                         </div>
                     )}
 
@@ -101,9 +129,9 @@ const ProductPage = () => {
                     </div>
                 </div>
                 <div className="p-4">
-                    <button 
-                    onClick={handlePruchase}
-                    className="w-full bg-[#F7941C] text-white py-3 rounded-xl flex items-center justify-center gap-2 font-medium active:bg-amber-600">
+                    <button
+                        onClick={handlePruchase}
+                        className="w-full bg-[#F7941C] text-white py-3 rounded-xl flex items-center justify-center gap-2 font-medium active:bg-amber-600">
                         <CreditCard className="w-5 h-5" />
                         Buy Now • ₹{(product.price * quantity).toLocaleString()}
                     </button>

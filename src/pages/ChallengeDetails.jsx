@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react"; // Added useEffect
 import { useParams, useNavigate, useLocation } from "react-router-dom";
-import { FileImage, FileVideo, User, Phone, Upload, X, Check, ChevronUpSquare } from "lucide-react";
+import { FileImage, FileVideo, User, Phone, Upload, X, Check, ChevronUpSquare, CodeSquare } from "lucide-react";
 import challenge1 from "../assets/images/challenge1.png";
 import challenge2 from "../assets/images/challenge2.png";
 import steps from "../assets/images/steps-rb.png";
@@ -19,7 +19,7 @@ const ChallengeDetails = () => {
         userId:"",
         mediaFiles: [],
         previews: [],
-        mediaType: "image",
+        mediaType: "images",
     });
     const [loading, setLoading] = useState(true); // Added loading state
 
@@ -44,6 +44,7 @@ const ChallengeDetails = () => {
                 phone: userData?.phone || "",
                 userId: userData?.id || ""
             }));
+            console.log("userid fjskf", formData.userId,)
             setLoading(false);
         };
         initializeUserData();
@@ -84,7 +85,7 @@ const ChallengeDetails = () => {
 
     const handleFileChange = (e) => {
         const selectedFiles = Array.from(e.target.files); // Fixed: e.target.files, not mediaFiles
-        let mediaType = "image";
+        let mediaType = "images";
 
         if (selectedFiles.some(file => file.type.startsWith("video/"))) {
             if (selectedFiles.length > 1) {
@@ -140,6 +141,16 @@ const ChallengeDetails = () => {
             return;
         }
 
+        if (formData.phone.length < 10) {
+            toast.error("Phone number should not be less than 10 digits.");
+            return;
+        }
+
+        if (!/^\d+$/.test(formData.phone)) {
+            toast.error("Phone number should contain only numbers.");
+            return;
+        }
+
         if (!formData.mediaFiles.length) {
             toast.error("Please upload at least one file.");
             return;
@@ -161,6 +172,8 @@ const ChallengeDetails = () => {
                     "Content-Type": "multipart/form-data",
                 },
             });
+
+            console.log("submission data", submissionData)
 
             if (response.status === 200 || response.status === 201) {
                 setMessage(true);
@@ -268,6 +281,7 @@ const ChallengeDetails = () => {
                                     value={formData.name}
                                     disabled
                                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                    multiple={formData.mediaType === "image"}
                                 />
                             </div>
 

@@ -94,7 +94,7 @@ const Welcome = () => {
                         <button onClick={() => navigate("/redeem")} >
                             <img src={coin} alt="redeem-logo" className="w-40 h-auto" />
                         </button>
-                        <button onClick={() => setShowDropdown(!showDropdown)} className="focus:outline-none">
+                        <button onClick={() => setIsDropDownOpen(!isDropDownOpen)} className="focus:outline-none">
                             <EllipsisVertical className="w-6 h-5" />
                         </button>
                     </div>

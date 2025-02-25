@@ -17,6 +17,7 @@ import SplashScreen from "./pages/SplashScreen";
 import ProtectedRoute from "./utils/ProtectedRoute";
 import { Toaster } from "react-hot-toast";
 import Login from "./pages/Login";
+import SubmissionHistory from "./pages/SubmissionHistory";
 
 function App() {
   return (
@@ -46,6 +47,7 @@ function App() {
                 <Route path="/reward/:id" element={<RewardPage />} />
                 <Route path="/thankyou" element={<ThankYouPage />} />
                 <Route path="/firstlogin" element={<FirstLogin />} />
+                <Route path="/history" element={<SubmissionHistory />} />
               </Route>
             </Route>
         </Routes>
