@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import brebootSvg from "../assets/svg/BrebootLogo.svg";
@@ -9,9 +9,11 @@ const Login = () => {
   const navigate = useNavigate();
   const [loginWithPhone, setLoginWithPhone] = useState(true);
   const [showOtpInput, setShowOtpInput] = useState(false);
+  const [resendTimer, setResendTimer] = useState(60);
+  const [isResendDisabled, setIsResendDisabled] = useState(true);
 
   const { fetchUserDetails } = useUser();
-  
+
   const [formData, setFormData] = useState({
     phone: '',
     email: '',
@@ -80,7 +82,7 @@ const Login = () => {
         if (response.status === 200) {
           // Store auth token
           localStorage.setItem("authToken", response.data.token);
-          await fetchUserDetails(); 
+          await fetchUserDetails();
           toast.success("Login successful!");
           const userType = response.data.userType === "Doctor" ? "Dr" : response.data.userType
           localStorage.setItem("userType", userType)
@@ -115,7 +117,7 @@ const Login = () => {
       if (response.status === 200) {
         // Store auth token
         localStorage.setItem("authToken", response.data.token);
-        await fetchUserDetails(); 
+        await fetchUserDetails();
         toast.success("Login successful!");
         const userType = response.data.userType === "Doctor" ? "Dr" : response.data.userType
         localStorage.setItem("userType", userType)
@@ -128,6 +130,42 @@ const Login = () => {
       toast.error(error.response?.data?.message || "Invalid OTP");
     }
   };
+
+
+  const handleResendOtp = async () => {
+    try {
+      const response = await api.post("/auth/user/login", {
+        phone: formData.phone,
+        email: null,
+        otp: null,
+        password: null,
+      });
+
+      if (response.status === 200) {
+        toast.success("New OTP sent successfully!");
+        setResendTimer(60);
+        setIsResendDisabled(true);
+      } else {
+        toast.error(response.data.message || "Failed to resend OTP");
+      }
+    } catch (error) {
+      console.error("Resend OTP error:", error);
+      toast.error(error.response?.data?.message || "Failed to resend OTP");
+    }
+  };
+
+  useEffect(() => {
+    let interval;
+    if (showOtpInput && resendTimer > 0) {
+      interval = setInterval(() => {
+        setResendTimer(prev => prev - 1);
+      }, 1000);
+    } else {
+      setIsResendDisabled(false);
+    }
+    return () => clearInterval(interval);
+  }, [showOtpInput, resendTimer]);
+
 
   const toggleLoginMethod = () => {
     setLoginWithPhone(!loginWithPhone);
@@ -172,11 +210,12 @@ const Login = () => {
                     name="phone"
                     placeholder="Enter your phone number"
                     value={formData.phone}
+                    maxLength={10}
                     onChange={handleFormChange}
                   />
                 </div>
                 {showOtpInput && (
-                  <div className="max-w-80 mx-auto">
+                  <div className="max-w-80 mx-auto flex flex-col items-center">
                     <input
                       className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#F7941C]/20 focus:border-[#F7941C]"
                       type="text"
@@ -185,6 +224,13 @@ const Login = () => {
                       value={formData.otp}
                       onChange={handleFormChange}
                     />
+                    <button
+                      onClick={handleResendOtp}
+                      disabled={isResendDisabled}
+                      className={`text-[#F7941C] font-semibold text-xs mt-2 ${isResendDisabled ? "opacity-50" : ""}`}
+                    >
+                        {isResendDisabled ? `Resend OTP in ${resendTimer}s` : "Resend OTP"}
+                    </button>
                   </div>
                 )}
               </>
@@ -194,7 +240,7 @@ const Login = () => {
                   <div className="flex items-center justify-center gap-2 px-4 py-3 border-r border-gray-200 w-20">
                     <span className="text-gray-700 font-semibold">Email</span>
                   </div>
-                  <input 
+                  <input
                     className="flex-1 bg-transparent px-4 py-3 focus:outline-none"
                     type="email"
                     name="email"

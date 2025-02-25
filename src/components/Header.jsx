@@ -1,5 +1,7 @@
 import redeemSvg from "../assets/images/redeem-bg.png";
 import { Link } from "react-router-dom";
+import coin from "../assets/images/Coin.png";
+
 
 const Header = ({ title, icon, onAction }) => {
     return <div className="bg-[#F7941C] text-white sticky top-0 z-10">
@@ -14,7 +16,7 @@ const Header = ({ title, icon, onAction }) => {
                 </div>
                 <Link to="/redeem">
                     <div>
-                        <img src={redeemSvg} alt="redeem-icon" className="w-10 h-10" />
+                        <img src={coin} alt="redeem-icon" className="w-7 h-auto" />
                     </div>
                 </Link>
             </div>

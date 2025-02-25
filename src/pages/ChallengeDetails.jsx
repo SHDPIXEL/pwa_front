@@ -5,6 +5,7 @@ import challenge1 from "../assets/images/challenge1.png"
 import challenge2 from "../assets/images/challenge2.png"
 import challenge3 from "../assets/images/challenge3.png"
 import steps from "../assets/images/steps-rb.png"
+import { useUser } from "../context/userContext";
 
 const ChallengeDetails = () => {
     // const { id } = useParams();
@@ -19,6 +20,7 @@ const ChallengeDetails = () => {
     });
 
     const navigate = useNavigate();
+    const { userData } = useUser();
 
     const challenge = {
         title: "10,000 Steps Daily",
@@ -201,7 +203,7 @@ const ChallengeDetails = () => {
                                     className="ml-2 flex-1 bg-transparent text-gray-400 focus:outline-none text-sm"
                                     type="text"
                                     placeholder="Enter your name"
-                                    value={"Kartik Sharma"}
+                                    value={userData.name}
                                     disabled
                                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                                 />
@@ -214,7 +216,7 @@ const ChallengeDetails = () => {
                                     className="ml-2 flex-1 bg-transparent focus:outline-none text-sm text-gray-400"
                                     type="text"
                                     placeholder="Enter your phone number"
-                                    value={"8756785678"}
+                                    value={userData.phone}
                                     disabled
                                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                                 />

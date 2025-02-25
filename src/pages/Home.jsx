@@ -33,7 +33,7 @@ const Home = () => {
 
   useEffect(() => {
     localStorage.setItem("userType", activeTab)
-  },[activeTab])
+  }, [activeTab])
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -57,6 +57,7 @@ const Home = () => {
       ...prevData,
       gender: newGender, // Ensure formData is updated
     }));
+    localStorage.setItem("GenderType", newGender);
   };
 
 
@@ -113,7 +114,12 @@ const Home = () => {
       }
     } catch (error) {
       console.error("Registration error:", error);
-      toast.error("An error occurred during registration.");
+      if (error.response && error.response.status === 400) {
+        const errorMessage = error.response.data.message || "User already exists";
+        toast.error(errorMessage);
+      } else {
+        toast.error("An error occurred during registration.");
+      }
     }
   };
 
@@ -144,7 +150,7 @@ const Home = () => {
         toast.success("OTP verified successfully!");
         setShowOtpModal(false);
         localStorage.setItem("authToken", response.data.token)
-        await fetchUserDetails(); 
+        await fetchUserDetails();
         const route = activeTab === "Dr" ? "/firstlogin" : "/welcome";
         navigate(route);
       } else {
@@ -179,7 +185,7 @@ const Home = () => {
       if (response.status === 201) {
         toast.success("Registration successful!");
         localStorage.setItem("authToken", response.data.token);
-        await fetchUserDetails(); 
+        await fetchUserDetails();
         const route = activeTab === "Dr" ? "/firstlogin" : "/welcome";
         navigate(route);
       } else {
@@ -187,7 +193,12 @@ const Home = () => {
       }
     } catch (error) {
       console.error("Password submission error:", error);
-      toast.error("An error occurred while setting the password.");
+      if(error.response.status === 400){
+        const errorMessage = error.response.data.message || "User already exists";
+        toast.error(errorMessage)
+      }else{
+        toast.error("An error occurred while setting the password.");
+      }
     }
 
     setShowPasswordModal(false);
@@ -282,6 +293,7 @@ const Home = () => {
                           placeholder="Enter your phone number"
                           value={formData.phone}
                           name="phone"
+                          maxLength={10}
                           onChange={handleFormChange}
                         />
                       </>
@@ -459,9 +471,9 @@ const Home = () => {
                   Policy, including usage of cookies
                 </p>
                 <p
-                   onClick={() => {
+                  onClick={() => {
                     navigate("/login")
-                   }}
+                  }}
                   className="text-center text-xs px-6 pb-10 text-[#F7941C] font-semibold tracking-wide cursor-pointer">
                   Already a user?
                 </p>

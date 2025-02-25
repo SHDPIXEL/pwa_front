@@ -57,7 +57,7 @@ const MemberProgramPage = () => {
                                     name={product.name}
                                     price={userType === "Dr" ? product.newPrice * 0.9 : product.newPrice}
                                     originalPrice={product.oldPrice}
-                                    image={product.product_image || dumy_1}
+                                    image={dumy_1}
                                     discount={discountPercentage + "% OFF"}
                                 />
                             );

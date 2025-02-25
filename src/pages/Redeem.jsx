@@ -5,6 +5,7 @@ import { CategoryCard } from '../components/cards';
 import Header from '../components/Header';
 import dumy_1 from "../assets/images/dumy_1.jpg";
 import { useNavigate } from 'react-router-dom';
+import coin from "../assets/images/Coin.png";
 
 // Mock data for rewards
 const categories = [
@@ -50,8 +51,8 @@ const RewardCard = ({ id, title, points, image, description, claimed }) => {
   };
 
   return (
-    <div 
-      onClick={handleClick} 
+    <div
+      onClick={handleClick}
       className="bg-white rounded-2xl shadow-sm group hover:shadow-md transition-all duration-300 cursor-pointer"
     >
       <div className="flex gap-3 p-3">
@@ -63,6 +64,7 @@ const RewardCard = ({ id, title, points, image, description, claimed }) => {
           <div className="flex items-center gap-1 mb-2">
             <span className="text-sm font-bold text-[#F7941C]">{points.toLocaleString()}</span>
             <span className="text-xs text-gray-500">points</span>
+            <img src={coin} alt="coin-image" className='w-3 h-auto' />
           </div>
           {description && (
             <div className="flex items-center gap-2">
@@ -80,8 +82,11 @@ const RewardCard = ({ id, title, points, image, description, claimed }) => {
 const UserPoints = () => (
   <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-4 mb-6">
     <div className="flex items-center justify-between">
-        <p className="text-sm text-gray-500 mb-1">Available Points</p>
+      <p className="text-sm text-gray-500 mb-1">Available Points</p>
+      <div className='flex items-center justify-center gap-2'>
+        <img src={coin} alt="coin-image" className="w-4 h-auto" />
         <p className="text-2xl font-bold text-[#F7941C]">2,500</p>
+      </div>
     </div>
   </div>
 );
@@ -90,10 +95,10 @@ const RedeemPage = () => {
   return (
     <div className="min-h-screen text-gray-900 font-poppins">
       <Header title="Redeem Rewards" />
-      
+
       <div className="px-4 py-4 pb-24">
         <UserPoints />
-        
+
         {/* Categories */}
         {/* <div className="mb-8">
           <div className="flex justify-between items-center mb-4">

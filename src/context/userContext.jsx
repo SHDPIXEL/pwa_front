@@ -11,6 +11,7 @@ export const UserProvider = ({ children }) => {
     try {
       const response = await api.get("/user/getuserdetails");
       setUserData(response.data.user);
+      localStorage.setItem("GenderType", response.data.user.gender);
     } catch (error) {
       console.error("Failed to fetch user details:", error);
       setUserData(null); // Clear userData on error (e.g., invalid token)
