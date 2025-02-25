@@ -24,7 +24,7 @@ const BrandCard = ({ name, bgImage }) => (
 );
 
 
-const ProductCard = ({ id, name, price, originalPrice, image }) => {
+const ProductCard = ({ id, name, price, originalPrice, image, description }) => {
     const navigate = useNavigate();
 
     // Calculate discount percentage
@@ -34,25 +34,25 @@ const ProductCard = ({ id, name, price, originalPrice, image }) => {
 
     return (
         <div
-            className="bg-white rounded-2xl shadow-sm group active:shadow-lg transition-all duration-300 min-w-[150px] cursor-pointer"
-            onClick={() => navigate(`/product/${id}`, { state: { id, name, price, originalPrice, image } })}
+            className="bg-white rounded-2xl shadow-sm group active:shadow-lg transition-all duration-300 min-w-[150px] cursor-pointer border border-gray-200"
+            onClick={() => navigate(`/product/${id}`, { state: { id, name, price, originalPrice, image, discountPercentage, description } })}
         >
             {/* Image Section */}
             <div className="relative overflow-hidden rounded-t-2xl">
                 <img
                     src={image}
                     alt={name}
-                    className="w-full h-[160px] object-cover transform group-active:scale-105 transition-transform duration-500"
+                    className="w-full h-[160px] object-contain transform group-active:scale-105 transition-transform duration-500"
                 />
-                <div className="absolute top-3 right-3">
+                {/* <div className="absolute top-3 right-3">
                     <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-white shadow-sm">
                         🔥 Popular
                     </span>
-                </div>
+                </div> */}
             </div>
 
             {/* Product Details */}
-            <div className="p-4">
+            <div className="p-4 border-t border-gray-200">
                 <h3 className="font-medium text-gray-900 line-clamp-2">{name}</h3>
                 
                 <div className="flex flex-col">

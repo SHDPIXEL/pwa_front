@@ -1,10 +1,11 @@
 import React from 'react';
 import { CategoryCard, ProductCard, BrandCard } from '../components/cards';
 import { BottomNavBarMemberProgram } from '../components/BottomNavBar';
-import dumy_1 from "../assets/images/dumy_1.jpg";
+// import dumy_1 from "../assets/images/dumy_1.jpg";
 import Header from '../components/Header';
 import { useState, useEffect } from 'react';
 import api from '../utils/Api';
+import dumy_1 from "../assets/svg/Byzepta_Logo.svg";
 
 
 const MemberProgramPage = () => {
@@ -23,6 +24,7 @@ const MemberProgramPage = () => {
             try {
                 const response = await api.get("user/products");
                 setProductDetails(response.data);
+                console.log(response.data)
             } catch (error) {
                 console.error("Error fetching products:", error);
             }
@@ -59,6 +61,7 @@ const MemberProgramPage = () => {
                                     originalPrice={product.oldPrice}
                                     image={dumy_1}
                                     discount={discountPercentage + "% OFF"}
+                                    description={product.description}
                                 />
                             );
                         })}

@@ -5,7 +5,7 @@ import { CategoryCard } from '../components/cards';
 import Header from '../components/Header';
 import dumy_1 from "../assets/images/dumy_1.jpg";
 import { useNavigate } from 'react-router-dom';
-import coin from "../assets/images/Coin.png";
+import coin from "../assets/svg/Coin.svg";
 
 // Mock data for rewards
 const categories = [
@@ -64,7 +64,7 @@ const RewardCard = ({ id, title, points, image, description, claimed }) => {
           <div className="flex items-center gap-1 mb-2">
             <span className="text-sm font-bold text-[#F7941C]">{points.toLocaleString()}</span>
             <span className="text-xs text-gray-500">points</span>
-            <img src={coin} alt="coin-image" className='w-3 h-auto' />
+            <img src={coin} alt="coin-image" className='w-5 h-auto' />
           </div>
           {description && (
             <div className="flex items-center gap-2">
@@ -83,8 +83,8 @@ const UserPoints = () => (
   <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-4 mb-6">
     <div className="flex items-center justify-between">
       <p className="text-sm text-gray-500 mb-1">Available Points</p>
-      <div className='flex items-center justify-center gap-2'>
-        <img src={coin} alt="coin-image" className="w-4 h-auto" />
+      <div className='flex items-center justify-center'>
+        <img src={coin} alt="coin-image" className="w-8 h-auto" />
         <p className="text-2xl font-bold text-[#F7941C]">2,500</p>
       </div>
     </div>

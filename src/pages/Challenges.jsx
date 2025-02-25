@@ -14,9 +14,10 @@ const ChallengesPage = () => {
     const fetchChallengs = async () => {
       const response = await api.get("/user/weeks");
       setWeeks(response.data)
+      console.log(response.data)
     } 
     fetchChallengs();
-  },[])
+  },[]) 
 
   return (
     <div className="min-h-screen poppins-regular">
@@ -38,7 +39,7 @@ const ChallengesPage = () => {
 
             {/* Join Button */}
             <button
-              onClick={() => navigate(`/challenges/week/${week.id}`)}
+              onClick={() => navigate(`/challenges/week/${week.id}`, { state: { weekName: week.name } })}
               className="w-full mt-6 py-2 px-4 rounded-xl text-white font-medium transition-all hover:opacity-90 bg-[#F7941C] active:bg-amber-600"
             >
               <div className="flex items-center justify-center gap-2">

@@ -8,7 +8,7 @@ import redeem from "../assets/images/redeem-bg.png";
 import brebootSvg from "../assets/svg/BrebootLogo.svg";
 import useLogout from "../auth/Logout.Jsx";
 import { useUser } from "../context/userContext";
-import coin from "../assets/images/Coin.png";
+import coin from "../assets/svg/Coin.svg";
 
 
 const Welcome = () => {
@@ -92,7 +92,7 @@ const Welcome = () => {
 
                     <div className="flex items-center w-14">
                         <button onClick={() => navigate("/redeem")} >
-                            <img src={coin} alt="redeem-logo" className="w-7 h-auto" />
+                            <img src={coin} alt="redeem-logo" className="w-40 h-auto" />
                         </button>
                         <button onClick={() => setShowDropdown(!showDropdown)} className="focus:outline-none">
                             <EllipsisVertical className="w-6 h-5" />
