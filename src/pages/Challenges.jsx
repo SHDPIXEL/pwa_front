@@ -15,60 +15,63 @@ const ChallengesPage = () => {
 
   useEffect(() => {
     const fetchChallenges = async () => {
-      try {
-        setIsLoading(true);
-        // Fetch all weeks
-        const weeksResponse = await api.get("/user/weeks");
-        const weeksData = weeksResponse.data;
+  try {
+    setIsLoading(true);
 
-        // Fetch completed challenges
-        const completedResponse = await api.get("/user/allchallengeForms");
-        const completedIds = Array.isArray(completedResponse.data)
-          ? completedResponse.data.map((item) => item.challengeId)
-          : [];
-        setCompletedChallengeIds(completedIds);
-        console.log("Completed Challenges IDs:", completedIds);
+    // Fetch all weeks
+    const weeksResponse = await api.get("/user/weeks");
+    const weeksData = weeksResponse.data || [];
 
-        // Fetch challenges for each week and calculate progress
-        const updatedWeeks = await Promise.all(
-          weeksData.map(async (week) => {
-            try {
-              const challengesResponse = await api.get(
-                `/user/challenges/${week.id}`
-              );
-              const challenges = challengesResponse.data;
+    // Fetch completed challenges
+    const completedResponse = await api.get("/user/allchallengeForms");
+    const completedIds = Array.isArray(completedResponse?.data)
+      ? completedResponse.data.map((item) => item.challengeId)
+      : [];
 
-              // Calculate the number of completed challenges for this week
-              const completedInWeek = challenges.filter((challenge) =>
-                completedIds.includes(challenge.id)
-              ).length;
+    setCompletedChallengeIds(completedIds);
+    console.log("Completed Challenges IDs:", completedIds);
 
-              // Calculate progress percentage
-              const totalChallenges = challenges.length;
-              const progress =
-                totalChallenges > 0
-                  ? Math.round((completedInWeek / totalChallenges) * 100)
-                  : 0;
+    // Fetch challenges for each week and calculate progress
+    const updatedWeeks = await Promise.all(
+      weeksData.map(async (week) => {
+        try {
+          const challengesResponse = await api.get(
+            `/user/challenges/${week.id}`
+          );
+          const challenges = challengesResponse.data || [];
 
-              return { ...week, progress }; // Add progress to week object
-            } catch (error) {
-              console.error(
-                `Error fetching challenges for week ${week.id}:`,
-                error
-              );
-              return { ...week, progress: 0 }; // Fallback to 0% on error
-            }
-          })
-        );
+          // Calculate the number of completed challenges for this week
+          const completedInWeek = challenges.filter((challenge) =>
+            completedIds.includes(challenge.id)
+          ).length;
 
-        setWeeks(updatedWeeks);
-        console.log("Updated Weeks with Progress:", updatedWeeks);
-      } catch (error) {
-        toast.error("Error in fetching challenges", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+          // Calculate progress percentage
+          const totalChallenges = challenges.length;
+          const progress =
+            totalChallenges > 0
+              ? Math.round((completedInWeek / totalChallenges) * 100)
+              : 0;
+
+          return { ...week, progress }; // Add progress to week object
+        } catch (error) {
+          console.error(
+            `Error fetching challenges for week ${week.id}:`,
+            error
+          );
+          return { ...week, progress: 0 }; // Fallback to 0% on error
+        }
+      })
+    );
+
+    setWeeks(updatedWeeks);
+    console.log("Updated Weeks with Progress:", updatedWeeks);
+  } catch (error) {
+    console.error("Error in fetching challenges", error);
+    toast.error("Error in fetching challenges"); // Avoid passing `error` directly to `toast.error`
+  } finally {
+    setIsLoading(false);
+  }
+};
     fetchChallenges();
   }, []); // Empty dependency array since we only fetch once on mount
 
