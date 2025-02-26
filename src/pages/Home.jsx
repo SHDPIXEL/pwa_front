@@ -420,7 +420,9 @@ const Home = () => {
                       onClick={handlePasswordSubmit}
                       className="w-full bg-orange-500 text-white py-3 rounded-xl"
                     >
-                      Submit
+                      {
+                        isVerifyLoading ? <Loader isCenter={flase} BorderColor="border-white" /> : "Submit"
+                      }
                     </button>
                   </FormModal>
                 )}

@@ -4,6 +4,7 @@ import toast from 'react-hot-toast';
 import brebootSvg from "../assets/svg/BrebootLogo.svg";
 import api from '../utils/Api';
 import { useUser } from '../context/userContext';
+import Loader from '../components/Loader';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -11,6 +12,7 @@ const Login = () => {
   const [showOtpInput, setShowOtpInput] = useState(false);
   const [resendTimer, setResendTimer] = useState(60);
   const [isResendDisabled, setIsResendDisabled] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
 
   const { fetchUserDetails } = useUser();
 
@@ -41,6 +43,7 @@ const Login = () => {
       }
 
       try {
+        setIsLoading(true)
         const response = await api.post("/auth/user/login", {
           phone: formData.phone,
           email: null,
@@ -57,7 +60,7 @@ const Login = () => {
       } catch (error) {
         console.error("Login error:", error);
         toast.error(error.response?.data?.message || "Failed to send OTP");
-      }
+      }finally{setIsLoading(false)}
     } else {
       if (!formData.email) {
         toast.error("Please enter your email");
@@ -69,6 +72,7 @@ const Login = () => {
       }
 
       try {
+        setIsLoading(true)
         const response = await api.post("/auth/user/login", {
           phone: null,
           email: formData.email,
@@ -93,7 +97,7 @@ const Login = () => {
       } catch (error) {
         console.error("Login error:", error);
         toast.error(error.response?.data?.message || "Login failed");
-      }
+      }finally{setIsLoading(false)}
     }
   };
 
@@ -104,6 +108,7 @@ const Login = () => {
     }
 
     try {
+      setIsLoading(true)
       const response = await api.post("/auth/user/login", {
         phone: formData.phone,
         email: null,
@@ -128,12 +133,15 @@ const Login = () => {
     } catch (error) {
       console.error("OTP verification error:", error);
       toast.error(error.response?.data?.message || "Invalid OTP");
+    }finally{
+      setIsLoading(false);
     }
   };
 
 
   const handleResendOtp = async () => {
     try {
+      setIsLoading(true)
       const response = await api.post("/auth/user/login", {
         phone: formData.phone,
         email: null,
@@ -144,6 +152,7 @@ const Login = () => {
       if (response.status === 200) {
         toast.success("New OTP sent successfully!");
         setResendTimer(60);
+        setIsLoading(false)
         setIsResendDisabled(true);
       } else {
         toast.error(response.data.message || "Failed to resend OTP");
@@ -267,9 +276,12 @@ const Login = () => {
           <div className="max-w-80 mx-auto w-full">
             <button
               onClick={loginWithPhone ? (showOtpInput ? handleOtpVerify : handleLogin) : handleLogin}
-              className="w-full bg-black text-white py-3 rounded-xl mb-4 active:bg-gray-900 transition-opacity"
-            >
-              {loginWithPhone ? (showOtpInput ? "Verify OTP" : "Get OTP") : "Login"}
+              className={`w-full bg-black text-white py-3 rounded-xl mb-4 active:bg-gray-900 transition-opacity ${isLoading ? "bg-gray-700" : "bg-black"}`}
+            >{
+              isLoading ? (<Loader isCenter={false} />) : (
+                loginWithPhone ? (showOtpInput ? "Verify OTP" : "Get OTP") : "Login"
+              ) 
+            }
             </button>
 
             {/* Divider */}
