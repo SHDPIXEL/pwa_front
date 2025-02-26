@@ -14,7 +14,7 @@ const ChallengesPage = () => {
   const [completedChallengeIds, setCompletedChallengeIds] = useState([]);
 
   useEffect(() => {
-    const fetchChallenges = async () => {
+   const fetchChallenges = async () => {
   try {
     setIsLoading(true);
 
@@ -22,11 +22,21 @@ const ChallengesPage = () => {
     const weeksResponse = await api.get("/user/weeks");
     const weeksData = weeksResponse.data || [];
 
-    // Fetch completed challenges
-    const completedResponse = await api.get("/user/allchallengeForms");
-    const completedIds = Array.isArray(completedResponse?.data)
-      ? completedResponse.data.map((item) => item.challengeId)
-      : [];
+    // Fetch completed challenges (handling 404 error separately)
+    let completedIds = [];
+    try {
+      const completedResponse = await api.get("/user/allchallengeForms");
+      completedIds = Array.isArray(completedResponse?.data)
+        ? completedResponse.data.map((item) => item.challengeId)
+        : [];
+    } catch (error) {
+      if (error.response && error.response.status === 404) {
+        console.warn("No completed challenges found, treating as empty.");
+      } else {
+        console.error("Error fetching completed challenges:", error);
+        throw error; // Re-throw if it's a different error
+      }
+    }
 
     setCompletedChallengeIds(completedIds);
     console.log("Completed Challenges IDs:", completedIds);
@@ -72,6 +82,7 @@ const ChallengesPage = () => {
     setIsLoading(false);
   }
 };
+
     fetchChallenges();
   }, []); // Empty dependency array since we only fetch once on mount
 
