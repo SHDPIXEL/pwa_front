@@ -4,6 +4,7 @@ import Header from '../components/Header';
 import { Calendar, Image, FileText, Video, ExternalLink, Phone } from 'lucide-react';
 import api from '../utils/Api';
 import toast from 'react-hot-toast';
+import Loader from '../components/Loader';
 
 const MediaTypeIcon = ({ type }) => {
     switch (type.toLowerCase()) {
@@ -147,9 +148,7 @@ const SubmissionHistory = () => {
 
             <div className="px-4 py-4 pb-24">
                 {loading ? (
-                    <div className="flex items-center justify-center h-60">
-                        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#F7941C]"></div>
-                    </div>
+                    <Loader />
                 ) : submissions.length > 0 ? (
                     <>
                         <div className="mb-4">

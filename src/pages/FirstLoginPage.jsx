@@ -7,6 +7,7 @@ import coin from "../assets/images/coin-br.gif";
 import { ConsentModal } from "../components/Modal";
 import useLogout from "../auth/Logout.Jsx";
 import { useUser } from "../context/userContext";
+import Loader from "../components/Loader";
 
 const FirstLogin = () => {
   const [showLogoutModal, setShowLogoutModal] = useState(false);
@@ -61,10 +62,8 @@ const FirstLogin = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div>Loading...</div>
-      </div>
-    );
+      <Loader />  
+        );
   }
 
   if (!userData) {

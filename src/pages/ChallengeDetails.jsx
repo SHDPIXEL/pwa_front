@@ -7,16 +7,18 @@ import steps from "../assets/images/steps-rb.png";
 import { useUser } from "../context/userContext";
 import api from "../utils/Api";
 import toast from "react-hot-toast";
+import Loader from "../components/Loader";
 
 const ChallengeDetails = () => {
     const [activeTab, setActiveTab] = useState("details");
     const [message, setMessage] = useState(false);
-    const { userData, fetchUserDetails } = useUser(); // Assuming fetchUserDetails exists
+    const { userData, fetchUserDetails } = useUser();
+    const [isButtonLoading, setIsButtonLoading] = useState();
     const [formData, setFormData] = useState({
         name: "",
         phone: "",
         message: "",
-        userId:"",
+        userId: "",
         mediaFiles: [],
         previews: [],
         mediaType: "images",
@@ -44,7 +46,6 @@ const ChallengeDetails = () => {
                 phone: userData?.phone || "",
                 userId: userData?.id || ""
             }));
-            console.log("userid fjskf", formData.userId,)
             setLoading(false);
         };
         initializeUserData();
@@ -167,6 +168,7 @@ const ChallengeDetails = () => {
         });
 
         try {
+            setIsButtonLoading(true)
             const response = await api.post("/user/challengeForm", submissionData, {
                 headers: {
                     "Content-Type": "multipart/form-data",
@@ -187,11 +189,13 @@ const ChallengeDetails = () => {
         } catch (error) {
             console.error("Submission error:", error);
             toast.error("An error occurred while submitting the challenge.");
+        } finally {
+            setIsButtonLoading(false);
         }
     };
 
     if (loading) {
-        return <p className="text-center text-gray-500">Loading user data...</p>;
+        return <p className="text-center text-gray-500"> <Loader /> Loading user data...</p>;
     }
 
     return (
@@ -200,21 +204,19 @@ const ChallengeDetails = () => {
                 <div className="flex justify-center">
                     <div className="bg-white shadow-lg rounded-xl py-2 px-2 inline-flex gap-2">
                         <button
-                            className={`relative px-8 py-2.5 text-sm font-semibold rounded-lg transition-all ${
-                                activeTab === "details"
+                            className={`relative px-8 py-2.5 text-sm font-semibold rounded-lg transition-all ${activeTab === "details"
                                     ? "bg-[#F7941C] text-white shadow-md"
                                     : "text-gray-700 hover:bg-gray-100"
-                            }`}
+                                }`}
                             onClick={() => setActiveTab("details")}
                         >
                             Details
                         </button>
                         <button
-                            className={`relative px-8 py-2.5 text-sm font-semibold rounded-lg transition-all ${
-                                activeTab === "submit"
+                            className={`relative px-8 py-2.5 text-sm font-semibold rounded-lg transition-all ${activeTab === "submit"
                                     ? "bg-[#F7941C] text-white shadow-md"
                                     : "text-gray-700 hover:bg-gray-100"
-                            }`}
+                                }`}
                             onClick={() => setActiveTab("submit")}
                         >
                             Submit Challenge
@@ -237,9 +239,8 @@ const ChallengeDetails = () => {
                                 {descriptionsWithDetails.map((item, index) => (
                                     <div
                                         key={index}
-                                        className={`flex items-center gap-8 ${
-                                            item.side === "right" ? "flex-row-reverse" : "flex-row"
-                                        }`}
+                                        className={`flex items-center gap-8 ${item.side === "right" ? "flex-row-reverse" : "flex-row"
+                                            }`}
                                     >
                                         <div className="w-32 h-32 flex-shrink-0 flex items-center justify-center bg-amber-400/10 rounded-full">
                                             <img
@@ -313,8 +314,8 @@ const ChallengeDetails = () => {
                                         {formData.mediaFiles.length === 0
                                             ? "Upload Images (max 5) or 1 Video"
                                             : formData.mediaFiles[0]?.type.startsWith("video/")
-                                            ? "1 Video selected"
-                                            : `${formData.mediaFiles.length}/5 Images selected`}
+                                                ? "1 Video selected"
+                                                : `${formData.mediaFiles.length}/5 Images selected`}
                                     </div>
                                     <input
                                         type="file"
@@ -358,7 +359,17 @@ const ChallengeDetails = () => {
                                 onClick={handleSubmit}
                                 className="w-full bg-[#F7941C] text-white py-3 rounded-xl mt-6 hover:opacity-90 transition-opacity"
                             >
-                                Submit Challenge
+                                {
+                                    isButtonLoading ? <div>
+                                        <div className="flex items-center justify-center gap-3">
+                                            <Loader 
+                                            isCenter={false}
+                                            BorderColor="border-white" />
+                                            <p>Submitting</p>
+                                        </div>
+                                    </div>
+                                        : <p>Submit Challenge</p>
+                                }
                             </button>
 
                             {message && (

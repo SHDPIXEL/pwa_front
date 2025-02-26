@@ -9,6 +9,7 @@ import brebootSvg from "../assets/svg/BrebootLogo.svg";
 import useLogout from "../auth/Logout.Jsx";
 import { useUser } from "../context/userContext";
 import coin from "../assets/svg/Coin.svg";
+import Loader from "../components/Loader";
 
 
 const Welcome = () => {
@@ -72,7 +73,7 @@ const Welcome = () => {
     };
 
     if (loading) {
-        return <div>Loading...</div>;
+        return <Loader />;
       }
     
       if (!userData) {

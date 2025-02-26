@@ -7,6 +7,7 @@ import api from "../utils/Api";
 import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
 import { useUser } from "../context/userContext";
+import Loader from "../components/Loader";
 
 const Home = () => {
   const [isSplashVisible, setIsSplashVisible] = useState(true);
@@ -16,6 +17,8 @@ const Home = () => {
   const [registerWithPhone, setRegisterWithPhone] = useState(true);
   const [showOtpModal, setShowOtpModal] = useState(false);
   const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const [isLoading, setIsLoading ] = useState(false);
+  const [isVerifyLoading, setIsVerifyLoading] = useState(false);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -86,6 +89,7 @@ const Home = () => {
     }
 
     try {
+      setIsLoading(true);
       const response = await api.post("/auth/user/register", {
         name: formData.name,
         phone: registerWithPhone ? formData.phone : null,
@@ -111,6 +115,8 @@ const Home = () => {
       } else {
         toast.error("An error occurred during registration.");
       }
+    }finally{
+      setIsLoading(false);
     }
   };
 
@@ -121,6 +127,7 @@ const Home = () => {
     }
 
     try {
+      setIsVerifyLoading(true);
       const response = await api.post("/auth/user/register", {
         name: formData.name,
         gender: formData.gender,
@@ -132,7 +139,6 @@ const Home = () => {
       });
 
       console.log("verify response", response.data);
-
       if (response.data.status === "success" || response.status === 200) {
         toast.success("OTP verified successfully!");
         setShowOtpModal(false);
@@ -150,6 +156,8 @@ const Home = () => {
     } catch (error) {
       console.error("OTP verification error:", error);
       toast.error("An error occurred while verifying OTP.");
+    }finally{
+      setIsVerifyLoading(false);
     }
   };
 
@@ -160,6 +168,7 @@ const Home = () => {
     }
 
     try {
+      setIsVerifyLoading(true)
       const response = await api.post("/auth/user/register", {
         name: formData.name,
         email: formData.email,
@@ -189,8 +198,9 @@ const Home = () => {
       } else {
         toast.error("An error occurred while setting the password.");
       }
+    }{
+      setIsVerifyLoading(false)
     }
-
     setShowPasswordModal(false);
   };
 
@@ -368,10 +378,13 @@ const Home = () => {
                   </label>
                 </div>
                 <button
+                  disabled={isLoading}
                   onClick={handleRegister}
-                  className="w-full bg-black text-white py-3 rounded-xl mb-4 active:bg-gray-900 transition-opacity"
+                  className={`w-full text-white py-3 rounded-xl mb-4 active:bg-gray-900 transition-opacity ${isLoading ? "bg-gray-700" : "bg-black"} `}
                 >
-                  Continue
+                  {
+                    isLoading ? <Loader isCenter={false} /> : "Continue"
+                  }
                 </button>
                 {showOtpModal && (
                   <FormModal title="Enter OTP" onClose={() => setShowOtpModal(false)}>
@@ -387,7 +400,9 @@ const Home = () => {
                       onClick={handleOtpVerify}
                       className="w-full bg-orange-500 text-white py-3 rounded-xl"
                     >
-                      Verify OTP
+                      {
+                        isVerifyLoading ? <Loader BorderColor="border-white" isCenter={false} /> : "Verify OTP"
+                      }
                     </button>
                   </FormModal>
                 )}

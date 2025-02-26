@@ -3,10 +3,12 @@ import { useParams, useLocation } from "react-router-dom";
 import Header from "../components/Header";
 import ChallengeCard from "../components/ChallengeCard";
 import api from "../utils/Api";
+import Loader from "../components/Loader";
 
 const WeekChallengesPage = () => {
   const { weekId } = useParams();
   const [allChallenges, setAllChallenges] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const location = useLocation();
   const weekName = location.state?.weekName || "Week";
@@ -15,11 +17,14 @@ const WeekChallengesPage = () => {
   useEffect(() => {
     const fetchChallenges = async () => {
       try {
+        setIsLoading(true)
         const response = await api.get(`/user/challenges/${weekId}`);
         setAllChallenges(response.data);
         console.log("Challenges Data:", response.data);
       } catch (error) {
         console.error("Error fetching challenges:", error);
+      } finally {
+        setIsLoading(false)
       }
     };
     fetchChallenges();
@@ -28,33 +33,37 @@ const WeekChallengesPage = () => {
   return (
     <div className="min-h-screen poppins-regular">
       <Header title={`Challenges for ${weekName}`} />
-      <div className="px-4 py-4 pb-24">
-        {allChallenges.length > 0 ? (
-          allChallenges.map((challenge) => {
-            let challengeImages = [];
+      {
+        isLoading ? <Loader /> : <div>
+          <div className="px-4 py-4 pb-24">
+            {allChallenges.length > 0 ? (
+              allChallenges.map((challenge) => {
+                let challengeImages = [];
 
-            try {
-              challengeImages = JSON.parse(challenge.challenge_images); 
-            } catch (error) {
-              console.error("Error parsing challenge_images:", error);
-            }
+                try {
+                  challengeImages = JSON.parse(challenge.challenge_images);
+                } catch (error) {
+                  console.error("Error parsing challenge_images:", error);
+                }
 
-            return (
-              <ChallengeCard
-                key={challenge.id}
-                // title={challenge.name}
-                // id={challenge.id}
-                // description={challenge.shortDescription}
-                // challengeImage={challengeImages.length > 0 ? challengeImages[0] : ""}
-                challenge={challenge}
-              />
-            );
-          })
-        ) : (
-          <p className="text-gray-500 text-center">No challenges found for this week.</p>
-        )}
+                return (
+                  <ChallengeCard
+                    key={challenge.id}
+                    // title={challenge.name}
+                    // id={challenge.id}
+                    // description={challenge.shortDescription}
+                    // challengeImage={challengeImages.length > 0 ? challengeImages[0] : ""}
+                    challenge={challenge}
+                  />
+                );
+              })
+            ) : (
+              <p className="text-gray-500 text-center">No challenges found for this week.</p>
+            )}
 
-      </div>
+          </div>
+        </div>
+      }
     </div>
   );
 };
