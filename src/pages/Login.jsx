@@ -221,6 +221,7 @@ const Login = () => {
                     value={formData.phone}
                     maxLength={10}
                     onChange={handleFormChange}
+                    onInput={(e) => (e.target.value = e.target.value.replace(/\D/g, ""))}
                   />
                 </div>
                 {showOtpInput && (

@@ -1,6 +1,7 @@
 import redeemSvg from "../assets/images/redeem-bg.png";
 import { Link } from "react-router-dom";
-import coin from "../assets/svg/Coin.svg";
+// import coin from "../assets/svg/Coin.svg";
+import coin from "../assets/images/Coin_b.png";
 
 
 const Header = ({ title, icon, onAction }) => {
@@ -16,7 +17,7 @@ const Header = ({ title, icon, onAction }) => {
                 </div>
                 <Link to="/redeem">
                     <div className="flex items-center justify-end">
-                        <img src={coin} alt="redeem-icon" className="w-10 h-auto" />
+                        <img src={coin} alt="redeem-icon" className="w-6 h-auto" />
                     </div>
                 </Link>
             </div>

@@ -1,26 +1,28 @@
-import React from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { CheckCircle, Package, Bell, ArrowRight, Share2 } from 'lucide-react';
-import dumy_1 from "../assets/images/dumy_1.jpg";
-
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import { CheckCircle } from "lucide-react";
 
 const ThankYouPage = () => {
   const navigate = useNavigate();
-  const location = useLocation();
-  
-  const orderDetails = {
-    orderId: 'ORD123456789',
+
+  // Retrieve order details from localStorage
+  const orderDetails = JSON.parse(localStorage.getItem("orderDetails")) || {
+    orderId: "Unknown",
     product: {
-      name: 'Vitamin C Serum',
+      name: "Unknown Product",
       quantity: 1,
-      price: '₹1,499',
-      image: dumy_1
-    }
+      price: "₹0",
+      image: "",
+    },
   };
+
+  // Clean up localStorage after displaying
+  useEffect(() => {
+    localStorage.removeItem("orderDetails");
+  }, []);
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Celebration Animation Container */}
       <div className="bg-gradient-to-b from-[#F7941C] to-amber-500 pt-12 pb-20 px-4">
         <div className="flex flex-col items-center text-white">
           <CheckCircle className="w-16 h-16 mb-4" />
@@ -30,8 +32,6 @@ const ThankYouPage = () => {
           </p>
         </div>
       </div>
-
-      {/* Order Details Card */}
       <div className="px-4 -mt-12">
         <div className="bg-white rounded-2xl shadow-sm p-6">
           <div className="border-b border-gray-300 pb-4 mb-4">
@@ -40,12 +40,10 @@ const ThankYouPage = () => {
               <span className="font-medium text-gray-600">{orderDetails.orderId}</span>
             </div>
           </div>
-
-          {/* Product Summary */}
           <div className="flex gap-4 mb-6">
             <div className="w-20 h-20 rounded-xl overflow-hidden flex-shrink-0">
-              <img 
-                src={orderDetails.product.image} 
+              <img
+                src={orderDetails.product.image}
                 alt={orderDetails.product.name}
                 className="w-full h-full object-cover"
               />
@@ -62,12 +60,12 @@ const ThankYouPage = () => {
               </p>
             </div>
           </div>
-
-            <button 
-              onClick={() => navigate('/welcome')}
-              className="w-full bg-white border border-[#F7941C] text-[#F7941C] py-3 rounded-xl flex items-center justify-center gap-2 font-medium active:bg-orange-50">
-              Dashboard
-            </button>
+          <button
+            onClick={() => navigate("/welcome")}
+            className="w-full bg-white border border-[#F7941C] text-[#F7941C] py-3 rounded-xl flex items-center justify-center gap-2 font-medium active:bg-orange-50"
+          >
+            Dashboard
+          </button>
         </div>
       </div>
     </div>

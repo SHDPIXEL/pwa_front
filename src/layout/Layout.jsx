@@ -9,9 +9,9 @@ const Layout = () => {
   const hideBackButton = location.pathname === "/";
 
   return (
-    <div className="min-h-screen bg-gray-50 poppins-regular flex flex-col justify-between">
+    <div className="min-h-screen poppins-regular flex flex-col justify-between">
       {/* Main Container */}
-      <div className="max-w-md mx-auto w-full bg-white shadow-md min-h-screen">
+      <div className="max-w-md mx-auto w-full bg-white min-h-screen">
         <Outlet />
       </div>
       {/* Back Button */}

@@ -2,6 +2,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
+
 const CategoryCard = ({ title, icon }) => (
     <div className="flex flex-col items-center gap-3 min-w-[90px] group cursor-pointer">
         <div className="w-[70px] h-[70px] rounded-2xl bg-white shadow-sm group-active:shadow-lg active:bg-gray-100 transition-all duration-300 flex items-center justify-center relative overflow-hidden">

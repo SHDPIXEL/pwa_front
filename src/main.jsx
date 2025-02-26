@@ -13,9 +13,7 @@ if ('serviceWorker' in navigator) {
 }
 
 createRoot(document.getElementById('root')).render(
-  <UserProvider>
     <StrictMode>
       <App />
-    </StrictMode>,
-  </UserProvider>
+    </StrictMode>
 )

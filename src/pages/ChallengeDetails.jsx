@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react"; // Added useEffect
 import { useParams, useNavigate, useLocation } from "react-router-dom";
-import { FileImage, FileVideo, User, Phone, Upload, X, Check, ChevronUpSquare, CodeSquare } from "lucide-react";
+import { FileImage, FileVideo, User, Phone, Upload, X, Check, ChevronUpSquare, CodeSquare, CopySlash } from "lucide-react";
 import challenge1 from "../assets/images/challenge1.png";
 import challenge2 from "../assets/images/challenge2.png";
 import steps from "../assets/images/steps-rb.png";
 import { useUser } from "../context/userContext";
-import api from "../utils/Api";
+import api, { BASE_IMAGE_URL } from "../utils/Api";
 import toast from "react-hot-toast";
 import Loader from "../components/Loader";
 
@@ -22,12 +22,15 @@ const ChallengeDetails = () => {
         mediaFiles: [],
         previews: [],
         mediaType: "images",
+        challengeId:""
     });
     const [loading, setLoading] = useState(true); // Added loading state
 
     const navigate = useNavigate();
     const location = useLocation();
     const { challenge: ChallengeDetails } = location.state || {};
+
+    console.log("challenge id",ChallengeDetails.id)
 
     // Fetch user details on mount
     useEffect(() => {
@@ -44,12 +47,15 @@ const ChallengeDetails = () => {
                 ...prev,
                 name: userData?.name || "",
                 phone: userData?.phone || "",
-                userId: userData?.id || ""
+                userId: userData?.id || "",
+                challengeId: ChallengeDetails?.id || ""
             }));
             setLoading(false);
         };
         initializeUserData();
     }, [userData, fetchUserDetails]);
+
+    
 
     if (!ChallengeDetails) {
         return <p className="text-center text-gray-500">Challenge not found.</p>;
@@ -163,6 +169,7 @@ const ChallengeDetails = () => {
         submissionData.append("remark", formData.message);
         submissionData.append("mediaType", formData.mediaType);
         submissionData.append("userId", formData.userId);
+        submissionData.append("challengeId", formData.challengeId)
         formData.mediaFiles.forEach((file) => {
             submissionData.append("mediaFiles", file);
         });
@@ -244,7 +251,7 @@ const ChallengeDetails = () => {
                                     >
                                         <div className="w-32 h-32 flex-shrink-0 flex items-center justify-center bg-amber-400/10 rounded-full">
                                             <img
-                                                src={item.imagePlaceholder}
+                                                src={`${BASE_IMAGE_URL}/${item.imagePlaceholder}`}
                                                 alt="Challenge illustration"
                                                 className="w-20 h-20"
                                             />
@@ -296,6 +303,7 @@ const ChallengeDetails = () => {
                                     value={formData.phone}
                                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                                     disabled={!!userData?.phone}
+                                    onInput={(e) => (e.target.value = e.target.value.replace(/\D/g, ""))}
                                 />
                             </div>
 

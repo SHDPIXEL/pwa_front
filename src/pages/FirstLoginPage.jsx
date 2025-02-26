@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
 import { EllipsisVertical, User, LogOut, Copy, Check, MoveRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import redeem from "../assets/images/redeem-bg.png";
+// import redeem from "../assets/images/redeem-bg.png";
 import brebootSvg from "../assets/svg/BrebootLogo.svg";
 import coin from "../assets/images/coin-br.gif";
 import { ConsentModal } from "../components/Modal";
 import useLogout from "../auth/Logout.Jsx";
 import { useUser } from "../context/userContext";
 import Loader from "../components/Loader";
+import redeem from "../assets/images/Coin_b.png";
 
 const FirstLogin = () => {
   const [showLogoutModal, setShowLogoutModal] = useState(false);
@@ -77,9 +78,9 @@ const FirstLogin = () => {
           <p>{userType === "Dr" ? "Doctor" : userType || "User"}</p>
         </div>
         <div onClick={handleDropdown} className="relative">
-          <div className="flex items-center w-14">
+          <div className="flex items-center">
             <button onClick={() => navigate("/redeem")}>
-              <img src={redeem} alt="redeem-logo" />
+              <img src={redeem} alt="redeem-logo" className="w-5 h-auto" />
             </button>
             <button onClick={() => setIsDropDownOpen(!isDropDownOpen)} className="focus:outline-none">
               <EllipsisVertical className="w-6 h-5" />

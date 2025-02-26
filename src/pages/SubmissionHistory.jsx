@@ -42,7 +42,7 @@ const SubmissionCard = ({ submission }) => {
                         </div>
                     </div>
                 </div>
-                
+
                 <button
                     onClick={() => setExpanded(!expanded)}
                     className="text-xs text-[#F7941C] font-medium flex items-center gap-1 ml-2"
@@ -101,19 +101,26 @@ const SubmissionHistory = () => {
     const [submissions, setSubmissions] = useState([]);
     const [loading, setLoading] = useState(true);
 
+    // const userId
+
     useEffect(() => {
         const fetchHistory = async () => {
             try {
-                const response = await api.get("/user/get/challengeForm");
+                const response = await api.get(`/user/get/challengeForm`);
                 console.log("Raw challenge data:", response.data);
 
+                const dataArray = Array.isArray(response.data) ? response.data
+                    : Array.isArray(response.data?.data) ? response.data.data
+                        : [response.data]; // Wrap in an array if it's a single object
+
+                console.log("Processed data array:", dataArray);
                 // Transform the data with error handling
-                const transformedData = response.data.map(item => {
+                const transformedData = dataArray.map(item => {
                     let mediaFiles = [];
                     try {
                         // Handle case where mediaFiles might already be an array or invalid JSON
-                        mediaFiles = Array.isArray(item.mediaFiles) 
-                            ? item.mediaFiles 
+                        mediaFiles = Array.isArray(item.mediaFiles)
+                            ? item.mediaFiles
                             : JSON.parse(item.mediaFiles || '[]');
                     } catch (e) {
                         console.error(`Error parsing mediaFiles for item ${item.id}:`, e);
@@ -122,7 +129,7 @@ const SubmissionHistory = () => {
 
                     return {
                         id: item.id,
-                        name: item.name,
+                        name: item.challengeName,
                         phone: item.phone,
                         createdAt: item.createdAt,
                         remark: item.remark,
@@ -130,7 +137,7 @@ const SubmissionHistory = () => {
                         mediaFiles: mediaFiles
                     };
                 });
-                
+
                 setSubmissions(transformedData);
             } catch (error) {
                 console.error("Fetch error:", error);

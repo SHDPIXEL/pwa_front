@@ -5,8 +5,10 @@ import { BottomNavBarMemberProgram } from '../components/BottomNavBar';
 import Header from '../components/Header';
 import { useState, useEffect } from 'react';
 import api from '../utils/Api';
-import dumy_1 from "../assets/svg/Byzepta_Logo.svg";
+// import dumy_1 from "../assets/svg/Byzepta_Logo.svg";
 import Loader from '../components/Loader';
+import { BASE_IMAGE_URL } from '../utils/Api';
+
 
 const MemberProgramPage = () => {
 
@@ -26,7 +28,7 @@ const MemberProgramPage = () => {
                 setIsLoading(true);
                 const response = await api.get("user/products");
                 setProductDetails(response.data);
-                console.log(response.data)
+                console.log("Product data",response.data)
             } catch (error) {
                 console.error("Error fetching products:", error);
             } finally {
@@ -68,7 +70,7 @@ const MemberProgramPage = () => {
                                                 name={product.name}
                                                 price={userType === "Dr" ? product.newPrice * 0.9 : product.newPrice}
                                                 originalPrice={product.oldPrice}
-                                                image={dumy_1}
+                                                image={`${BASE_IMAGE_URL}/${product.product_image.replace(/^"|"$/g, '')}`}
                                                 discount={discountPercentage + "% OFF"}
                                                 description={product.description}
                                             />

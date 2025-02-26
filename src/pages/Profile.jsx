@@ -7,7 +7,8 @@ import { useUser } from "../context/userContext";
 import api from "../utils/Api";
 import toast from "react-hot-toast";
 import useLogout from "../auth/Logout.Jsx";
-import coin from "../assets/svg/Coin.svg";
+// import coin from "../assets/svg/Coin.svg";
+import coin from "../assets/images/Coin_b.png";
 
 
 const Profile = () => {
@@ -149,9 +150,9 @@ const Profile = () => {
           <div className="bg-white rounded-2xl border border-gray-100 p-4 mb-3">
             <div className="flex items-center justify-between">
               <p className="text-sm text-gray-500 mb-1">Available Points</p>
-              <div className="flex items-center justify-center">
+              <div className="flex items-center justify-center gap-2">
                 {/* <Dot className="text-[#F7941C]" /> */}
-                <img src={coin} alt="coin-image" className="w-8 h-auto" />
+                <img src={coin} alt="coin-image" className="w-5 h-auto" />
                 <p className="text-xl font-bold text-[#F7941C]">{userData.points || 0}</p>
               </div>
             </div>

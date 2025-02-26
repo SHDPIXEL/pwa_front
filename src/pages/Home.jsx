@@ -17,8 +17,9 @@ const Home = () => {
   const [registerWithPhone, setRegisterWithPhone] = useState(true);
   const [showOtpModal, setShowOtpModal] = useState(false);
   const [showPasswordModal, setShowPasswordModal] = useState(false);
-  const [isLoading, setIsLoading ] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [isVerifyLoading, setIsVerifyLoading] = useState(false);
+  const [selectedState, setSelectedState] = useState("");
 
   const [formData, setFormData] = useState({
     name: "",
@@ -43,6 +44,56 @@ const Home = () => {
     }, 2500);
     return () => clearTimeout(timer);
   }, []);
+
+
+  const states = [
+    "Andhra Pradesh",
+    "Arunachal Pradesh",
+    "Assam",
+    "Bihar",
+    "Chhattisgarh",
+    "Goa",
+    "Gujarat",
+    "Haryana",
+    "Himachal Pradesh",
+    "Jharkhand",
+    "Karnataka",
+    "Kerala",
+    "Madhya Pradesh",
+    "Maharashtra",
+    "Manipur",
+    "Meghalaya",
+    "Mizoram",
+    "Nagaland",
+    "Odisha",
+    "Punjab",
+    "Rajasthan",
+    "Sikkim",
+    "Tamil Nadu",
+    "Telangana",
+    "Tripura",
+    "Uttar Pradesh",
+    "Uttarakhand",
+    "West Bengal",
+    "Andaman and Nicobar Islands",
+    "Chandigarh",
+    "Dadra and Nagar Haveli and Daman and Diu",
+    "Lakshadweep",
+    "Delhi",
+    "Puducherry",
+    "Jammu and Kashmir",
+    "Ladakh"
+  ];
+  
+
+  const handleStateChange = (e) => {
+    setSelectedState(e.target.value);
+    setFormData((prevData) => ({
+      ...prevData,
+      state: e.target.value,
+    }));
+  };
+
 
   const handleFormChange = (e) => {
     const { name, value } = e.target;
@@ -90,33 +141,70 @@ const Home = () => {
 
     try {
       setIsLoading(true);
-      const response = await api.post("/auth/user/register", {
-        name: formData.name,
-        phone: registerWithPhone ? formData.phone : null,
-        email: !registerWithPhone ? formData.email : null,
-        code: activeTab !== "Dr" ? formData.referralCode.toUpperCase() : null,
-        gender: formData.gender,
-        userType: activeTab === "Dr" ? "Doctor" : "OtherUser",
-      });
+      if (registerWithPhone) {
+        // Phone registration: Trigger OTP modal directly
+        const response = await api.post("/auth/user/register", {
+          name: formData.name,
+          phone: formData.phone,
+          email: null,
+          code: activeTab !== "Dr" ? formData.referralCode.toUpperCase() : null,
+          gender: formData.gender,
+          userType: activeTab === "Dr" ? "Doctor" : "OtherUser",
+          state: activeTab === "Dr" ? selectedState : null,
+        });
 
-      console.log("User data", response.data);
-
-      if (response.status === 200 || response.status === 201) {
-        setShowOtpModal(true); // Show OTP modal for both phone and email
+        if (response.status === 200 || response.status === 201) {
+          setShowOtpModal(true); // Show OTP modal for phone
+        } else {
+          toast.error(response.data.message || "Registration failed");
+        }
       } else {
-        toast.error(response.data.message || "Registration failed");
+        // Email registration: Show password modal first
+        setShowPasswordModal(true);
       }
     } catch (error) {
       console.error("Registration error:", error);
-      if (error.response && error.response.status === 400) {
-        toast.error(
-          error.response.data.message || "User already exists"
-        );
-      } else {
-        toast.error("An error occurred during registration.");
-      }
-    }finally{
+      toast.error(
+        error.response?.data?.message || "An error occurred during registration."
+      );
+    } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handlePasswordSubmit = async () => {
+    if (!formData.password) {
+      toast.error("Please enter a password");
+      return;
+    }
+    try {
+      setIsVerifyLoading(true);
+      const response = await api.post("/auth/user/register", {
+        name: formData.name,
+        email: formData.email,
+        password: formData.password, // Include password in the initial request
+        gender: formData.gender,
+        userType: activeTab === "Dr" ? "Doctor" : "OtherUser",
+        code: activeTab !== "Dr" ? formData.referralCode.toUpperCase() : null,
+        state: activeTab === "Dr" ? selectedState : null,
+
+      });
+
+      console.log("Password submission response", response.data);
+
+      if (response.status === 200 || response.status === 201) {
+        setShowPasswordModal(false);
+        setShowOtpModal(true); // Show OTP modal after password submission
+      } else {
+        toast.error(response.data.message || "Password submission failed");
+      }
+    } catch (error) {
+      console.error("Password submission error:", error);
+      toast.error(
+        error.response?.data?.message || "An error occurred while setting the password."
+      );
+    } finally {
+      setIsVerifyLoading(false);
     }
   };
 
@@ -134,74 +222,29 @@ const Home = () => {
         phone: registerWithPhone ? formData.phone : null,
         email: !registerWithPhone ? formData.email : null,
         otp: formData.otp,
+        password: !registerWithPhone ? formData.password : null, // Send password for email
         userType: activeTab === "Dr" ? "Doctor" : "OtherUser",
         code: activeTab !== "Dr" ? formData.referralCode : null,
+        state: activeTab === "Dr" ? selectedState : null,
       });
 
-      console.log("verify response", response.data);
+      console.log("Verify response data", response.data);
       if (response.data.status === "success" || response.status === 200) {
         toast.success("OTP verified successfully!");
         setShowOtpModal(false);
-        if (!registerWithPhone) {
-          setShowPasswordModal(true); // Show password modal only for email after OTP verification
-        } else {
-          localStorage.setItem("authToken", response.data.token);
-          await fetchUserDetails();
-          const route = activeTab === "Dr" ? "/firstlogin" : "/welcome";
-          navigate(route);
-        }
+        localStorage.setItem("authToken", response.data.token);
+        await fetchUserDetails();
+        const route = activeTab === "Dr" ? "/firstlogin" : "/welcome";
+        navigate(route);
       } else {
         toast.error(response.data.message || "Invalid OTP. Please try again.");
       }
     } catch (error) {
       console.error("OTP verification error:", error);
       toast.error("An error occurred while verifying OTP.");
-    }finally{
+    } finally {
       setIsVerifyLoading(false);
     }
-  };
-
-  const handlePasswordSubmit = async () => {
-    if (!formData.password) {
-      toast.error("Please enter a password");
-      return;
-    }
-
-    try {
-      setIsVerifyLoading(true)
-      const response = await api.post("/auth/user/register", {
-        name: formData.name,
-        email: formData.email,
-        password: formData.password,
-        gender: formData.gender,
-        userType: activeTab === "Dr" ? "Doctor" : "OtherUser",
-        code: activeTab !== "Dr" ? formData.referralCode.toUpperCase() : null,
-      });
-
-      console.log("Password submission response", response.data);
-
-      if (response.status === 201) {
-        toast.success("Registration successful!");
-        localStorage.setItem("authToken", response.data.token);
-        await fetchUserDetails();
-        const route = activeTab === "Dr" ? "/firstlogin" : "/welcome";
-        navigate(route);
-      } else {
-        toast.error(response.data.message || "Password submission failed");
-      }
-    } catch (error) {
-      console.error("Password submission error:", error);
-      if (error.response && error.response.status === 400) {
-        toast.error(
-          error.response.data.message || "User already exists"
-        );
-      } else {
-        toast.error("An error occurred while setting the password.");
-      }
-    }{
-      setIsVerifyLoading(false)
-    }
-    setShowPasswordModal(false);
   };
 
   const toggleRegisterMethod = () => {
@@ -233,21 +276,19 @@ const Home = () => {
               <div className="flex justify-center pb-5">
                 <div className="bg-white shadow-xs border border-gray-200 rounded-xl py-1 px-1 inline-flex gap-1">
                   <button
-                    className={`relative px-6 py-2 text-xs font-semibold rounded-xl transition-all ${
-                      activeTab === "Dr"
+                    className={`relative px-6 py-2 text-xs font-semibold rounded-xl transition-all ${activeTab === "Dr"
                         ? "bg-[#F7941C] text-white shadow-md"
                         : "text-gray-700 hover:bg-gray-100"
-                    }`}
+                      }`}
                     onClick={() => setActiveTab("Dr")}
                   >
                     Doctor
                   </button>
                   <button
-                    className={`relative px-6 py-2 text-xs font-semibold rounded-xl transition-all ${
-                      activeTab === "Patient"
+                    className={`relative px-6 py-2 text-xs font-semibold rounded-xl transition-all ${activeTab === "Patient"
                         ? "bg-[#F7941C] text-white shadow-md"
                         : "text-gray-700 hover:bg-gray-100"
-                    }`}
+                      }`}
                     onClick={() => setActiveTab("Patient")}
                   >
                     Others
@@ -287,6 +328,7 @@ const Home = () => {
                           name="phone"
                           maxLength={10}
                           onChange={handleFormChange}
+                          onInput={(e) => (e.target.value = e.target.value.replace(/\D/g, ""))}
                         />
                       </>
                     ) : (
@@ -307,6 +349,28 @@ const Home = () => {
                       </>
                     )}
                   </div>
+
+                  {activeTab === "Dr" && (
+                    <div className="flex items-center w-80 pr-2 bg-gray-50 border border-gray-200 rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-[#F7941C]/20 focus-within:border-[#F7941C]">
+                      <div className="flex items-center justify-center gap-2 px-4 py-3 border-r border-gray-200 w-20">
+                        <span className="text-gray-700 font-semibold">State</span>
+                      </div>
+                      <select
+                        className="flex-1 bg-transparent px-4 py-3 focus:outline-none"
+                        value={selectedState}
+                        onChange={handleStateChange}
+                      >
+                        <option value="" disabled>Select State</option>
+                        {states.map((state) => (
+                          <option key={state} value={state}>
+                            {state}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  )}
+
+
                   {activeTab === "Patient" && (
                     <div className="flex items-center max-w-80 bg-gray-50 border border-gray-200 rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-[#F7941C]/20 focus-within:border-[#F7941C]">
                       <div className="flex items-center justify-center gap-2 px-4 py-3 border-r border-gray-200 w-20">
@@ -336,9 +400,8 @@ const Home = () => {
                           className="hidden"
                         />
                         <div
-                          className={`w-4 h-4 rounded-full border border-[#F7941C] flex items-center justify-center transition-all ${
-                            gender === "male" ? "bg-[#F7941C]" : "bg-white"
-                          }`}
+                          className={`w-4 h-4 rounded-full border border-[#F7941C] flex items-center justify-center transition-all ${gender === "male" ? "bg-[#F7941C]" : "bg-white"
+                            }`}
                         ></div>
                         <span className="text-gray-600">Male</span>
                       </label>
@@ -352,9 +415,8 @@ const Home = () => {
                           className="hidden"
                         />
                         <div
-                          className={`w-4 h-4 rounded-full border border-[#F7941C] flex items-center justify-center transition-all ${
-                            gender === "female" ? "bg-[#F7941C]" : "bg-white"
-                          }`}
+                          className={`w-4 h-4 rounded-full border border-[#F7941C] flex items-center justify-center transition-all ${gender === "female" ? "bg-[#F7941C]" : "bg-white"
+                            }`}
                         ></div>
                         <span className="text-gray-600">Female</span>
                       </label>
@@ -380,14 +442,16 @@ const Home = () => {
                 <button
                   disabled={isLoading}
                   onClick={handleRegister}
-                  className={`w-full text-white py-3 rounded-xl mb-4 active:bg-gray-900 transition-opacity ${isLoading ? "bg-gray-700" : "bg-black"} `}
+                  className={`w-full text-white py-3 rounded-xl mb-4 active:bg-gray-900 transition-opacity ${isLoading ? "bg-gray-700" : "bg-black"
+                    }`}
                 >
-                  {
-                    isLoading ? <Loader isCenter={false} /> : "Continue"
-                  }
+                  {isLoading ? <Loader isCenter={false} /> : "Continue"}
                 </button>
                 {showOtpModal && (
-                  <FormModal title="Enter OTP" onClose={() => setShowOtpModal(false)}>
+                  <FormModal
+                    title="Enter OTP"
+                    onClose={() => setShowOtpModal(false)}
+                  >
                     <input
                       className="w-full px-4 py-3 border rounded mb-2"
                       type="text"
@@ -400,14 +464,19 @@ const Home = () => {
                       onClick={handleOtpVerify}
                       className="w-full bg-orange-500 text-white py-3 rounded-xl"
                     >
-                      {
-                        isVerifyLoading ? <Loader BorderColor="border-white" isCenter={false} /> : "Verify OTP"
-                      }
+                      {isVerifyLoading ? (
+                        <Loader BorderColor="border-white" isCenter={false} />
+                      ) : (
+                        "Verify OTP"
+                      )}
                     </button>
                   </FormModal>
                 )}
                 {showPasswordModal && (
-                  <FormModal title="Set Your Password" onClose={() => setShowPasswordModal(false)}>
+                  <FormModal
+                    title="Set Your Password"
+                    onClose={() => setShowPasswordModal(false)}
+                  >
                     <input
                       className="w-full px-4 py-3 border rounded mb-2"
                       type="password"
@@ -420,9 +489,11 @@ const Home = () => {
                       onClick={handlePasswordSubmit}
                       className="w-full bg-orange-500 text-white py-3 rounded-xl"
                     >
-                      {
-                        isVerifyLoading ? <Loader isCenter={flase} BorderColor="border-white" /> : "Submit"
-                      }
+                      {isVerifyLoading ? (
+                        <Loader BorderColor="border-white" isCenter={false} />
+                      ) : (
+                        "Submit"
+                      )}
                     </button>
                   </FormModal>
                 )}

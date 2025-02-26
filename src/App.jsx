@@ -18,21 +18,23 @@ import ProtectedRoute from "./utils/ProtectedRoute";
 import { Toaster } from "react-hot-toast";
 import Login from "./pages/Login";
 import SubmissionHistory from "./pages/SubmissionHistory";
+import { UserProvider } from "./context/userContext";
 
 function App() {
   return (
     <>
       <Toaster />
       <BrowserRouter>
-        <Routes>
-          {/* Public Route (Home) */}
-          <Route path="/" element={<Layout />}>
-            <Route index element={<Home />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/splash" element={<SplashScreen />} />
-          </Route>
+        <UserProvider>
+          <Routes>
+            {/* Public Route (Home) */}
+            <Route path="/" element={<Layout />}>
+              <Route index element={<Home />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/splash" element={<SplashScreen />} />
+            </Route>
 
-          {/* Protected Routes */}
+            {/* Protected Routes */}
             <Route element={<ProtectedRoute />}>
               <Route path="/" element={<Layout />}>
                 <Route path="/Challenges" element={<ChallengesPage />} />
@@ -50,7 +52,8 @@ function App() {
                 <Route path="/history" element={<SubmissionHistory />} />
               </Route>
             </Route>
-        </Routes>
+          </Routes>
+        </UserProvider>
       </BrowserRouter>
     </>
   );
