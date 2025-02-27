@@ -8,15 +8,32 @@ const BottomNavBar = ({ variant = "default" }) => {
   const location = useLocation();
   const currentPath = location.pathname;
   
+  // Routes where history tab should be hidden
+  const hideHistoryRoutes = [
+    "/memberprogram",
+    // Add any other routes where you want to hide the history tab
+  ];
+  
+  // Check if current path starts with any route in hideHistoryRoutes
+  const shouldHideHistory = hideHistoryRoutes.some(route => 
+    currentPath === route || currentPath.startsWith(`${route}/`)
+  );
+  
   // Define navigation items based on variant
-  const navItems = variant === "memberProgram" ? [
+  let navItems = variant === "memberProgram" ? [
     { path: "/welcome", icon: HomeIcon, label: "Home" },
-    { path: "/memberprogram", icon: Gift, label: "Member" }
+    { path: "/memberprogram", icon: Gift, label: "Member" },
+    { path: "/redeemhistory", icon: History, label: "History" }
   ] : [
     { path: "/welcome", icon: HomeIcon, label: "Home" },
     { path: "/challenges", icon: Dumbbell, label: "Challenges" },
-    { path: "/history", icon: History, label: "History" }
+    { path: "/challengehistory", icon: History, label: "History" }
   ];
+  
+  // Filter out history tab if needed
+  if (variant === "memberProgram" && shouldHideHistory) {
+    navItems = navItems.filter(item => item.label !== "History");
+  }
   
   return (
     <div className="fixed bottom-0 left-0 right-0 bg-white shadow-lg border-t border-gray-100">

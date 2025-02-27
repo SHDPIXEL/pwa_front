@@ -3,11 +3,9 @@ import SplashScreen from "./SplashScreen";
 import { useNavigate } from "react-router-dom";
 import brebootSvg from "../assets/svg/BrebootLogo.svg";
 import { FormModal } from "../components/Modal";
-import api from "../utils/Api";
-import toast from "react-hot-toast";
-import { Link } from "react-router-dom";
 import { useUser } from "../context/userContext";
 import Loader from "../components/Loader";
+import useAuth from "../auth/useAuth";
 
 const Home = () => {
   const [isSplashVisible, setIsSplashVisible] = useState(true);
@@ -15,12 +13,7 @@ const Home = () => {
   const [activeTab, setActiveTab] = useState("Dr");
   const [gender, setGender] = useState("female");
   const [registerWithPhone, setRegisterWithPhone] = useState(true);
-  const [showOtpModal, setShowOtpModal] = useState(false);
-  const [showPasswordModal, setShowPasswordModal] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isVerifyLoading, setIsVerifyLoading] = useState(false);
   const [selectedState, setSelectedState] = useState("");
-
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
@@ -30,9 +23,24 @@ const Home = () => {
     password: "",
     gender: gender,
   });
+  const [resendTimer, setResendTimer] = useState(60);
+  const [canResend, setCanResend] = useState(false);
 
   const navigate = useNavigate();
   const { fetchUserDetails } = useUser();
+
+  const {
+    isLoading,
+    isVerifyLoading,
+    showOtpModal,
+    setShowOtpModal,
+    showPasswordModal,
+    setShowPasswordModal,
+    handleRegister,
+    handlePasswordSubmit,
+    handleOtpVerify,
+    resendOtp,
+  } = useAuth(fetchUserDetails, navigate);
 
   useEffect(() => {
     localStorage.setItem("userType", activeTab);
@@ -45,6 +53,24 @@ const Home = () => {
     return () => clearTimeout(timer);
   }, []);
 
+  useEffect(() => {
+    if (showOtpModal && resendTimer > 0) {
+      const countdown = setInterval(() => {
+        setResendTimer((prev) => prev - 1);
+      }, 1000);
+      return () => clearInterval(countdown);
+    } else if (resendTimer === 0) {
+      setCanResend(true);
+    }
+  }, [showOtpModal, resendTimer]);
+
+  const handleResendOtp = async () => {
+    const success = await resendOtp(formData, activeTab, registerWithPhone, selectedState);
+    if (success) {
+      setResendTimer(60);
+      setCanResend(false);
+    }
+  };
 
   const states = [
     "Andhra Pradesh",
@@ -82,9 +108,8 @@ const Home = () => {
     "Delhi",
     "Puducherry",
     "Jammu and Kashmir",
-    "Ladakh"
+    "Ladakh",
   ];
-  
 
   const handleStateChange = (e) => {
     setSelectedState(e.target.value);
@@ -93,7 +118,6 @@ const Home = () => {
       state: e.target.value,
     }));
   };
-
 
   const handleFormChange = (e) => {
     const { name, value } = e.target;
@@ -110,141 +134,6 @@ const Home = () => {
       gender: newGender,
     }));
     localStorage.setItem("GenderType", newGender);
-  };
-
-  const handleRegister = async () => {
-    if (!formData.name) {
-      toast.error("Please enter your name");
-      return;
-    }
-
-    if (registerWithPhone) {
-      if (!formData.phone) {
-        toast.error("Please enter your phone number");
-        return;
-      }
-      if (!/^\d{10}$/.test(formData.phone)) {
-        toast.error("Phone number must be exactly 10 digits");
-        return;
-      }
-    } else {
-      if (!formData.email) {
-        toast.error("Please enter your email");
-        return;
-      }
-    }
-
-    if (activeTab !== "Dr" && !formData.referralCode) {
-      toast.error("Please enter a referral code");
-      return;
-    }
-
-    try {
-      setIsLoading(true);
-      if (registerWithPhone) {
-        // Phone registration: Trigger OTP modal directly
-        const response = await api.post("/auth/user/register", {
-          name: formData.name,
-          phone: formData.phone,
-          email: null,
-          code: activeTab !== "Dr" ? formData.referralCode.toUpperCase() : null,
-          gender: formData.gender,
-          userType: activeTab === "Dr" ? "Doctor" : "OtherUser",
-          state: activeTab === "Dr" ? selectedState : null,
-        });
-
-        if (response.status === 200 || response.status === 201) {
-          setShowOtpModal(true); // Show OTP modal for phone
-        } else {
-          toast.error(response.data.message || "Registration failed");
-        }
-      } else {
-        // Email registration: Show password modal first
-        setShowPasswordModal(true);
-      }
-    } catch (error) {
-      console.error("Registration error:", error);
-      toast.error(
-        error.response?.data?.message || "An error occurred during registration."
-      );
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handlePasswordSubmit = async () => {
-    if (!formData.password) {
-      toast.error("Please enter a password");
-      return;
-    }
-    try {
-      setIsVerifyLoading(true);
-      const response = await api.post("/auth/user/register", {
-        name: formData.name,
-        email: formData.email,
-        password: formData.password, // Include password in the initial request
-        gender: formData.gender,
-        userType: activeTab === "Dr" ? "Doctor" : "OtherUser",
-        code: activeTab !== "Dr" ? formData.referralCode.toUpperCase() : null,
-        state: activeTab === "Dr" ? selectedState : null,
-
-      });
-
-      console.log("Password submission response", response.data);
-
-      if (response.status === 200 || response.status === 201) {
-        setShowPasswordModal(false);
-        setShowOtpModal(true); // Show OTP modal after password submission
-      } else {
-        toast.error(response.data.message || "Password submission failed");
-      }
-    } catch (error) {
-      console.error("Password submission error:", error);
-      toast.error(
-        error.response?.data?.message || "An error occurred while setting the password."
-      );
-    } finally {
-      setIsVerifyLoading(false);
-    }
-  };
-
-  const handleOtpVerify = async () => {
-    if (!formData.otp) {
-      toast.error("Please enter OTP");
-      return;
-    }
-
-    try {
-      setIsVerifyLoading(true);
-      const response = await api.post("/auth/user/register", {
-        name: formData.name,
-        gender: formData.gender,
-        phone: registerWithPhone ? formData.phone : null,
-        email: !registerWithPhone ? formData.email : null,
-        otp: formData.otp,
-        password: !registerWithPhone ? formData.password : null, // Send password for email
-        userType: activeTab === "Dr" ? "Doctor" : "OtherUser",
-        code: activeTab !== "Dr" ? formData.referralCode : null,
-        state: activeTab === "Dr" ? selectedState : null,
-      });
-
-      console.log("Verify response data", response.data);
-      if (response.data.status === "success" || response.status === 200) {
-        toast.success("OTP verified successfully!");
-        setShowOtpModal(false);
-        localStorage.setItem("authToken", response.data.token);
-        await fetchUserDetails();
-        const route = activeTab === "Dr" ? "/firstlogin" : "/welcome";
-        navigate(route);
-      } else {
-        toast.error(response.data.message || "Invalid OTP. Please try again.");
-      }
-    } catch (error) {
-      console.error("OTP verification error:", error);
-      toast.error("An error occurred while verifying OTP.");
-    } finally {
-      setIsVerifyLoading(false);
-    }
   };
 
   const toggleRegisterMethod = () => {
@@ -276,19 +165,21 @@ const Home = () => {
               <div className="flex justify-center pb-5">
                 <div className="bg-white shadow-xs border border-gray-200 rounded-xl py-1 px-1 inline-flex gap-1">
                   <button
-                    className={`relative px-6 py-2 text-xs font-semibold rounded-xl transition-all ${activeTab === "Dr"
+                    className={`relative px-6 py-2 text-xs font-semibold rounded-xl transition-all ${
+                      activeTab === "Dr"
                         ? "bg-[#F7941C] text-white shadow-md"
                         : "text-gray-700 hover:bg-gray-100"
-                      }`}
+                    }`}
                     onClick={() => setActiveTab("Dr")}
                   >
                     Doctor
                   </button>
                   <button
-                    className={`relative px-6 py-2 text-xs font-semibold rounded-xl transition-all ${activeTab === "Patient"
+                    className={`relative px-6 py-2 text-xs font-semibold rounded-xl transition-all ${
+                      activeTab === "Patient"
                         ? "bg-[#F7941C] text-white shadow-md"
                         : "text-gray-700 hover:bg-gray-100"
-                      }`}
+                    }`}
                     onClick={() => setActiveTab("Patient")}
                   >
                     Others
@@ -312,7 +203,7 @@ const Home = () => {
                       onChange={handleFormChange}
                     />
                   </div>
-                  <div className="flex items-center max-w-80 bg-gray-50 border border-gray-200 rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-[#F7941C]/20 focus-within:border-[#F7941C]">
+                  <div className="flex items-center max-w-80 mx-auto bg-gray-50 border border-gray-200 rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-[#F7941C]/20 focus-within:border-[#F7941C]">
                     {registerWithPhone ? (
                       <>
                         <div className="flex items-center justify-center gap-2 px-4 py-3 border-r border-gray-200 w-20">
@@ -328,7 +219,9 @@ const Home = () => {
                           name="phone"
                           maxLength={10}
                           onChange={handleFormChange}
-                          onInput={(e) => (e.target.value = e.target.value.replace(/\D/g, ""))}
+                          onInput={(e) =>
+                            (e.target.value = e.target.value.replace(/\D/g, ""))
+                          }
                         />
                       </>
                     ) : (
@@ -353,14 +246,18 @@ const Home = () => {
                   {activeTab === "Dr" && (
                     <div className="flex items-center w-80 pr-2 bg-gray-50 border border-gray-200 rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-[#F7941C]/20 focus-within:border-[#F7941C]">
                       <div className="flex items-center justify-center gap-2 px-4 py-3 border-r border-gray-200 w-20">
-                        <span className="text-gray-700 font-semibold">State</span>
+                        <span className="text-gray-700 font-semibold">
+                          State
+                        </span>
                       </div>
                       <select
                         className="flex-1 bg-transparent px-4 py-3 focus:outline-none"
                         value={selectedState}
                         onChange={handleStateChange}
                       >
-                        <option value="" disabled>Select State</option>
+                        <option value="" disabled>
+                          Select State
+                        </option>
                         {states.map((state) => (
                           <option key={state} value={state}>
                             {state}
@@ -369,7 +266,6 @@ const Home = () => {
                       </select>
                     </div>
                   )}
-
 
                   {activeTab === "Patient" && (
                     <div className="flex items-center max-w-80 bg-gray-50 border border-gray-200 rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-[#F7941C]/20 focus-within:border-[#F7941C]">
@@ -400,8 +296,9 @@ const Home = () => {
                           className="hidden"
                         />
                         <div
-                          className={`w-4 h-4 rounded-full border border-[#F7941C] flex items-center justify-center transition-all ${gender === "male" ? "bg-[#F7941C]" : "bg-white"
-                            }`}
+                          className={`w-4 h-4 rounded-full border border-[#F7941C] flex items-center justify-center transition-all ${
+                            gender === "male" ? "bg-[#F7941C]" : "bg-white"
+                          }`}
                         ></div>
                         <span className="text-gray-600">Male</span>
                       </label>
@@ -415,8 +312,9 @@ const Home = () => {
                           className="hidden"
                         />
                         <div
-                          className={`w-4 h-4 rounded-full border border-[#F7941C] flex items-center justify-center transition-all ${gender === "female" ? "bg-[#F7941C]" : "bg-white"
-                            }`}
+                          className={`w-4 h-4 rounded-full border border-[#F7941C] flex items-center justify-center transition-all ${
+                            gender === "female" ? "bg-[#F7941C]" : "bg-white"
+                          }`}
                         ></div>
                         <span className="text-gray-600">Female</span>
                       </label>
@@ -441,9 +339,12 @@ const Home = () => {
                 </div>
                 <button
                   disabled={isLoading}
-                  onClick={handleRegister}
-                  className={`w-full text-white py-3 rounded-xl mb-4 active:bg-gray-900 transition-opacity ${isLoading ? "bg-gray-700" : "bg-black"
-                    }`}
+                  onClick={() =>
+                    handleRegister(formData, activeTab, registerWithPhone, selectedState)
+                  }
+                  className={`w-full text-white py-3 rounded-xl mb-4 active:bg-gray-900 transition-opacity ${
+                    isLoading ? "bg-gray-700" : "bg-black"
+                  }`}
                 >
                   {isLoading ? <Loader isCenter={false} /> : "Continue"}
                 </button>
@@ -461,13 +362,33 @@ const Home = () => {
                       onChange={handleFormChange}
                     />
                     <button
-                      onClick={handleOtpVerify}
-                      className="w-full bg-orange-500 text-white py-3 rounded-xl"
+                      onClick={() =>
+                        handleOtpVerify(formData, activeTab, registerWithPhone, selectedState)
+                      }
+                      className="w-full bg-orange-500 text-white py-3 rounded-xl mb-2"
+                      disabled={isVerifyLoading}
                     >
                       {isVerifyLoading ? (
                         <Loader BorderColor="border-white" isCenter={false} />
                       ) : (
                         "Verify OTP"
+                      )}
+                    </button>
+                    <button
+                      onClick={handleResendOtp}
+                      disabled={!canResend || isLoading}
+                      className={`w-full text-[#F7941C] py-2 rounded-xl transition-opacity ${
+                        !canResend || isLoading
+                          ? "opacity-50 cursor-not-allowed"
+                          : "hover:bg-gray-100"
+                      }`}
+                    >
+                      {isLoading ? (
+                        <Loader isCenter={false} />
+                      ) : canResend ? (
+                        "Resend OTP"
+                      ) : (
+                        `Resend OTP in ${resendTimer}s`
                       )}
                     </button>
                   </FormModal>
@@ -486,8 +407,11 @@ const Home = () => {
                       onChange={handleFormChange}
                     />
                     <button
-                      onClick={handlePasswordSubmit}
+                      onClick={() =>
+                        handlePasswordSubmit(formData, activeTab, selectedState)
+                      }
                       className="w-full bg-orange-500 text-white py-3 rounded-xl"
+                      disabled={isVerifyLoading}
                     >
                       {isVerifyLoading ? (
                         <Loader BorderColor="border-white" isCenter={false} />

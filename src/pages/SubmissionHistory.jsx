@@ -2,13 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { BottomNavBar } from '../components/BottomNavBar';
 import Header from '../components/Header';
 import { Calendar, Image, FileText, Video, ExternalLink, Phone } from 'lucide-react';
-import api from '../utils/Api';
+import api, { BASE_IMAGE_URL } from '../utils/Api';
 import toast from 'react-hot-toast';
 import Loader from '../components/Loader';
 
 const MediaTypeIcon = ({ type }) => {
     switch (type.toLowerCase()) {
         case 'images':
+        case 'image': // Add 'image' to handle potential variations
             return <Image size={18} className="text-blue-500" />;
         case 'video':
             return <Video size={18} className="text-purple-500" />;
@@ -38,17 +39,19 @@ const SubmissionCard = ({ submission }) => {
                         </div>
                         <div className="flex items-center gap-1">
                             <MediaTypeIcon type={submission.mediaType} />
-                            <span className="text-xs text-gray-500 capitalize">{submission.mediaType} ({submission.mediaFiles.length})</span>
+                            <span className="text-xs text-gray-500 capitalize">
+                                {submission.mediaType} ({submission.mediaFiles.length})
+                            </span>
                         </div>
                     </div>
                 </div>
 
-                <button
+                {/* <button
                     onClick={() => setExpanded(!expanded)}
                     className="text-xs text-[#F7941C] font-medium flex items-center gap-1 ml-2"
                 >
                     {expanded ? 'Show less' : 'View files'}
-                </button>
+                </button> */}
             </div>
 
             <div className="mt-3">
@@ -61,10 +64,18 @@ const SubmissionCard = ({ submission }) => {
                     <p className="text-xs text-gray-500 font-medium mb-2">Media Files:</p>
                     <div className="grid grid-cols-4 gap-2">
                         {submission.mediaFiles.map((file, index) => (
-                            <div key={index} className="relative rounded-lg bg-gray-100 h-20 flex items-center justify-center overflow-hidden group">
-                                {submission.mediaType === 'image' ? (
-                                    <img src={file} alt="Submission" className="w-full h-full object-cover" onError={(e) => e.target.src = '/placeholder-image.jpg'} />
-                                ) : submission.mediaType === 'video' ? (
+                            <div
+                                key={index}
+                                className="relative rounded-lg bg-gray-100 h-20 flex items-center justify-center overflow-hidden group"
+                            >
+                                {(['images', 'image'].includes(submission.mediaType.toLowerCase())) ? (
+                                    <img
+                                        src={file}
+                                        alt="Submission"
+                                        className="w-full h-full object-cover"
+                                        onError={(e) => (e.target.src = '/placeholder-image.jpg')}
+                                    />
+                                ) : submission.mediaType.toLowerCase() === 'video' ? (
                                     <video src={file} className="w-full h-full object-cover" controls />
                                 ) : (
                                     <div className="w-full h-full bg-gray-200 flex items-center justify-center">
@@ -73,7 +84,10 @@ const SubmissionCard = ({ submission }) => {
                                 )}
                                 <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 flex items-center justify-center transition-all">
                                     <a href={file} target="_blank" rel="noopener noreferrer">
-                                        <ExternalLink size={18} className="text-white opacity-0 group-hover:opacity-100 transition-all" />
+                                        <ExternalLink
+                                            size={18}
+                                            className="text-white opacity-0 group-hover:opacity-100 transition-all"
+                                        />
                                     </a>
                                 </div>
                             </div>
@@ -97,11 +111,24 @@ const EmptyState = () => (
     </div>
 );
 
+const extractImagePath = (imageString) => {
+    try {
+        // If it's already a full URL, return it as is
+        if (imageString.startsWith('http')) {
+            return imageString;
+        }
+        // Remove surrounding brackets and quotes from JSON string, decode URL components
+        const cleanedString = decodeURIComponent(imageString).replace(/^\["|"\]$/g, "");
+        return `${BASE_IMAGE_URL}/${cleanedString}`;
+    } catch (error) {
+        console.error("Error parsing image path:", error);
+        return "/placeholder-image.jpg"; // Fallback image
+    }
+};
+
 const SubmissionHistory = () => {
     const [submissions, setSubmissions] = useState([]);
     const [loading, setLoading] = useState(true);
-
-    // const userId
 
     useEffect(() => {
         const fetchHistory = async () => {
@@ -109,19 +136,24 @@ const SubmissionHistory = () => {
                 const response = await api.get(`/user/get/challengeForm`);
                 console.log("Raw challenge data:", response.data);
 
-                const dataArray = Array.isArray(response.data) ? response.data
-                    : Array.isArray(response.data?.data) ? response.data.data
-                        : [response.data]; // Wrap in an array if it's a single object
+                const dataArray = Array.isArray(response.data)
+                    ? response.data
+                    : Array.isArray(response.data?.data)
+                    ? response.data.data
+                    : [response.data]; // Wrap in an array if it's a single object
 
                 console.log("Processed data array:", dataArray);
-                // Transform the data with error handling
-                const transformedData = dataArray.map(item => {
+
+                // Transform the data with error handling and image path extraction
+                const transformedData = dataArray.map((item) => {
                     let mediaFiles = [];
                     try {
-                        // Handle case where mediaFiles might already be an array or invalid JSON
-                        mediaFiles = Array.isArray(item.mediaFiles)
-                            ? item.mediaFiles
-                            : JSON.parse(item.mediaFiles || '[]');
+                        // Handle case where mediaFiles might be a JSON string or array
+                        mediaFiles = typeof item.mediaFiles === 'string'
+                            ? JSON.parse(item.mediaFiles || '[]').map((file) => extractImagePath(file))
+                            : Array.isArray(item.mediaFiles)
+                            ? item.mediaFiles.map((file) => extractImagePath(file))
+                            : [];
                     } catch (e) {
                         console.error(`Error parsing mediaFiles for item ${item.id}:`, e);
                         mediaFiles = []; // Fallback to empty array if parsing fails
@@ -129,16 +161,17 @@ const SubmissionHistory = () => {
 
                     return {
                         id: item.id,
-                        name: item.challengeName,
+                        name: item.challengeName || item.name, // Use challengeName if available, fallback to name
                         phone: item.phone,
                         createdAt: item.createdAt,
                         remark: item.remark,
-                        mediaType: item.mediaType,
-                        mediaFiles: mediaFiles
+                        mediaType: item.mediaType || 'images', // Default to 'images' if not specified
+                        mediaFiles: mediaFiles,
                     };
                 });
 
                 setSubmissions(transformedData);
+                console.log("Transformed submissions:", transformedData);
             } catch (error) {
                 console.error("Fetch error:", error);
                 toast.error("Error in fetching user history");
@@ -164,7 +197,7 @@ const SubmissionHistory = () => {
                         </div>
 
                         <div className="grid grid-cols-1 gap-4">
-                            {submissions.map(submission => (
+                            {submissions.map((submission) => (
                                 <SubmissionCard key={submission.id} submission={submission} />
                             ))}
                         </div>

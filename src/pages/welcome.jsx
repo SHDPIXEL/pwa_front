@@ -4,12 +4,10 @@ import menProfile from "../assets/images/man.png";
 import womanProfile from "../assets/images/woman.png";
 import { Link, useNavigate } from "react-router-dom";
 import {ConsentModal} from "../components/Modal";
-import redeem from "../assets/images/redeem-bg.png";
 import brebootSvg from "../assets/svg/BrebootLogo.svg";
 import useLogout from "../auth/Logout.Jsx";
 import { useUser } from "../context/userContext";
 import Loader from "../components/Loader";
-// import coin from "../assets/svg/Coin_b.svg";
 import coin from "../assets/images/Coin_b.png"
 
 
@@ -144,7 +142,7 @@ const Welcome = () => {
             {/* Welcome Text */}
 
             <h2 className="text-lg font-bold">Welcome back</h2>
-            <p className="text-4xl text-black font-bold ">{userData.name} !</p>
+            <p className="text-4xl text-black font-bold text-center px-3">{userData.name} !</p>
             {user === "Dr" && <div className="text-center">
                 <button
                     onClick={handleCopy}

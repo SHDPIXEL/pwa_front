@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom"; // Add useLocation
+import { useNavigate, useLocation } from "react-router-dom";
 import api from "../utils/Api";
+import toast from "react-hot-toast"; // Optional: for user feedback
 
 const UserContext = createContext();
 
@@ -8,20 +9,25 @@ export const UserProvider = ({ children }) => {
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-  const location = useLocation(); // Hook to get current path
+  const location = useLocation();
 
   const fetchUserDetails = async () => {
     try {
+      const token = localStorage.getItem("authToken");
+      if (!token) {
+        throw new Error("No auth token found");
+      }
       const response = await api.get("/user/getuserdetails");
       setUserData(response.data.user);
-      console.log(response.data);
       localStorage.setItem("GenderType", response.data.user.gender);
     } catch (error) {
       console.error("Failed to fetch user details:", error);
-      setUserData(null); // Clear userData on error (e.g., invalid token)
-      // Only redirect if not already on "/" or "/login"
-      if (location.pathname !== "/" && location.pathname !== "/login") {
-        navigate("/");
+      setUserData(null); // Clear user data on failure
+      const isPublicRoute = ["/", "/login"].includes(location.pathname);
+      if (!isPublicRoute) {
+        // Redirect to "/" only if not on a public route
+        toast.error("Session expired. Please log in again."); // Optional feedback
+        navigate("/login"); // Redirect to "/login" instead of "/"
       }
     } finally {
       setLoading(false);
@@ -30,23 +36,28 @@ export const UserProvider = ({ children }) => {
 
   useEffect(() => {
     const token = localStorage.getItem("authToken");
+    const isPublicRoute = ["/", "/login"].includes(location.pathname);
+
     if (token) {
       fetchUserDetails(); // Fetch user details if token exists
     } else {
-      setUserData(null); // No token, clear userData
+      setUserData(null); // No token, clear user data
       setLoading(false);
-      // Only redirect if not already on "/" or "/login"
-      if (location.pathname !== "/" && location.pathname !== "/login") {
-        navigate("/");
+      if (!isPublicRoute) {
+        // Redirect to "/" only if not on "/" or "/login"
+        navigate("/"); // Allow "/" and "/login" without redirect
       }
     }
-  }, [navigate, location.pathname]); // Add location.pathname to dependency array
+  }, [navigate, location.pathname]);
 
   const logout = () => {
-    setUserData(null); // Clear user data in context
-    localStorage.removeItem("authToken"); // Remove token from localStorage
+    setUserData(null);
+    localStorage.removeItem("authToken");
+    localStorage.removeItem("GenderType"); // Clean up other stored data
+    localStorage.removeItem("userType");
     setLoading(false);
-    navigate("/"); // Redirect to "/" on logout
+    navigate("/"); // Redirect to "/" on explicit logout
+    toast.success("Logged out successfully"); // Optional feedback
   };
 
   return (

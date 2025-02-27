@@ -1,8 +1,10 @@
 import { User, Swords, CodeSquare } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { BASE_IMAGE_URL } from "../utils/Api";
+import coin from "../assets/images/Coin_b.png";
 
-const ChallengeCard = ({ challenge, isCompleted }) => {
+
+const ChallengeCard = ({ challenge, status }) => {
   const { weekId } = useParams();
   const navigate = useNavigate();
 
@@ -13,7 +15,6 @@ const ChallengeCard = ({ challenge, isCompleted }) => {
     console.error("Error parsing challenge_images:", error);
   }
 
-  console.log("images routes",challengeImages)
 
   return (
     <div className="bg-white rounded-2xl border border-black/15 shadow-sm mb-6 overflow-hidden flex items-center p-4">
@@ -27,12 +28,21 @@ const ChallengeCard = ({ challenge, isCompleted }) => {
       {/* Right Side: Content */}
       <div className="flex-1">
         <div className="flex justify-between items-center mb-2">
+
           <h2 className="text-lg font-semibold text-gray-900">
             {challenge.name}
           </h2>
-          <div className="flex gap-2 items-center">
-            {challenge.submissionCount}
-            <User className="text-gray-500 w-4 h-4" />
+          <div className="flex items-center justify-center space-x-2 text-xs text-gray-500">
+            <div className="flex justify-center items-center space-x-1">
+              <img src={coin} alt="coin-image" className="w-3 h-auto" />
+              <div className="text-xs">
+                {challenge?.rewards || 0}
+              </div>
+            </div>
+            <div className="flex gap-2 items-center">
+              <User className="w-3 h-3" />
+              {challenge.submissionCount}
+            </div>
           </div>
         </div>
 
@@ -45,16 +55,21 @@ const ChallengeCard = ({ challenge, isCompleted }) => {
               state: { challenge },
             })
           }
-          className={`w-full py-2 px-4 rounded-xl text-white font-medium transition-all hover:opacity-90 ${
-            isCompleted
-              ? "bg-green-500 active:bg-green-600"
-              : "bg-[#F7941C] active:bg-amber-600"
-          } flex items-center justify-center gap-2`}
-          disabled={isCompleted} // Optional: Disable button if completed
+          className={`w-full py-2 px-4 rounded-xl text-white font-medium transition-all hover:opacity-90 ${status === "Completed"
+            ? "bg-green-500 active:bg-green-600"
+            : status === "Under Verification"
+              ? "bg-yellow-500 active:bg-yellow-600"
+              : status === "Disapproved"
+                ? "bg-red-500 active:bg-red-600"
+                : "bg-[#F7941C] active:bg-amber-600"
+            } flex items-center justify-center gap-2`}
+          disabled={status === "Completed" || status === "Under Verification"}
         >
-          <span>{isCompleted ? "Completed" : "Start"}</span>
-          {!isCompleted && <Swords className="w-4 h-4" />}
+          <span>{status}</span>
+          {status === "Start" && <Swords className="w-4 h-4" />}
+
         </button>
+
       </div>
     </div>
   );

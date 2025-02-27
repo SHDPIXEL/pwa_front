@@ -19,7 +19,7 @@ const Layout = () => {
         {!hideBackButton && (
           <button
             onClick={() => navigate(-1)}
-            className="fixed bottom-7 left-10 transform -translate-x-1/2 border border-[#F7941C]/50 text-sm p-1.5 rounded-full flex items-center gap-1 shadow-[#F7941C]"
+            className="fixed bottom-20 left-8 transform -translate-x-1/2 border border-[#F7941C]/50 text-sm p-1.5 rounded-full flex items-center gap-1 shadow-lg"
           >
             <ChevronLeft className="w-5 h-5 text-gray-700" />
           </button>

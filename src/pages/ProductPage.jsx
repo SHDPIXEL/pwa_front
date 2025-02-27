@@ -7,6 +7,7 @@ import { useUser } from "../context/userContext";
 import toast from "react-hot-toast";
 import api from "../utils/Api";
 import Loader from "../components/Loader";
+import payUPayment from "./PayUPayment";
 
 const ProductPage = () => {
     const { id } = useParams();
@@ -15,6 +16,9 @@ const ProductPage = () => {
     const [doctorCode, setDoctorCode] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const [quantity, setQuantity] = useState(userType === "Dr" ? 100 : 1);
+    const [hash, setHash] = useState("");
+    const [transactionId, setTransactionId] = useState("")
+    const [toggle, setToggle] = useState("")
 
 
     const { userData, fetchUserDetails } = useUser();
@@ -24,6 +28,14 @@ const ProductPage = () => {
 
     const BASE_URL = "http://192.168.1.11:4040";
     const FRONTEND_URL = "http://localhost:3000";
+
+    const data = {
+        txnid: `TXN_${id}_${Date.now()}`,
+        amount: (product.price * quantity).toFixed(2),
+        productinfo: product.name,
+        firstname: userData?.name || "Guest",
+        email: userData?.email || "guest@example.com",
+    };
     
 
     useEffect(() => {
@@ -52,6 +64,25 @@ const ProductPage = () => {
                 {isLoading ? <Loader /> : "Product not found!"}
             </div>
         );
+    }
+
+    const handleGetHash = async () => {
+        console.log("Data for hash", data);
+        try{
+            const response = await api.post("/auth/user/hash", data);
+            const hash = response.data;
+            console.log("Generated Hash", response.data)
+            setHash(response.data.hash);
+            setTransactionId(response.data.transactionId);
+        }catch(error){
+            console.error("Error in generating hash", error)
+        }
+    }
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        handleGetHash();
+        setToggle(2)
     }
 
     const handlePurchase = async () => {
@@ -187,6 +218,7 @@ const ProductPage = () => {
                 )}
                 <div className="p-4">
                     <button
+                        // onClick={handleSubmit}
                         onClick={handlePurchase}
                         className="w-full bg-[#F7941C] text-white py-3 rounded-xl flex items-center justify-center gap-2 font-medium active:bg-amber-600"
                         disabled={isLoading}
@@ -202,6 +234,10 @@ const ProductPage = () => {
                                 Buy Now • ₹{(product.price * quantity).toLocaleString()}
                             </div>
                         )}
+
+                        {
+                            toggle === 2 && <payUPayment setToogle={setToggle} form={data} hash={hash} transactionId={transactionId} />
+                        }
                     </button>
                 </div>
             </div>

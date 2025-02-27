@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from "react";
 import Header from "../components/Header";
-import { UserPen, Copy, Check, Mail, Phone, User, LogOut, Key, Dot } from "lucide-react";
+import { UserPen, Copy, Check, Mail, Phone, User, LogOut, Key, Dot, MapPin } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { ConsentModal } from "../components/Modal";
 import { useUser } from "../context/userContext";
 import api from "../utils/Api";
 import toast from "react-hot-toast";
 import useLogout from "../auth/Logout.Jsx";
-// import coin from "../assets/svg/Coin.svg";
 import coin from "../assets/images/Coin_b.png";
+import menProfile from "../assets/images/man.png";
+import womanProfile from "../assets/images/woman.png";
 
 
 const Profile = () => {
@@ -18,7 +19,6 @@ const Profile = () => {
 
   const { userData, setUserData, loading } = useUser();
   const user = localStorage.getItem("userType");
-  const navigate = useNavigate();
   const logout = useLogout();
 
 
@@ -27,15 +27,56 @@ const Profile = () => {
     phone: "",
     email: "",
     doctorCode: "",
+    state: ""
   });
+
+  const states = [
+    "Andhra Pradesh",
+    "Arunachal Pradesh",
+    "Assam",
+    "Bihar",
+    "Chhattisgarh",
+    "Goa",
+    "Gujarat",
+    "Haryana",
+    "Himachal Pradesh",
+    "Jharkhand",
+    "Karnataka",
+    "Kerala",
+    "Madhya Pradesh",
+    "Maharashtra",
+    "Manipur",
+    "Meghalaya",
+    "Mizoram",
+    "Nagaland",
+    "Odisha",
+    "Punjab",
+    "Rajasthan",
+    "Sikkim",
+    "Tamil Nadu",
+    "Telangana",
+    "Tripura",
+    "Uttar Pradesh",
+    "Uttarakhand",
+    "West Bengal",
+    "Andaman and Nicobar Islands",
+    "Chandigarh",
+    "Dadra and Nagar Haveli and Daman and Diu",
+    "Lakshadweep",
+    "Delhi",
+    "Puducherry",
+    "Jammu and Kashmir",
+    "Ladakh"
+  ];
 
   useEffect(() => {
     if (userData) {
       setFormData({
-        name: userData.name || "", 
+        name: userData.name || "",
         phone: userData.phone || "",
         email: userData.email || "",
         doctorCode: userData.code || "",
+        state: userData.state || "",
       });
     }
   }, [userData]);
@@ -43,6 +84,13 @@ const Profile = () => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
+
+    if (name === "phone") {
+      if (!/^[0-9]*$/.test(value)) {
+        return;
+      }
+    }
+
     setFormData((prev) => ({
       ...prev,
       [name]: value,
@@ -51,10 +99,11 @@ const Profile = () => {
 
   const handleUpdate = async () => {
     try {
-      const response = await api.put("/user/updateprofile", {
+      const response = await api.put("/user/update", {
         name: formData.name,
         phone: formData.phone,
         email: formData.email,
+        state: formData.state,
       });
 
       if (response.status === 200) {
@@ -63,6 +112,7 @@ const Profile = () => {
           name: formData.name,
           phone: formData.phone,
           email: formData.email,
+          state: formData.state,
         }));
         toast.success("Profile updated successfully!");
         setIsEditing(false);
@@ -137,9 +187,10 @@ const Profile = () => {
           <div className="h-32 bg-[#F7941C]" />
           <div className="px-4 -mt-16">
             <div className="relative inline-block">
-              <div className="w-32 h-32 bg-white rounded-2xl p-1">
-                <div className="w-full h-full bg-gray-100 rounded-xl flex items-center justify-center relative overflow-hidden">
-                  <User className="w-16 h-16 text-gray-400" />
+              <div className="w-32 h-32 bg-white rounded-full p-1">
+                <div className="w-full h-full bg-gray-100 rounded-full flex items-center justify-center relative overflow-hidden">
+                  {/* <User className="w-16 h-16 text-gray-400" /> */}
+                  <img src={userData?.gender === "male" ? menProfile : womanProfile} alt="diaplay-image" />
                 </div>
               </div>
             </div>
@@ -165,9 +216,8 @@ const Profile = () => {
                 <input
                   type="text"
                   name="name"
-                  className={`w-full px-3 py-2 bg-gray-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#F7941C]/20 ${
-                    isEditing ? "text-black" : "text-gray-500"
-                  }`}
+                  className={`w-full px-3 py-2 bg-gray-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#F7941C]/20 ${isEditing ? "text-black" : "text-gray-500"
+                    }`}
                   value={formData.name}
                   onChange={handleInputChange}
                   disabled={!isEditing}
@@ -210,9 +260,9 @@ const Profile = () => {
                   <input
                     type="tel"
                     name="phone"
-                    className={`w-full px-3 py-2 bg-gray-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#F7941C]/20 ${
-                      isEditing ? "text-black" : "text-gray-500"
-                    }`}
+                    maxLength={10}
+                    className={`w-full px-3 py-2 bg-gray-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#F7941C]/20 ${isEditing ? "text-black" : "text-gray-500"
+                      }`}
                     value={formData.phone}
                     onChange={handleInputChange}
                     disabled={!isEditing}
@@ -227,14 +277,37 @@ const Profile = () => {
                   <input
                     type="email"
                     name="email"
-                    className={`w-full px-3 py-2 bg-gray-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#F7941C]/20 ${
-                      isEditing ? "text-black" : "text-gray-500"
-                    }`}
+                    className={`w-full px-3 py-2 bg-gray-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#F7941C]/20 ${isEditing ? "text-black" : "text-gray-500"
+                      }`}
                     value={formData.email}
                     onChange={handleInputChange}
                     disabled={!isEditing}
                   />
                 </div>
+
+                {user === "Dr" && (
+                  <div>
+                    <div className="flex items-center gap-2 text-gray-500 mb-1">
+                      <MapPin className="w-4 h-4" />
+                      <span className="text-sm">State</span>
+                    </div>
+                    <select
+                      name="state"
+                      className={`w-full px-3 py-2 bg-gray-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#F7941C]/20 ${isEditing ? "text-black" : "text-gray-500"
+                        }`}
+                      value={formData.state}
+                      onChange={handleInputChange}
+                      disabled={!isEditing}
+                    >
+                      <option value="">Select a state</option>
+                      {states.map((state) => (
+                        <option key={state} value={state}>
+                          {state}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
               </div>
             </div>
 

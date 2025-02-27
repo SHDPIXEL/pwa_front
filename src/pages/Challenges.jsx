@@ -14,74 +14,76 @@ const ChallengesPage = () => {
   const [completedChallengeIds, setCompletedChallengeIds] = useState([]);
 
   useEffect(() => {
-   const fetchChallenges = async () => {
-  try {
-    setIsLoading(true);
+    const fetchChallenges = async () => {
+      try {
+        setIsLoading(true);
 
-    // Fetch all weeks
-    const weeksResponse = await api.get("/user/weeks");
-    const weeksData = weeksResponse.data || [];
+        // Fetch all weeks
+        const weeksResponse = await api.get("/user/weeks");
+        const weeksData = weeksResponse.data || [];
+        const activeaWeeks = weeksResponse.data.filter(week => week.status === "Active");
+        console.log("weeks Data", weeksData)
 
-    // Fetch completed challenges (handling 404 error separately)
-    let completedIds = [];
-    try {
-      const completedResponse = await api.get("/user/allchallengeForms");
-      completedIds = Array.isArray(completedResponse?.data)
-        ? completedResponse.data.map((item) => item.challengeId)
-        : [];
-    } catch (error) {
-      if (error.response && error.response.status === 404) {
-        console.warn("No completed challenges found, treating as empty.");
-      } else {
-        console.error("Error fetching completed challenges:", error);
-        throw error; // Re-throw if it's a different error
-      }
-    }
-
-    setCompletedChallengeIds(completedIds);
-    console.log("Completed Challenges IDs:", completedIds);
-
-    // Fetch challenges for each week and calculate progress
-    const updatedWeeks = await Promise.all(
-      weeksData.map(async (week) => {
+        // Fetch completed challenges (handling 404 error separately)
+        let completedIds = [];
         try {
-          const challengesResponse = await api.get(
-            `/user/challenges/${week.id}`
-          );
-          const challenges = challengesResponse.data || [];
-
-          // Calculate the number of completed challenges for this week
-          const completedInWeek = challenges.filter((challenge) =>
-            completedIds.includes(challenge.id)
-          ).length;
-
-          // Calculate progress percentage
-          const totalChallenges = challenges.length;
-          const progress =
-            totalChallenges > 0
-              ? Math.round((completedInWeek / totalChallenges) * 100)
-              : 0;
-
-          return { ...week, progress }; // Add progress to week object
+          const completedResponse = await api.get("/user/allchallengeForms");
+          completedIds = Array.isArray(completedResponse?.data)
+            ? completedResponse.data.map((item) => ({
+              challengeId: item.challengeId,
+              isVerified: item.isVerified,
+            }))
+            : [];
         } catch (error) {
-          console.error(
-            `Error fetching challenges for week ${week.id}:`,
-            error
-          );
-          return { ...week, progress: 0 }; // Fallback to 0% on error
+          if (error.response && error.response.status === 404) {
+            console.warn("No completed challenges found, treating as empty.");
+          } else {
+            console.error("Error fetching completed challenges:", error);
+            throw error;
+          }
         }
-      })
-    );
 
-    setWeeks(updatedWeeks);
-    console.log("Updated Weeks with Progress:", updatedWeeks);
-  } catch (error) {
-    console.error("Error in fetching challenges", error);
-    toast.error("Error in fetching challenges"); // Avoid passing `error` directly to `toast.error`
-  } finally {
-    setIsLoading(false);
-  }
-};
+        setCompletedChallengeIds(completedIds);
+
+        // Fetch challenges for each week and calculate progress
+        const updatedWeeks = await Promise.all(
+          weeksData.map(async (week) => {
+            try {
+              const challengesResponse = await api.get(
+                `/user/challenges/${week.id}`
+              );
+              const challenges = challengesResponse.data || [];
+
+              // Calculate the number of completed challenges for this week
+              const completedInWeek = challenges.filter((challenge) =>
+                completedIds.some((completed) => completed.challengeId === challenge.id && completed.isVerified === true)).length;
+
+              // Calculate progress percentage
+              const totalChallenges = challenges.length;
+              const progress =
+                totalChallenges > 0
+                  ? Math.round((completedInWeek / totalChallenges) * 100)
+                  : 0;
+
+              return { ...week, progress }; // Add progress to week object
+            } catch (error) {
+              console.error(
+                `Error fetching challenges for week ${week.id}:`,
+                error
+              );
+              return { ...week, progress: 0 }; // Fallback to 0% on error
+            }
+          })
+        );
+
+        setWeeks(updatedWeeks);
+      } catch (error) {
+        console.error("Error in fetching challenges", error);
+        toast.error("Error in fetching challenges"); // Avoid passing `error` directly to `toast.error`
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
     fetchChallenges();
   }, []); // Empty dependency array since we only fetch once on mount
@@ -95,39 +97,48 @@ const ChallengesPage = () => {
           <Loader />
         ) : (
           <div>
-            {weeks.map((week) => (
-              <div
-                key={week.id}
-                className="bg-white rounded-2xl border border-black/15 shadow-sm mb-6 p-4 cursor-pointer hover:bg-gray-100 transition-all"
-              >
-                <div className="flex justify-between items-center mb-2">
-                  <h3 className="text-lg font-semibold text-gray-900">
-                    {week.name}
-                  </h3>
-                  <span className="text-sm text-gray-500">
-                    {week.progress}% Completed
-                  </span>
-                </div>
-                {/* Progress Bar */}
-                <ProgressBar progress={week.progress} />
+            {weeks.filter((week) => week.status === "Active").length > 0 ? (
+              weeks
+                .filter((week) => week.status === "Active")
+                .map((week) => (
+                  <div
+                    key={week.id}
+                    className="bg-white rounded-2xl border border-black/15 shadow-sm mb-6 p-4 cursor-pointer hover:bg-gray-100 transition-all"
+                  >
+                    <div className="flex justify-between items-center mb-2">
+                      <h3 className="text-lg font-semibold text-gray-900">
+                        {week.name}
+                      </h3>
+                      <span className="text-sm text-gray-500">
+                        {week.progress}% Completed
+                      </span>
+                    </div>
+                    {/* Progress Bar */}
+                    <ProgressBar progress={week.progress} />
 
-                {/* Join Button */}
-                <button
-                  onClick={() =>
-                    navigate(`/challenges/week/${week.id}`, {
-                      state: { weekName: week.name, completedChallengeIds },
-                    })
-                  }
-                  className="w-full mt-6 py-2 px-4 rounded-xl text-white font-medium transition-all hover:opacity-90 bg-[#F7941C] active:bg-amber-600"
-                >
-                  <div className="flex items-center justify-center gap-2">
-                    <div>Join Weekly Challenges</div>
+                    {/* Join Button */}
+                    <button
+                      onClick={() =>
+                        navigate(`/challenges/week/${week.id}`, {
+                          state: { weekName: week.name, completedChallengeIds },
+                        })
+                      }
+                      className="w-full mt-6 py-2 px-4 rounded-xl text-white font-medium transition-all hover:opacity-90 bg-[#F7941C] active:bg-amber-600"
+                    >
+                      <div className="flex items-center justify-center gap-2">
+                        <div>Join Weekly Challenges</div>
+                      </div>
+                    </button>
                   </div>
-                </button>
+                ))
+            ) : (
+              <div className="text-center text-gray-600 font-medium mt-10">
+                No active challenges available.
               </div>
-            ))}
+            )}
           </div>
         )}
+
       </div>
       <BottomNavBar />
     </div>

@@ -19,6 +19,8 @@ import { Toaster } from "react-hot-toast";
 import Login from "./pages/Login";
 import SubmissionHistory from "./pages/SubmissionHistory";
 import { UserProvider } from "./context/userContext";
+import RedeemHistory from "./pages/RedeemHistory";
+
 
 function App() {
   return (
@@ -49,7 +51,8 @@ function App() {
                 <Route path="/reward/:id" element={<RewardPage />} />
                 <Route path="/thankyou" element={<ThankYouPage />} />
                 <Route path="/firstlogin" element={<FirstLogin />} />
-                <Route path="/history" element={<SubmissionHistory />} />
+                <Route path="/challengehistory" element={<SubmissionHistory />} />
+                <Route path="redeemhistory" element={<RedeemHistory />} />
               </Route>
             </Route>
           </Routes>

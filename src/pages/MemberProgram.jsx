@@ -28,7 +28,7 @@ const MemberProgramPage = () => {
                 setIsLoading(true);
                 const response = await api.get("user/products");
                 setProductDetails(response.data);
-                console.log("Product data",response.data)
+                console.log("Product data", response.data)
             } catch (error) {
                 console.error("Error fetching products:", error);
             } finally {
@@ -58,25 +58,32 @@ const MemberProgramPage = () => {
                                 <Loader />
                             ) : (
                                 <div>
-                                    {productDetails.map((product) => {
-                                        const discountPercentage = product.oldPrice
-                                            ? ((1 - product.newPrice / product.oldPrice) * 100).toFixed(2)
-                                            : 0;
+                                    {productDetails.filter((product) => product.status === "Active").length > 0 ? (
+                                        productDetails
+                                            .filter((product) => product.status === "Active")
+                                            .map((product) => {
+                                                const discountPercentage = product.oldPrice
+                                                    ? ((1 - product.newPrice / product.oldPrice) * 100).toFixed(2)
+                                                    : 0;
 
-                                        return (
-                                            <ProductCard
-                                                key={product.id}
-                                                id={product.id}
-                                                name={product.name}
-                                                price={userType === "Dr" ? product.newPrice * 0.9 : product.newPrice}
-                                                originalPrice={product.oldPrice}
-                                                image={`${BASE_IMAGE_URL}/${product.product_image.replace(/^"|"$/g, '')}`}
-                                                discount={discountPercentage + "% OFF"}
-                                                description={product.description}
-                                            />
-                                        );
-                                    })}
+                                                return (
+                                                    <ProductCard
+                                                        key={product.id}
+                                                        id={product.id}
+                                                        name={product.name}
+                                                        price={userType === "Dr" ? product.newPrice * 0.9 : product.newPrice}
+                                                        originalPrice={product.oldPrice}
+                                                        image={`${BASE_IMAGE_URL}/${product.product_image.replace(/^"|"$/g, "")}`}
+                                                        discount={discountPercentage + "% OFF"}
+                                                        description={product.description}
+                                                    />
+                                                );
+                                            })
+                                    ) : (
+                                        <p className="text-gray-500 text-center mt-10">No active products available.</p>
+                                    )}
                                 </div>
+
                             )
                         }
                     </div>
