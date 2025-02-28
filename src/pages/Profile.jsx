@@ -99,6 +99,10 @@ const Profile = () => {
       toast.error("Name is required.");
       return;
     }
+    if (!formData.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      toast.error("Please enter a valid email address");
+      return;
+    }
 
     setIsUpdating(true);
     try {

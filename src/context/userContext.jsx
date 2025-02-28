@@ -36,7 +36,7 @@ export const UserProvider = ({ children }) => {
 
   useEffect(() => {
     const token = localStorage.getItem("authToken");
-    const isPublicRoute = ["/", "/login"].includes(location.pathname);
+    const isPublicRoute = ["/", "/login","/termsandcondition","/privacypolicy","/refund"].includes(location.pathname);
 
     if (token) {
       fetchUserDetails(); // Fetch user details if token exists
