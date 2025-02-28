@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Header from "../components/Header";
-import { UserPen, Copy, Check, Mail, Phone, User, LogOut, Key, Dot, MapPin } from "lucide-react";
+import { UserPen, Copy, Check, Mail, Phone, User, LogOut, Key, Dot, MapPin, Edit2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { ConsentModal } from "../components/Modal";
 import { useUser } from "../context/userContext";
@@ -11,23 +11,23 @@ import coin from "../assets/images/Coin_b.png";
 import menProfile from "../assets/images/man.png";
 import womanProfile from "../assets/images/woman.png";
 
-
 const Profile = () => {
   const [copied, setCopied] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false); // Added for update loading
 
   const { userData, setUserData, loading } = useUser();
-  const user = localStorage.getItem("userType");
+  const user = localStorage.getItem("userType") || "Patient"; // Default to Patient
   const logout = useLogout();
-
+  const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
     email: "",
     doctorCode: "",
-    state: ""
+    state: "",
   });
 
   const states = [
@@ -66,7 +66,7 @@ const Profile = () => {
     "Delhi",
     "Puducherry",
     "Jammu and Kashmir",
-    "Ladakh"
+    "Ladakh",
   ];
 
   useEffect(() => {
@@ -81,23 +81,26 @@ const Profile = () => {
     }
   }, [userData]);
 
-
   const handleInputChange = (e) => {
     const { name, value } = e.target;
 
-    if (name === "phone") {
-      if (!/^[0-9]*$/.test(value)) {
-        return;
-      }
+    if (name === "phone" && !/^[0-9]*$/.test(value)) {
+      return;
     }
 
     setFormData((prev) => ({
       ...prev,
-      [name]: value,
+      [name]: value.trim(), // Trim all inputs
     }));
   };
 
   const handleUpdate = async () => {
+    if (!formData.name) {
+      toast.error("Name is required.");
+      return;
+    }
+
+    setIsUpdating(true);
     try {
       const response = await api.put("/user/update", {
         name: formData.name,
@@ -121,7 +124,9 @@ const Profile = () => {
       }
     } catch (error) {
       console.error("Update profile error:", error);
-      toast.error("An error occurred while updating the profile.");
+      toast.error(error.response?.data?.message || "Failed to update profile. Try again.");
+    } finally {
+      setIsUpdating(false);
     }
   };
 
@@ -147,7 +152,10 @@ const Profile = () => {
           setCopied(true);
           setTimeout(() => setCopied(false), 2000);
         })
-        .catch((err) => console.error("Clipboard API failed: ", err));
+        .catch((err) => {
+          console.error("Clipboard API failed: ", err);
+          toast.error("Failed to copy code.");
+        });
     } else {
       const textArea = document.createElement("textarea");
       textArea.value = textToCopy;
@@ -161,17 +169,25 @@ const Profile = () => {
         setTimeout(() => setCopied(false), 2000);
       } catch (err) {
         console.error("Fallback copy failed: ", err);
+        toast.error("Failed to copy code.");
       }
       document.body.removeChild(textArea);
     }
   };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <div className="text-center py-10">Loading...</div>;
   }
 
   if (!userData) {
-    return <div>No user data available. Please log in.</div>;
+    return (
+      <div className="text-center py-10">
+        No user data available. Please{" "}
+        <button onClick={() => navigate("/login")} className="text-[#F7941C] underline">
+          log in
+        </button>.
+      </div>
+    );
   }
 
   return (
@@ -180,6 +196,13 @@ const Profile = () => {
         title="Profile"
         icon={<UserPen className="w-6 h-6" />}
         onAction={() => setIsEditing(!isEditing)}
+        extraContent={
+          isEditing ? (
+            <span className="text-sm text-[#F7941C] flex items-center gap-1">
+              <Edit2 className="w-4 h-4" /> Edit Mode
+            </span>
+          ) : null
+        }
       />
 
       <div className="flex-1">
@@ -189,8 +212,11 @@ const Profile = () => {
             <div className="relative inline-block">
               <div className="w-32 h-32 bg-white rounded-full p-1">
                 <div className="w-full h-full bg-gray-100 rounded-full flex items-center justify-center relative overflow-hidden">
-                  {/* <User className="w-16 h-16 text-gray-400" /> */}
-                  <img src={userData?.gender === "male" ? menProfile : womanProfile} alt="diaplay-image" />
+                  <img
+                    src={userData?.gender === "male" ? menProfile : womanProfile}
+                    alt={`${userData.name}'s profile`}
+                    className="w-full h-full object-cover"
+                  />
                 </div>
               </div>
             </div>
@@ -202,8 +228,7 @@ const Profile = () => {
             <div className="flex items-center justify-between">
               <p className="text-sm text-gray-500 mb-1">Available Points</p>
               <div className="flex items-center justify-center gap-2">
-                {/* <Dot className="text-[#F7941C]" /> */}
-                <img src={coin} alt="coin-image" className="w-5 h-auto" />
+                <img src={coin} alt="Points coin" className="w-5 h-auto" />
                 <p className="text-xl font-bold text-[#F7941C]">{userData.points || 0}</p>
               </div>
             </div>
@@ -212,15 +237,20 @@ const Profile = () => {
           <div className="bg-white rounded-2xl border border-gray-100 p-6">
             <div className="space-y-6">
               <div>
-                <label className="text-sm text-gray-500 mb-1 block">Name</label>
+                <label className="text-sm text-gray-500 mb-1 block" htmlFor="name">
+                  Name
+                </label>
                 <input
                   type="text"
+                  id="name"
                   name="name"
-                  className={`w-full px-3 py-2 bg-gray-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#F7941C]/20 ${isEditing ? "text-black" : "text-gray-500"
-                    }`}
+                  className={`w-full px-3 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#F7941C]/20 ${
+                    isEditing ? "bg-white border border-[#F7941C]/50 text-black" : "bg-gray-50 text-gray-500"
+                  }`}
                   value={formData.name}
                   onChange={handleInputChange}
                   disabled={!isEditing}
+                  aria-label="Name"
                 />
               </div>
 
@@ -236,10 +266,13 @@ const Profile = () => {
                       className="flex-1 bg-transparent text-sm focus:outline-none"
                       value={formData.doctorCode}
                       disabled
+                      aria-label="Doctor code"
                     />
                     <button
                       onClick={handleCopy}
-                      className="p-2 rounded-lg hover:bg-gray-100 transition-all"
+                      onKeyDown={(e) => e.key === "Enter" && handleCopy()}
+                      className="p-2 rounded-lg hover:bg-gray-100 transition-all focus:outline-none focus:ring-2 focus:ring-[#F7941C]"
+                      aria-label={copied ? "Copied" : "Copy doctor code"}
                     >
                       {copied ? (
                         <Check className="w-5 h-5 text-green-600" />
@@ -249,7 +282,6 @@ const Profile = () => {
                     </button>
                   </div>
                 </div>
-
               )}
 
               <div className="space-y-4">
@@ -262,11 +294,13 @@ const Profile = () => {
                     type="tel"
                     name="phone"
                     maxLength={10}
-                    className={`w-full px-3 py-2 bg-gray-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#F7941C]/20 ${isEditing ? "text-black" : "text-gray-500"
-                      }`}
+                    className={`w-full px-3 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#F7941C]/20 ${
+                      isEditing ? "bg-white border border-[#F7941C]/50 text-black" : "bg-gray-50 text-gray-500"
+                    }`}
                     value={formData.phone}
                     onChange={handleInputChange}
                     disabled={!isEditing}
+                    aria-label="Phone number"
                   />
                 </div>
 
@@ -278,11 +312,13 @@ const Profile = () => {
                   <input
                     type="email"
                     name="email"
-                    className={`w-full px-3 py-2 bg-gray-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#F7941C]/20 ${isEditing ? "text-black" : "text-gray-500"
-                      }`}
+                    className={`w-full px-3 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#F7941C]/20 ${
+                      isEditing ? "bg-white border border-[#F7941C]/50 text-black" : "bg-gray-50 text-gray-500"
+                    }`}
                     value={formData.email}
                     onChange={handleInputChange}
                     disabled={!isEditing}
+                    aria-label="Email"
                   />
                 </div>
 
@@ -294,11 +330,13 @@ const Profile = () => {
                     </div>
                     <select
                       name="state"
-                      className={`w-full px-3 py-2 bg-gray-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#F7941C]/20 ${isEditing ? "text-black" : "text-gray-500"
-                        }`}
+                      className={`w-full px-3 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#F7941C]/20 ${
+                        isEditing ? "bg-white border border-[#F7941C]/50 text-black" : "bg-gray-50 text-gray-500"
+                      }`}
                       value={formData.state}
                       onChange={handleInputChange}
                       disabled={!isEditing}
+                      aria-label="State"
                     >
                       <option value="">Select a state</option>
                       {states.map((state) => (
@@ -316,13 +354,12 @@ const Profile = () => {
               <div className="mt-8">
                 <button
                   onClick={handleLogoutConfirm}
-                  className="w-full py-2 px-4 rounded-xl text-white font-medium transition-colors bg-[#F7941C] active:bg-amber-600"
+                  className="w-full py-2 px-4 rounded-xl text-white font-medium transition-colors bg-[#F7941C] active:bg-amber-600 focus:outline-none focus:ring-2 focus:ring-[#F7941C]"
+                  aria-label="Logout"
                 >
                   <div className="flex items-center justify-center gap-2">
-                    <div>LogOut</div>
-                    <div>
-                      <LogOut className="w-4 h-4" />
-                    </div>
+                    <div>Log Out</div>
+                    <LogOut className="w-4 h-4" />
                   </div>
                 </button>
               </div>
@@ -340,9 +377,13 @@ const Profile = () => {
               <div className="mt-8">
                 <button
                   onClick={handleUpdate}
-                  className="w-full bg-[#F7941C] text-white py-2 px-4 rounded-xl font-medium active:bg-amber-600 transition-colors"
+                  disabled={isUpdating}
+                  className={`w-full bg-[#F7941C] text-white py-2 px-4 rounded-xl font-medium transition-colors ${
+                    isUpdating ? "opacity-50 cursor-not-allowed" : "active:bg-amber-600"
+                  }`}
+                  aria-label="Update profile"
                 >
-                  Update
+                  {isUpdating ? "Updating..." : "Update"}
                 </button>
               </div>
             )}
