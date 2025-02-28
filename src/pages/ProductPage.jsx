@@ -1,13 +1,11 @@
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { CreditCard } from "lucide-react";
-// import dumy_1 from "../assets/svg/Byzepta_Logo.svg";
-import dumy_1 from "../assets/svg/Byzepta.svg";
 import { useUser } from "../context/userContext";
 import toast from "react-hot-toast";
 import api from "../utils/Api";
 import Loader from "../components/Loader";
-import payUPayment from "./PayUPayment";
+import PayUPayment from "../pages/PayUPayment";
 
 const ProductPage = () => {
     const { id } = useParams();
@@ -17,9 +15,8 @@ const ProductPage = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [quantity, setQuantity] = useState(userType === "Dr" ? 100 : 1);
     const [hash, setHash] = useState("");
-    const [transactionId, setTransactionId] = useState("")
-    const [toggle, setToggle] = useState("")
-
+    const [transactionId, setTransactionId] = useState("");
+    const [showPaymentForm, setShowPaymentForm] = useState(false); // New state to control PayUPayment rendering
 
     const { userData, fetchUserDetails } = useUser();
     const navigate = useNavigate();
@@ -35,8 +32,10 @@ const ProductPage = () => {
         productinfo: product.name,
         firstname: userData?.name || "Guest",
         email: userData?.email || "guest@example.com",
+        phone: '1234567890',
+        status: "completed",
+        quantity: quantity,
     };
-    
 
     useEffect(() => {
         const initializeUserData = async () => {
@@ -58,6 +57,26 @@ const ProductPage = () => {
         }
     }, [userData]);
 
+    const handleGetHash = async () => {
+        try {
+            setIsLoading(true);
+            const response = await api.post("/auth/user/hash", data);
+            setHash(response.data.hash.hash);
+            setTransactionId(response.data.hash.txnid);
+            setShowPaymentForm(true);
+        } catch (error) {
+            console.error("Error in generating hash", error);
+            toast.error("Failed to initiate payment.");
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        await handleGetHash();
+    };
+
     if (!product) {
         return (
             <div className="text-center text-red-500 font-medium">
@@ -66,87 +85,31 @@ const ProductPage = () => {
         );
     }
 
-    const handleGetHash = async () => {
-        console.log("Data for hash", data);
-        try{
-            const response = await api.post("/auth/user/hash", data);
-            const hash = response.data;
-            console.log("Generated Hash", response.data)
-            setHash(response.data.hash);
-            setTransactionId(response.data.transactionId);
-        }catch(error){
-            console.error("Error in generating hash", error)
-        }
-    }
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        handleGetHash();
-        setToggle(2)
-    }
-
-    const handlePurchase = async () => {
-        const data = {
-            txnid: `TXN_${id}_${Date.now()}`,
-            amount: (product.price * quantity).toFixed(2),
-            productinfo: product.name,
-            firstname: userData?.name || "Guest",
-            email: userData?.email || "guest@example.com",
-        };
-
+    const handleTempPayment = async () => {
         try {
             setIsLoading(true);
+            const response = await api.post("/auth/user/success", data);
 
-            // Step 1: Generate hash
-            const hashResponse = await api.post("/auth/user/hash", data);
-            const hash = hashResponse.data.hash;
+            if (response.status === 200) {
+                toast.success("Payment successful!");
+                console.log("Temp Payment Response:", response.data);
 
-            if (!hash) {
-                throw new Error("Hash generation failed");
-            }
-
-            // Step 2: Prepare payment data
-            const paymentData = {
-                key: "A00Ozq",
-                txnid: data.txnid,
-                amount: data.amount,
-                firstname: data.firstname,
-                email: data.email,
-                phone: userData?.phone || "1234567890",
-                productinfo: data.productinfo,
-                surl: `${BASE_URL}/auth/user/verify`,
-                furl: `${BASE_URL}/auth/user/verify`,
-                hash: hash,
-                service_provider: "payu_paisa",
-            };
-
-            // Store product data for ThankYouPage
-            localStorage.setItem("orderDetails", JSON.stringify({
-                orderId: data.txnid,
-                product: {
-                    name: product.name,
-                    quantity: quantity,
-                    price: `₹${(product.price * quantity).toLocaleString()}`,
-                    image: product.image
-                },
-            }));
-
-            // Step 3: Initiate payment
-            const paymentResponse = await api.post("/auth/user/pay", paymentData, {
-                responseType: "text",
-            });
-
-            if (paymentResponse.data) {
-                const paymentForm = document.createElement("div");
-                paymentForm.innerHTML = paymentResponse.data;
-                document.body.appendChild(paymentForm);
-                paymentForm.querySelector("form").submit();
-            } else {
-                toast.error("Payment initiation failed");
+                // Map response data to orderDetails structure expected by ThankYouPage
+                const orderDetails = {
+                    orderId: response.data.paymentData.txnid, // Use txnid as orderId
+                    product: {
+                        name: response.data.paymentData.productinfo, // Product name
+                        price: `₹${parseFloat(response.data.paymentData.amount).toLocaleString()}`, // Formatted price
+                        quantity: quantity, // From ProductPage state
+                        image: product.image, // From ProductPage state
+                    },
+                };
+                // Navigate to ThankYouPage with the mapped data
+                navigate("/thankyou", { state: { orderDetails } });
             }
         } catch (error) {
-            console.error("Payment Error:", error);
-            toast.error("Failed to process payment. Please try again.");
+            console.error("Error in processing payment", error);
+            toast.error("Error in processing payment.");
         } finally {
             setIsLoading(false);
         }
@@ -183,7 +146,7 @@ const ProductPage = () => {
                             )}
                         </div>
                         <p className="text-gray-600 text-sm">{product.description}</p>
-                        {userType === "Patient" && (
+                        {userType === "Patient" && doctorCode && (
                             <div className="bg-orange-50 p-4 rounded-xl">
                                 <h3 className="font-semibold text-gray-900 mb-2">Doctor's Referral Code</h3>
                                 <input
@@ -219,7 +182,7 @@ const ProductPage = () => {
                 <div className="p-4">
                     <button
                         // onClick={handleSubmit}
-                        onClick={handlePurchase}
+                        onClick={handleTempPayment}
                         className="w-full bg-[#F7941C] text-white py-3 rounded-xl flex items-center justify-center gap-2 font-medium active:bg-amber-600"
                         disabled={isLoading}
                     >
@@ -234,13 +197,13 @@ const ProductPage = () => {
                                 Buy Now • ₹{(product.price * quantity).toLocaleString()}
                             </div>
                         )}
-
-                        {
-                            toggle === 2 && <payUPayment setToogle={setToggle} form={data} hash={hash} transactionId={transactionId} />
-                        }
                     </button>
                 </div>
             </div>
+            {/* Render PayUPayment outside the button when showPaymentForm is true */}
+            {showPaymentForm && (
+                <PayUPayment setToggle={setShowPaymentForm} form={data} hash={hash} transactionId={transactionId} />
+            )}
         </div>
     );
 };

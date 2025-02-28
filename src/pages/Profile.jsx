@@ -230,16 +230,16 @@ const Profile = () => {
                     <Key className="w-4 h-4" />
                     <span className="text-sm">Doctor Code</span>
                   </div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 bg-gray-50 rounded-xl px-3 py-2">
                     <input
                       type="text"
-                      className="flex-1 px-3 py-2 bg-gray-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#F7941C]/20"
+                      className="flex-1 bg-transparent text-sm focus:outline-none"
                       value={formData.doctorCode}
                       disabled
                     />
                     <button
                       onClick={handleCopy}
-                      className="p-2 hover:bg-gray-100 rounded-xl transition-colors"
+                      className="p-2 rounded-lg hover:bg-gray-100 transition-all"
                     >
                       {copied ? (
                         <Check className="w-5 h-5 text-green-600" />
@@ -249,6 +249,7 @@ const Profile = () => {
                     </button>
                   </div>
                 </div>
+
               )}
 
               <div className="space-y-4">

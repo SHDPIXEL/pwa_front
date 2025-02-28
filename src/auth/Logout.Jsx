@@ -19,8 +19,8 @@ const useLogout = () => {
     navigate("/login");
 
     // Optional: Show a success message
-    toast.success("Logout Successfull")
-    console.log("Logged out successfully!");
+    // toast.success("Logout Successfull")
+    // console.log("Logged out successfully!");
   };
   return logout;
 };

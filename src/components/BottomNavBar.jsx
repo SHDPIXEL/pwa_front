@@ -1,40 +1,35 @@
-import { HomeIcon, Dumbbell, History, Gift } from 'lucide-react';
+import { HomeIcon, Dumbbell, History, Gift, Award } from 'lucide-react';
 import { useNavigate, useLocation } from "react-router-dom";
-import { Link } from 'react-router-dom';
 
-// Unified BottomNavBar component with active tab feature
+// Unified BottomNavBar component with variant support for three different nav bars
 const BottomNavBar = ({ variant = "default" }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const currentPath = location.pathname;
-  
-  // Routes where history tab should be hidden
-  const hideHistoryRoutes = [
-    "/memberprogram",
-    // Add any other routes where you want to hide the history tab
-  ];
-  
-  // Check if current path starts with any route in hideHistoryRoutes
-  const shouldHideHistory = hideHistoryRoutes.some(route => 
-    currentPath === route || currentPath.startsWith(`${route}/`)
-  );
-  
+
   // Define navigation items based on variant
-  let navItems = variant === "memberProgram" ? [
-    { path: "/welcome", icon: HomeIcon, label: "Home" },
-    { path: "/memberprogram", icon: Gift, label: "Member" },
-    { path: "/redeemhistory", icon: History, label: "History" }
-  ] : [
-    { path: "/welcome", icon: HomeIcon, label: "Home" },
-    { path: "/challenges", icon: Dumbbell, label: "Challenges" },
-    { path: "/challengehistory", icon: History, label: "History" }
-  ];
+  let navItems = [];
   
-  // Filter out history tab if needed
-  if (variant === "memberProgram" && shouldHideHistory) {
-    navItems = navItems.filter(item => item.label !== "History");
+  if (variant === "default") {
+    navItems = [
+      { path: "/welcome", icon: HomeIcon, label: "Home" },
+      { path: "/challenges", icon: Dumbbell, label: "Challenges" },
+      { path: "/challengehistory", icon: History, label: "History" }
+    ];
+  } else if (variant === "memberProgram") {
+    navItems = [
+      { path: "/welcome", icon: HomeIcon, label: "Home" },
+      { path: "/memberprogram", icon: Gift, label: "Member" },
+      { path: "/pruchaseHistory", icon: History, label: "History" }
+    ];
+  } else if (variant === "redeemRewards") {
+    navItems = [
+      { path: "/welcome", icon: HomeIcon, label: "Home" },
+      { path: "/redeem", icon: Award, label: "Rewards" },
+      { path: "/redeemhistory", icon: History, label: "History" }
+    ];
   }
-  
+
   return (
     <div className="fixed bottom-0 left-0 right-0 bg-white shadow-lg border-t border-gray-100">
       <div className="flex justify-around items-center p-3 max-w-md mx-auto">
@@ -55,7 +50,8 @@ const BottomNavBar = ({ variant = "default" }) => {
   );
 };
 
-// For backward compatibility, export the original component names
+// Export specific variants for backward compatibility and easier usage
 const BottomNavBarMemberProgram = () => <BottomNavBar variant="memberProgram" />;
+const BottomNavBarRedeemRewards = () => <BottomNavBar variant="redeemRewards" />;
 
-export { BottomNavBar, BottomNavBarMemberProgram };
+export { BottomNavBar, BottomNavBarMemberProgram, BottomNavBarRedeemRewards };

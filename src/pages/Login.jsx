@@ -141,7 +141,7 @@ const Login = () => {
                     onChange={handleFormChange}
                   />
                 </div>
-                <div className="max-w-80 mx-auto">
+                <div className="relative max-w-80 mx-auto">
                   <input
                     className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#F7941C]/20 focus:border-[#F7941C]"
                     type={isVisible ? "text" : "password"}
@@ -150,9 +150,9 @@ const Login = () => {
                     value={formData.password}
                     onChange={handleFormChange}
                   />
-                  {/* <button onClick={togglePasswordVisible} className="absolute inset-y-0 right-3 flex items-center">
-                    {isVisible ? <EyeClosed /> : <Eye />}
-                  </button> */}
+                  <button onClick={togglePasswordVisible} className="absolute inset-y-0 right-3 flex items-center">
+                    {isVisible ? <EyeClosed className="w-5 h-5 text-gray-500" /> : <Eye className="w-5 h-5 text-gray-500" />}
+                  </button>
                 </div>
               </>
             )}

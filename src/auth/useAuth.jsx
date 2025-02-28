@@ -3,51 +3,44 @@ import toast from "react-hot-toast";
 import api from "../utils/Api";
 
 const useAuth = (fetchUserDetails, navigate) => {
-  const [isLoading, setIsLoading] = useState(false);
-  const [isVerifyLoading, setIsVerifyLoading] = useState(false);
-  const [showOtpModal, setShowOtpModal] = useState(false); // For registration
-  const [showPasswordModal, setShowPasswordModal] = useState(false); // For registration
+  const [isLoading, setIsLoading] = useState(false); 
+  const [showOtpModal, setShowOtpModal] = useState(false);
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const [otpResendCount, setOtpResendCount] = useState(0); // Track OTP resends
+  const MAX_OTP_RESENDS = 3; // Frontend limit for resends
 
-  // Registration Functions (unchanged from previous)
+  // Registration Functions
   const handleRegister = async (formData, activeTab, registerWithPhone, selectedState) => {
-    if (!formData.name) {
-      toast.error("Please enter your name");
+    if (!formData.name || formData.name.trim() === "") {
+      toast.error("Please enter a valid name");
       return;
     }
-    if (registerWithPhone) {
-      if (!formData.phone) {
-        toast.error("Please enter your phone number");
-        return;
-      }
-      if (!/^\d{10}$/.test(formData.phone)) {
-        toast.error("Phone number must be exactly 10 digits");
-        return;
-      }
 
-    } else {
-      if (!formData.email) {
-        toast.error("Please enter your email");
+    if (activeTab === "Dr" && (!selectedState || selectedState.trim() === "")) {
+      toast.error("Please select a valid state");
+      return;
+    }
+
+    if (registerWithPhone) {
+      if (!formData.phone || !/^\d{10}$/.test(formData.phone)) {
+        toast.error("Please enter a valid 10-digit phone number");
         return;
       }
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(formData.email)) {
+    } else {
+      if (!formData.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
         toast.error("Please enter a valid email address");
         return;
       }
-    }
-    if (activeTab !== "Dr" && !formData.referralCode) {
-      toast.error("Please enter a referral code");
-      return;
     }
 
     try {
       setIsLoading(true);
       const payload = {
-        name: formData.name,
+        name: formData.name.trim(),
         phone: registerWithPhone ? formData.phone : null,
         email: !registerWithPhone ? formData.email : null,
-        code: activeTab !== "Dr" ? formData.referralCode.toUpperCase() : null,
-        gender: formData.gender,
+        code: activeTab !== "Dr" ? formData.referralCode?.toUpperCase() : null,
+        gender: formData.gender || null, // Default to null if empty
         userType: activeTab === "Dr" ? "Doctor" : "OtherUser",
         state: activeTab === "Dr" ? selectedState : null,
       };
@@ -61,30 +54,33 @@ const useAuth = (fetchUserDetails, navigate) => {
           setShowPasswordModal(true);
         }
       } else {
-        toast.error(response.data.message || "Registration failed");
+        toast.error(response.data.message || "Registration failed. Please try again.");
       }
     } catch (error) {
       console.error("Registration error:", error);
-      toast.error(error.response?.data?.message || "An error occurred during registration.");
+      toast.error(
+        error.response?.data?.message || "Registration failed. Check your connection and try again."
+      );
     } finally {
       setIsLoading(false);
     }
   };
 
   const handlePasswordSubmit = async (formData, activeTab, selectedState) => {
-    if (!formData.password) {
-      toast.error("Please enter a password");
+    if (!formData.password || formData.password.length < 6) {
+      toast.error("Please enter a password (minimum 6 characters)");
       return;
     }
+
     try {
-      setIsVerifyLoading(true);
+      setIsLoading(true);
       const payload = {
-        name: formData.name,
+        name: formData.name.trim(),
         email: formData.email,
         password: formData.password,
-        gender: formData.gender,
+        gender: formData.gender || null,
         userType: activeTab === "Dr" ? "Doctor" : "OtherUser",
-        code: activeTab !== "Dr" ? formData.referralCode.toUpperCase() : null,
+        code: activeTab !== "Dr" ? formData.referralCode?.toUpperCase() : null,
         state: activeTab === "Dr" ? selectedState : null,
       };
 
@@ -94,27 +90,29 @@ const useAuth = (fetchUserDetails, navigate) => {
         setShowPasswordModal(false);
         setShowOtpModal(true);
       } else {
-        toast.error(response.data.message || "Password submission failed");
+        toast.error(response.data.message || "Password submission failed. Please try again.");
       }
     } catch (error) {
       console.error("Password submission error:", error);
-      toast.error(error.response?.data?.message || "An error occurred while setting the password.");
+      toast.error(
+        error.response?.data?.message || "Failed to set password. Please try again."
+      );
     } finally {
-      setIsVerifyLoading(false);
+      setIsLoading(false);
     }
   };
 
   const handleOtpVerify = async (formData, activeTab, registerWithPhone, selectedState) => {
-    if (!formData.otp) {
-      toast.error("Please enter OTP");
+    if (!formData.otp || formData.otp.length < 4) {
+      toast.error("Please enter a valid OTP (at least 4 digits)");
       return;
     }
 
     try {
-      setIsVerifyLoading(true);
+      setIsLoading(true);
       const payload = {
-        name: formData.name,
-        gender: formData.gender,
+        name: formData.name.trim(),
+        gender: formData.gender || null,
         phone: registerWithPhone ? formData.phone : null,
         email: !registerWithPhone ? formData.email : null,
         otp: formData.otp,
@@ -130,44 +128,42 @@ const useAuth = (fetchUserDetails, navigate) => {
         toast.success("OTP verified successfully!");
         setShowOtpModal(false);
         localStorage.setItem("authToken", response.data.token);
-        await fetchUserDetails();
-        const route = activeTab === "Dr" ? "/firstlogin" : "/welcome";
-        navigate(route);
+        try {
+          await fetchUserDetails();
+          const route = activeTab === "Dr" ? "/firstlogin" : "/welcome";
+          navigate(route);
+        } catch (fetchError) {
+          console.error("Fetch user details error:", fetchError);
+          toast.error("Failed to load user data. Please log in again.");
+          navigate("/login");
+        }
       } else {
         toast.error(response.data.message || "Invalid OTP. Please try again.");
       }
     } catch (error) {
       console.error("OTP verification error:", error);
-      toast.error("An error occurred while verifying OTP.");
+      toast.error(
+        error.response?.data?.message || "OTP verification failed. Please try again."
+      );
     } finally {
-      setIsVerifyLoading(false);
+      setIsLoading(false);
     }
   };
 
   // Login Functions
   const handleLogin = async (formData, loginWithPhone, setShowOtpInput) => {
     if (loginWithPhone) {
-      if (!formData.phone) {
-        toast.error("Please enter your phone number");
-        return;
-      }
-      if (!/^\d{10}$/.test(formData.phone)) {
-        toast.error("Phone number must be exactly 10 digits");
+      if (!formData.phone || !/^\d{10}$/.test(formData.phone)) {
+        toast.error("Please enter a valid 10-digit phone number");
         return;
       }
     } else {
-      if (!formData.email) {
-        toast.error("Please enter your email");
-        return;
-      }
-      // Email format validation
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(formData.email)) {
+      if (!formData.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
         toast.error("Please enter a valid email address");
         return;
       }
-      if (!formData.password) {
-        toast.error("Please enter your password");
+      if (!formData.password || formData.password.length < 6) {
+        toast.error("Please enter a password (minimum 6 characters)");
         return;
       }
     }
@@ -176,46 +172,53 @@ const useAuth = (fetchUserDetails, navigate) => {
       setIsLoading(true);
       const payload = loginWithPhone
         ? {
-          phone: formData.phone,
-          email: null,
-          otp: null,
-          password: null,
-        }
+            phone: formData.phone,
+            email: null,
+            otp: null,
+            password: null,
+          }
         : {
-          phone: null,
-          email: formData.email,
-          otp: null,
-          password: formData.password,
-        };
+            phone: null,
+            email: formData.email,
+            otp: null,
+            password: formData.password,
+          };
 
       const response = await api.post("/auth/user/login", payload);
 
       if (response.status === 200) {
         if (loginWithPhone) {
           toast.success("OTP sent successfully!");
-          setShowOtpInput(true); // Show OTP input for phone login
+          setShowOtpInput(true);
+          setOtpResendCount(0); // Reset resend count
         } else {
           localStorage.setItem("authToken", response.data.token);
-          await fetchUserDetails();
-          toast.success("Login successful!");
-          const userType = response.data.userType === "Doctor" ? "Dr" : response.data.userType;
-          localStorage.setItem("userType", userType);
-          navigate("/welcome");
+          try {
+            await fetchUserDetails();
+            toast.success("Login successful!");
+            const userType = response.data.userType === "Doctor" ? "Dr" : response.data.userType;
+            localStorage.setItem("userType", userType);
+            navigate("/welcome");
+          } catch (fetchError) {
+            console.error("Fetch user details error:", fetchError);
+            toast.error("Failed to load user data. Please log in again.");
+            navigate("/login");
+          }
         }
       } else {
-        toast.error(response.data.message || "Login failed");
+        toast.error(response.data.message || "Login failed. Please try again.");
       }
     } catch (error) {
       console.error("Login error:", error);
-      toast.error(error.response?.data?.message || "Login failed");
+      toast.error(error.response?.data?.message || "Login failed. Check your connection.");
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleLoginOtpVerify = async (formData) => {
-    if (!formData.otp) {
-      toast.error("Please enter OTP");
+    if (!formData.otp || formData.otp.length < 4) {
+      toast.error("Please enter a valid OTP (at least 4 digits)");
       return;
     }
 
@@ -232,23 +235,41 @@ const useAuth = (fetchUserDetails, navigate) => {
 
       if (response.status === 200) {
         localStorage.setItem("authToken", response.data.token);
-        await fetchUserDetails();
-        toast.success("Login successful!");
-        const userType = response.data.userType === "Doctor" ? "Dr" : response.data.userType;
-        localStorage.setItem("userType", userType);
-        navigate("/welcome");
+        try {
+          await fetchUserDetails();
+          toast.success("Login successful!");
+          const userType = response.data.userType === "Doctor" ? "Dr" : response.data.userType;
+          localStorage.setItem("userType", userType);
+          navigate("/welcome");
+        } catch (fetchError) {
+          console.error("Fetch user details error:", fetchError);
+          toast.error("Failed to load user data. Please log in again.");
+          navigate("/login");
+        }
       } else {
-        toast.error(response.data.message || "Invalid OTP");
+        toast.error(response.data.message || "Invalid OTP. Please try again.");
       }
     } catch (error) {
       console.error("OTP verification error:", error);
-      toast.error(error.response?.data?.message || "Invalid OTP");
+      toast.error(
+        error.response?.data?.message || "OTP verification failed. Please try again."
+      );
     } finally {
       setIsLoading(false);
     }
   };
 
   const resendLoginOtp = async (formData) => {
+    if (otpResendCount >= MAX_OTP_RESENDS) {
+      toast.error("Maximum OTP resend attempts reached. Please wait or try again later.");
+      return false;
+    }
+
+    if (!formData.phone || !/^\d{10}$/.test(formData.phone)) {
+      toast.error("Please provide a valid 10-digit phone number to resend OTP");
+      return false;
+    }
+
     try {
       setIsLoading(true);
       const payload = {
@@ -261,15 +282,18 @@ const useAuth = (fetchUserDetails, navigate) => {
       const response = await api.post("/auth/user/login", payload);
 
       if (response.status === 200) {
-        toast.success("New OTP sent successfully!");
+        setOtpResendCount((prev) => prev + 1);
+        toast.success(`New OTP sent successfully! (${otpResendCount + 1}/${MAX_OTP_RESENDS})`);
         return true;
       } else {
-        toast.error(response.data.message || "Failed to resend OTP");
+        toast.error(response.data.message || "Failed to resend OTP. Please try again.");
         return false;
       }
     } catch (error) {
       console.error("Resend OTP error:", error);
-      toast.error(error.response?.data?.message || "Failed to resend OTP");
+      toast.error(
+        error.response?.data?.message || "Failed to resend OTP. Check your connection."
+      );
       return false;
     } finally {
       setIsLoading(false);
@@ -278,7 +302,6 @@ const useAuth = (fetchUserDetails, navigate) => {
 
   return {
     isLoading,
-    isVerifyLoading,
     showOtpModal,
     setShowOtpModal,
     showPasswordModal,
@@ -286,9 +309,9 @@ const useAuth = (fetchUserDetails, navigate) => {
     handleRegister,
     handlePasswordSubmit,
     handleOtpVerify,
-    handleLogin,           // New: For login
-    handleLoginOtpVerify,  // New: For login OTP verification
-    resendLoginOtp,        // New: For resending login OTP
+    handleLogin,
+    handleLoginOtpVerify,
+    resendLoginOtp,
   };
 };
 

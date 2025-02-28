@@ -6,6 +6,7 @@ import { FormModal } from "../components/Modal";
 import { useUser } from "../context/userContext";
 import Loader from "../components/Loader";
 import useAuth from "../auth/useAuth";
+import { Eye, EyeClosed } from "lucide-react";
 
 const Home = () => {
   const [isSplashVisible, setIsSplashVisible] = useState(true);
@@ -21,17 +22,17 @@ const Home = () => {
     referralCode: "",
     otp: "",
     password: "",
-    gender: gender,
+    gender: "female", // Sync with initial gender state
   });
   const [resendTimer, setResendTimer] = useState(60);
   const [canResend, setCanResend] = useState(false);
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
   const navigate = useNavigate();
   const { fetchUserDetails } = useUser();
 
   const {
     isLoading,
-    isVerifyLoading,
     showOtpModal,
     setShowOtpModal,
     showPasswordModal,
@@ -39,7 +40,7 @@ const Home = () => {
     handleRegister,
     handlePasswordSubmit,
     handleOtpVerify,
-    resendOtp,
+    resendLoginOtp, // Correct function name
   } = useAuth(fetchUserDetails, navigate);
 
   useEffect(() => {
@@ -65,10 +66,11 @@ const Home = () => {
   }, [showOtpModal, resendTimer]);
 
   const handleResendOtp = async () => {
-    const success = await resendOtp(formData, activeTab, registerWithPhone, selectedState);
+    const success = await resendLoginOtp(formData); // Fixed to use resendLoginOtp
     if (success) {
       setResendTimer(60);
       setCanResend(false);
+      setFormData((prev) => ({ ...prev, otp: "" })); // Clear OTP field
     }
   };
 
@@ -112,39 +114,35 @@ const Home = () => {
   ];
 
   const handleStateChange = (e) => {
-    setSelectedState(e.target.value);
-    setFormData((prevData) => ({
-      ...prevData,
-      state: e.target.value,
-    }));
+    const value = e.target.value.trim();
+    setSelectedState(value);
+    setFormData((prev) => ({ ...prev, state: value }));
   };
 
   const handleFormChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
+    setFormData((prev) => ({ ...prev, [name]: value.trim() }));
   };
 
   const handleGenderChange = (newGender) => {
     setGender(newGender);
-    setFormData((prevData) => ({
-      ...prevData,
-      gender: newGender,
-    }));
+    setFormData((prev) => ({ ...prev, gender: newGender }));
     localStorage.setItem("GenderType", newGender);
   };
 
   const toggleRegisterMethod = () => {
     setRegisterWithPhone(!registerWithPhone);
-    setFormData((prevData) => ({
-      ...prevData,
+    setFormData((prev) => ({
+      ...prev,
       phone: "",
       email: "",
       otp: "",
       password: "",
     }));
+  };
+
+  const togglePasswordVisible = () => {
+    setIsPasswordVisible(!isPasswordVisible);
   };
 
   return (
@@ -157,7 +155,7 @@ const Home = () => {
           <div className="flex-1 overflow-hidden flex flex-col items-center justify-center px-10">
             <div className="w-full flex flex-col">
               <div className="flex flex-col items-center mb-4">
-                <img src={brebootSvg} alt="logo" className="w-auto h-26 mb-3" />
+                <img src={brebootSvg} alt="Breboot Logo" className="w-auto h-26 mb-3" />
                 <h2 className="text-xl font-bold text-gray-800">
                   Let's create your account
                 </h2>
@@ -171,6 +169,7 @@ const Home = () => {
                         : "text-gray-700 hover:bg-gray-100"
                     }`}
                     onClick={() => setActiveTab("Dr")}
+                    aria-pressed={activeTab === "Dr"}
                   >
                     Doctor
                   </button>
@@ -181,6 +180,7 @@ const Home = () => {
                         : "text-gray-700 hover:bg-gray-100"
                     }`}
                     onClick={() => setActiveTab("Patient")}
+                    aria-pressed={activeTab === "Patient"}
                   >
                     Others
                   </button>
@@ -191,7 +191,7 @@ const Home = () => {
                   <div className="flex items-center max-w-80 bg-gray-50 border border-gray-200 rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-[#F7941C]/20 focus-within:border-[#F7941C]">
                     <div className="flex items-center justify-center gap-2 px-4 py-3 border-r border-gray-200 w-20">
                       <span className="text-gray-700 font-semibold">
-                        {activeTab === "Dr" ? activeTab : "Others"}
+                        {activeTab === "Dr" ? "Dr" : "Others"}
                       </span>
                     </div>
                     <input
@@ -201,15 +201,14 @@ const Home = () => {
                       placeholder="Enter your name"
                       value={formData.name}
                       onChange={handleFormChange}
+                      aria-label="Name"
                     />
                   </div>
                   <div className="flex items-center max-w-80 mx-auto bg-gray-50 border border-gray-200 rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-[#F7941C]/20 focus-within:border-[#F7941C]">
                     {registerWithPhone ? (
                       <>
                         <div className="flex items-center justify-center gap-2 px-4 py-3 border-r border-gray-200 w-20">
-                          <span className="text-gray-700 font-semibold">
-                            +91
-                          </span>
+                          <span className="text-gray-700 font-semibold">+91</span>
                         </div>
                         <input
                           className="flex-1 bg-transparent px-4 py-3 focus:outline-none no-spinner"
@@ -219,17 +218,14 @@ const Home = () => {
                           name="phone"
                           maxLength={10}
                           onChange={handleFormChange}
-                          onInput={(e) =>
-                            (e.target.value = e.target.value.replace(/\D/g, ""))
-                          }
+                          onInput={(e) => (e.target.value = e.target.value.replace(/\D/g, ""))}
+                          aria-label="Phone number"
                         />
                       </>
                     ) : (
                       <>
                         <div className="flex items-center justify-center gap-2 px-4 py-3 border-r border-gray-200 w-20">
-                          <span className="text-gray-700 font-semibold">
-                            Email
-                          </span>
+                          <span className="text-gray-700 font-semibold">Email</span>
                         </div>
                         <input
                           className="w-full bg-transparent px-4 py-3 focus:outline-none"
@@ -238,6 +234,7 @@ const Home = () => {
                           value={formData.email}
                           name="email"
                           onChange={handleFormChange}
+                          aria-label="Email address"
                         />
                       </>
                     )}
@@ -246,14 +243,13 @@ const Home = () => {
                   {activeTab === "Dr" && (
                     <div className="flex items-center w-80 pr-2 bg-gray-50 border border-gray-200 rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-[#F7941C]/20 focus-within:border-[#F7941C]">
                       <div className="flex items-center justify-center gap-2 px-4 py-3 border-r border-gray-200 w-20">
-                        <span className="text-gray-700 font-semibold">
-                          State
-                        </span>
+                        <span className="text-gray-700 font-semibold">State</span>
                       </div>
                       <select
                         className="flex-1 bg-transparent px-4 py-3 focus:outline-none"
                         value={selectedState}
                         onChange={handleStateChange}
+                        aria-label="Select state"
                       >
                         <option value="" disabled>
                           Select State
@@ -270,17 +266,16 @@ const Home = () => {
                   {activeTab === "Patient" && (
                     <div className="flex items-center max-w-80 bg-gray-50 border border-gray-200 rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-[#F7941C]/20 focus-within:border-[#F7941C]">
                       <div className="flex items-center justify-center gap-2 px-4 py-3 border-r border-gray-200 w-20">
-                        <span className="text-gray-700 font-semibold">
-                          Code
-                        </span>
+                        <span className="text-gray-700 font-semibold">Code</span>
                       </div>
                       <input
                         className="flex-1 bg-transparent px-4 py-3 focus:outline-none uppercase"
                         type="text"
-                        placeholder="Enter referral Code"
+                        placeholder="Enter referral code"
                         value={formData.referralCode}
                         name="referralCode"
                         onChange={handleFormChange}
+                        aria-label="Referral code"
                       />
                     </div>
                   )}
@@ -294,12 +289,17 @@ const Home = () => {
                           checked={gender === "male"}
                           onChange={() => handleGenderChange("male")}
                           className="hidden"
+                          aria-label="Male"
                         />
                         <div
                           className={`w-4 h-4 rounded-full border border-[#F7941C] flex items-center justify-center transition-all ${
                             gender === "male" ? "bg-[#F7941C]" : "bg-white"
                           }`}
-                        ></div>
+                        >
+                          {gender === "male" && (
+                            <div className="w-2 h-2 rounded-full bg-[#F7941C]"></div>
+                          )}
+                        </div>
                         <span className="text-gray-600">Male</span>
                       </label>
                       <label className="flex items-center gap-2 cursor-pointer">
@@ -310,12 +310,17 @@ const Home = () => {
                           checked={gender === "female"}
                           onChange={() => handleGenderChange("female")}
                           className="hidden"
+                          aria-label="Female"
                         />
                         <div
                           className={`w-4 h-4 rounded-full border border-[#F7941C] flex items-center justify-center transition-all ${
                             gender === "female" ? "bg-[#F7941C]" : "bg-white"
                           }`}
-                        ></div>
+                        >
+                          {gender === "female" && (
+                            <div className="w-2 h-2 rounded-full bg-F7941C"></div>
+                          )}
+                        </div>
                         <span className="text-gray-600">Female</span>
                       </label>
                     </div>
@@ -326,6 +331,7 @@ const Home = () => {
                       checked={checked}
                       onChange={() => setChecked(!checked)}
                       className="hidden"
+                      aria-label="Receive updates on WhatsApp"
                     />
                     <div className="w-3 h-3 rounded-full border border-[#F7941C] flex items-center justify-center transition-all">
                       {checked && (
@@ -345,14 +351,12 @@ const Home = () => {
                   className={`w-full text-white py-3 rounded-xl mb-4 active:bg-gray-900 transition-opacity ${
                     isLoading ? "bg-gray-700" : "bg-black"
                   }`}
+                  aria-label="Continue"
                 >
                   {isLoading ? <Loader isCenter={false} /> : "Continue"}
                 </button>
                 {showOtpModal && (
-                  <FormModal
-                    title="Enter OTP"
-                    onClose={() => setShowOtpModal(false)}
-                  >
+                  <FormModal title="Enter OTP" onClose={() => setShowOtpModal(false)}>
                     <input
                       className="w-full px-4 py-3 border rounded mb-2"
                       type="text"
@@ -360,15 +364,17 @@ const Home = () => {
                       placeholder="Enter OTP"
                       value={formData.otp}
                       onChange={handleFormChange}
+                      aria-label="OTP"
                     />
                     <button
                       onClick={() =>
                         handleOtpVerify(formData, activeTab, registerWithPhone, selectedState)
                       }
                       className="w-full bg-orange-500 text-white py-3 rounded-xl mb-2"
-                      disabled={isVerifyLoading}
+                      disabled={isLoading} // Updated to use isLoading
+                      aria-label="Verify OTP"
                     >
-                      {isVerifyLoading ? (
+                      {isLoading ? (
                         <Loader BorderColor="border-white" isCenter={false} />
                       ) : (
                         "Verify OTP"
@@ -382,6 +388,7 @@ const Home = () => {
                           ? "opacity-50 cursor-not-allowed"
                           : "hover:bg-gray-100"
                       }`}
+                      aria-label={canResend ? "Resend OTP" : `Resend OTP in ${resendTimer}s`}
                     >
                       {isLoading ? (
                         <Loader isCenter={false} />
@@ -398,22 +405,37 @@ const Home = () => {
                     title="Set Your Password"
                     onClose={() => setShowPasswordModal(false)}
                   >
-                    <input
-                      className="w-full px-4 py-3 border rounded mb-2"
-                      type="password"
-                      name="password"
-                      placeholder="Enter Password"
-                      value={formData.password}
-                      onChange={handleFormChange}
-                    />
+                    <div className="relative">
+                      <input
+                        className="w-full px-4 py-3 border rounded mb-2 pr-10"
+                        type={isPasswordVisible ? "text" : "password"}
+                        name="password"
+                        placeholder="Enter Password"
+                        value={formData.password}
+                        onChange={handleFormChange}
+                        aria-label="Password"
+                      />
+                      <button
+                        onClick={togglePasswordVisible}
+                        className="absolute top-[calc(50%-2.5px)] right-3 -translate-y-1/2 flex items-center justify-center"
+                        aria-label={isPasswordVisible ? "Hide password" : "Show password"}
+                      >
+                        {isPasswordVisible ? (
+                          <EyeClosed className="w-5 h-5 text-gray-500" />
+                        ) : (
+                          <Eye className="w-5 h-5 text-gray-500" />
+                        )}
+                      </button>
+                    </div>
                     <button
                       onClick={() =>
                         handlePasswordSubmit(formData, activeTab, selectedState)
                       }
                       className="w-full bg-orange-500 text-white py-3 rounded-xl"
-                      disabled={isVerifyLoading}
+                      disabled={isLoading} // Updated to use isLoading
+                      aria-label="Submit password"
                     >
-                      {isVerifyLoading ? (
+                      {isLoading ? (
                         <Loader BorderColor="border-white" isCenter={false} />
                       ) : (
                         "Submit"
@@ -431,16 +453,21 @@ const Home = () => {
                 <button
                   onClick={toggleRegisterMethod}
                   className="w-full text-gray-700 border border-gray-400 py-3 rounded-xl mb-8 active:bg-gray-200 transition-opacity"
+                  aria-label={registerWithPhone ? "Switch to email" : "Switch to phone"}
                 >
                   {registerWithPhone ? "Email Address" : "Phone Number"}
                 </button>
                 <p className="text-center text-xs text-gray-500 px-6 mb-5">
-                  By signing up I agree to the Terms of Services and Privacy
-                  Policy, including usage of cookies
+                  By signing up I agree to the Terms of Services and Privacy Policy,
+                  including usage of cookies
                 </p>
                 <p
                   onClick={() => navigate("/login")}
                   className="text-center text-xs px-6 pb-10 text-[#F7941C] font-semibold tracking-wide cursor-pointer"
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => e.key === "Enter" && navigate("/login")}
+                  aria-label="Already a user? Login"
                 >
                   Already a user?
                 </p>

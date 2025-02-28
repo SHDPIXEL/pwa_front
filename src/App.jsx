@@ -20,6 +20,10 @@ import Login from "./pages/Login";
 import SubmissionHistory from "./pages/SubmissionHistory";
 import { UserProvider } from "./context/userContext";
 import RedeemHistory from "./pages/RedeemHistory";
+import TermsAndCondition from "./pages/TermsAndCondition";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import Refund from "./pages/Refund";
+import PurchaseHistory from "./pages/PurchaseHistory";
 
 
 function App() {
@@ -34,6 +38,9 @@ function App() {
               <Route index element={<Home />} />
               <Route path="/login" element={<Login />} />
               <Route path="/splash" element={<SplashScreen />} />
+              <Route path="/termsandcondition" element={<TermsAndCondition />} />
+              <Route path="/privacypolicy" element={<PrivacyPolicy />} />
+              <Route path="/refund" element={<Refund />} />
             </Route>
 
             {/* Protected Routes */}
@@ -52,7 +59,8 @@ function App() {
                 <Route path="/thankyou" element={<ThankYouPage />} />
                 <Route path="/firstlogin" element={<FirstLogin />} />
                 <Route path="/challengehistory" element={<SubmissionHistory />} />
-                <Route path="redeemhistory" element={<RedeemHistory />} />
+                <Route path="/redeemhistory" element={<RedeemHistory />} />
+                <Route path="pruchaseHistory" element={<PurchaseHistory />} />
               </Route>
             </Route>
           </Routes>

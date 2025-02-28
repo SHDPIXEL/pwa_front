@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { BottomNavBarMemberProgram } from '../components/BottomNavBar';
 import Header from '../components/Header';
 import { useNavigate } from 'react-router-dom';
 import coin from "../assets/images/Coin_b.png";
 import { useUser } from '../context/userContext';
 import toast from 'react-hot-toast';
 import api, { BASE_IMAGE_URL } from '../utils/Api';
+import { BottomNavBarRedeemRewards } from '../components/BottomNavBar';
 
 const extractImagePath = (imageString) => {
   try {
@@ -167,7 +167,7 @@ const RedeemPage = () => {
           </div>
         </div>
       </div>
-      <BottomNavBarMemberProgram />
+      <BottomNavBarRedeemRewards />
     </div>
   );
 };

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BottomNavBarMemberProgram } from '../components/BottomNavBar';
+import { BottomNavBarRedeemRewards } from '../components/BottomNavBar';
 import Header from '../components/Header';
 import { Calendar, Gift, FileText, Clock, ExternalLink, Check } from 'lucide-react';
 import api, { BASE_IMAGE_URL } from '../utils/Api';
@@ -41,10 +41,10 @@ const RewardCard = ({ reward }) => {
               <span className="text-xs text-gray-500">{reward.points} points</span>
               <img src={coin} alt="coin" className="w-3 h-3" />
             </div>
-            <div className="flex items-center gap-1">
+            {/* <div className="flex items-center gap-1">
               <Clock size={16} className="text-gray-400" />
               <span className="text-xs text-gray-500 capitalize">{reward.status}</span>
-            </div>
+            </div> */}
           </div>
         </div>
 
@@ -162,7 +162,7 @@ const RewardHistory = () => {
         )}
       </div>
 
-      <BottomNavBarMemberProgram />
+      <BottomNavBarRedeemRewards />
     </div>
   );
 };
