@@ -1,11 +1,12 @@
 import { useParams, useNavigate, useLocation } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useId } from "react";
 import { CreditCard } from "lucide-react";
 import { useUser } from "../context/userContext";
 import toast from "react-hot-toast";
 import api from "../utils/Api";
 import Loader from "../components/Loader";
 import PayUPayment from "../pages/PayUPayment";
+
 
 const ProductPage = () => {
     const { id } = useParams();
@@ -26,15 +27,21 @@ const ProductPage = () => {
     const BASE_URL = "http://192.168.1.11:4040";
     const FRONTEND_URL = "http://localhost:3000";
 
+    const userId = userData?.id || ""  // Use optional chaining and fallback value
+
+
+
     const data = {
         txnid: `TXN_${id}_${Date.now()}`,
         amount: (product.price * quantity).toFixed(2),
         productinfo: product.name,
         firstname: userData?.name || "Guest",
         email: userData?.email || "guest@example.com",
-        phone: '1234567890',
-        status: "completed",
+        phone: "1234567890",
+        status: "success",
         quantity: quantity,
+        // udf1: userId, // ✅ Use the fixed userId
+        // udf2: userType === "Dr" ? "Doctor" : "otherUser",
     };
 
     useEffect(() => {
@@ -115,6 +122,10 @@ const ProductPage = () => {
         }
     };
 
+    if (!userData) {
+        return <Loader />;  // Show loader while user data is being fetched
+    }
+
     return (
         <div className="min-h-screen bg-gray-50 flex flex-col">
             <div className="relative w-full h-96">
@@ -181,8 +192,8 @@ const ProductPage = () => {
                 )}
                 <div className="p-4">
                     <button
-                        // onClick={handleSubmit}
-                        onClick={handleTempPayment}
+                        onClick={handleSubmit}
+                        // onClick={handleTempPayment}
                         className="w-full bg-[#F7941C] text-white py-3 rounded-xl flex items-center justify-center gap-2 font-medium active:bg-amber-600"
                         disabled={isLoading}
                     >
