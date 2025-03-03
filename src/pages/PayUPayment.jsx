@@ -19,7 +19,9 @@ const PayUPayment = ({ setToggle, form, hash, transactionId }) => {
             <input type="hidden" name="lastname" value="" />
             <input type="hidden" name="surl" value={`${API_BASE_URL}/auth/user/success`} />
             <input type="hidden" name="furl" value={`${API_BASE_URL}/auth/user/failure`} />
-            <input type="hidden" name="phone" value={form?.phone} />
+            <input type="hidden" name="phone" value={form?.phone} />    
+            {/* <input type="hidden" name="udf1" value={"14"} />    
+            <input type="hidden" name="udf2" value={"someRandomDetail"} />     */}
             <input type="hidden" name="hash" value={hash} />
             {/* Optionally, hide the submit button since we're submitting programmatically */}
             <input type="submit" value="Submit" style={{ display: "none" }} />

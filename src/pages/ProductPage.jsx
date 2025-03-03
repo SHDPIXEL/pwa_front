@@ -26,6 +26,8 @@ const ProductPage = () => {
     const BASE_URL = "http://192.168.1.11:4040";
     const FRONTEND_URL = "http://localhost:3000";
 
+    // console.log("user data",userData)
+
     const data = {
         txnid: `TXN_${id}_${Date.now()}`,
         amount: (product.price * quantity).toFixed(2),
@@ -35,6 +37,8 @@ const ProductPage = () => {
         phone: '1234567890',
         status: "completed",
         quantity: quantity,
+        userId: userData?.id,
+        userType: userData?.userType,
     };
 
     useEffect(() => {
@@ -61,9 +65,10 @@ const ProductPage = () => {
         try {
             setIsLoading(true);
             const response = await api.post("/auth/user/hash", data);
+            console.log("data sent during hash", data)
             setHash(response.data.hash.hash);
             setTransactionId(response.data.hash.txnid);
-            setShowPaymentForm(true);
+            // setShowPaymentForm(true);
         } catch (error) {
             console.error("Error in generating hash", error);
             toast.error("Failed to initiate payment.");
@@ -181,8 +186,8 @@ const ProductPage = () => {
                 )}
                 <div className="p-4">
                     <button
-                        // onClick={handleSubmit}
-                        onClick={handleTempPayment}
+                        onClick={handleSubmit}
+                        // onClick={handleTempPayment}
                         className="w-full bg-[#F7941C] text-white py-3 rounded-xl flex items-center justify-center gap-2 font-medium active:bg-amber-600"
                         disabled={isLoading}
                     >

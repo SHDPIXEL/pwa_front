@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BottomNavBarRedeemRewards } from '../components/BottomNavBar';
+import { BottomNavBarMemberProgram } from '../components/BottomNavBar';
 import Header from '../components/Header';
 import api, { API_BASE_URL } from '../utils/Api';
 import toast from 'react-hot-toast';
@@ -67,7 +67,7 @@ const PurchaseHistory = () => {
         )}
       </div>
 
-      <BottomNavBarRedeemRewards />
+      <BottomNavBarMemberProgram />
     </div>
   );
 };

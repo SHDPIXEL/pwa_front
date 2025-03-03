@@ -19,7 +19,6 @@ const MemberProgramPage = () => {
     const user = localStorage.getItem("userType") || "Patient"; // Default to "Patient" if not set
     setUserType(user);
 
-    // Check authentication
     const authToken = localStorage.getItem("authToken");
     if (!authToken) {
       toast.error("Please log in to view member offers.");

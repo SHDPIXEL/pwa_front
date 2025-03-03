@@ -24,6 +24,9 @@ import TermsAndCondition from "./pages/TermsAndCondition";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import Refund from "./pages/Refund";
 import PurchaseHistory from "./pages/PurchaseHistory";
+import Success from "./pages/PaymentSuccess";
+import Failure from "./pages/PaymentFailure";
+import ComingSoonProductPage from "./pages/ComingSoon";
 
 
 function App() {
@@ -41,6 +44,8 @@ function App() {
               <Route path="/termsandcondition" element={<TermsAndCondition />} />
               <Route path="/privacypolicy" element={<PrivacyPolicy />} />
               <Route path="/refund" element={<Refund />} />
+              <Route path="/success" element={<Success />}/>
+              <Route path="/failure" element={<Failure />}/>
             </Route>
 
             {/* Protected Routes */}
@@ -48,7 +53,7 @@ function App() {
               <Route path="/" element={<Layout />}>
                 <Route path="/Challenges" element={<ChallengesPage />} />
                 <Route path="/challenges/week/:weekId" element={<WeekChallengesPage />} />
-                <Route path="/memberprogram" element={<MemberProgramPage />} />
+                {/* <Route path="/memberprogram" element={<MemberProgramPage />} /> */}
                 <Route path="/redeem" element={<RedeemPage />} />
                 <Route path="/welcome" element={<Welcome />} />
                 <Route path="/challenges/week/:weekId/:challengeId" element={<ChallengeDetails />} />
@@ -60,7 +65,8 @@ function App() {
                 <Route path="/firstlogin" element={<FirstLogin />} />
                 <Route path="/challengehistory" element={<SubmissionHistory />} />
                 <Route path="/redeemhistory" element={<RedeemHistory />} />
-                <Route path="pruchaseHistory" element={<PurchaseHistory />} />
+                <Route path="/pruchaseHistory" element={<PurchaseHistory />} />
+                <Route path="/memberprogram" element={ <ComingSoonProductPage/> } />
               </Route>
             </Route>
           </Routes>
