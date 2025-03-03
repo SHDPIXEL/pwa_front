@@ -1,11 +1,12 @@
 import { useParams, useNavigate, useLocation } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useId } from "react";
 import { CreditCard } from "lucide-react";
 import { useUser } from "../context/userContext";
 import toast from "react-hot-toast";
 import api from "../utils/Api";
 import Loader from "../components/Loader";
 import PayUPayment from "../pages/PayUPayment";
+
 
 const ProductPage = () => {
     const { id } = useParams();
@@ -26,7 +27,9 @@ const ProductPage = () => {
     const BASE_URL = "http://192.168.1.11:4040";
     const FRONTEND_URL = "http://localhost:3000";
 
-    // console.log("user data",userData)
+    const userId = userData?.id || ""  // Use optional chaining and fallback value
+
+
 
     const data = {
         txnid: `TXN_${id}_${Date.now()}`,
@@ -34,8 +37,8 @@ const ProductPage = () => {
         productinfo: product.name,
         firstname: userData?.name || "Guest",
         email: userData?.email || "guest@example.com",
-        phone: '1234567890',
-        status: "completed",
+        phone: "1234567890",
+        status: "success",
         quantity: quantity,
         userId: userData?.id,
         userType: userData?.userType,
@@ -119,6 +122,10 @@ const ProductPage = () => {
             setIsLoading(false);
         }
     };
+
+    if (!userData) {
+        return <Loader />;  // Show loader while user data is being fetched
+    }
 
     return (
         <div className="min-h-screen bg-gray-50 flex flex-col">
