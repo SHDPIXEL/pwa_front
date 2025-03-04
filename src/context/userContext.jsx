@@ -11,9 +11,12 @@ export const UserProvider = ({ children }) => {
   const navigate = useNavigate();
   const location = useLocation();
 
+  const PUBLIC_ROUTES = ["/", "/login", "/termsandcondition", "/privacypolicy", "/refund"];
+
   const fetchUserDetails = async () => {
     try {
       const token = localStorage.getItem("authToken");
+
       if (!token) {
         throw new Error("No auth token found");
       }
@@ -22,12 +25,11 @@ export const UserProvider = ({ children }) => {
       localStorage.setItem("GenderType", response.data.user.gender);
     } catch (error) {
       console.error("Failed to fetch user details:", error);
-      setUserData(null); // Clear user data on failure
-      const isPublicRoute = ["/", "/login","/termsandcondition","/privacypolicy","/refund"].includes(location.pathname);
-      if (!isPublicRoute) {
-        // Redirect to "/" only if not on a public route
-        toast.error("Session expired. Please log in again."); // Optional feedback
-        navigate("/login"); // Redirect to "/login" instead of "/"
+      setUserData(null);
+
+      if (!PUBLIC_ROUTES.includes(location.pathname)) {
+        toast.error("Session expired. Please log in again.");
+        navigate("/login");
       }
     } finally {
       setLoading(false);
@@ -36,16 +38,15 @@ export const UserProvider = ({ children }) => {
 
   useEffect(() => {
     const token = localStorage.getItem("authToken");
-    const isPublicRoute = ["/", "/login","/termsandcondition","/privacypolicy","/refund"].includes(location.pathname);
+    const isPublicRoute = PUBLIC_ROUTES.some(route => location.pathname.startsWith(route.toLowerCase()));
 
     if (token) {
-      fetchUserDetails(); // Fetch user details if token exists
+      fetchUserDetails();
     } else {
-      setUserData(null); // No token, clear user data
+      setUserData(null);
       setLoading(false);
       if (!isPublicRoute) {
-        // Redirect to "/" only if not on "/" or "/login"
-        navigate("/"); // Allow "/" and "/login" without redirect
+        navigate("/");
       }
     }
   }, [navigate, location.pathname]);
