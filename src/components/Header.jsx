@@ -8,7 +8,8 @@ const Header = ({ title, icon, onAction }) => {
 
     const location = useLocation();
 
-    const publicroutes = ["/privacypolicy", "/termsandcondition", "/refund"]
+    const PUBLIC_ROUTES = ["/privacypolicy", "/termsandcondition", "/refund"]
+    const isPublicRoute = PUBLIC_ROUTES.some(route => location.pathname.startsWith(route));
 
     return <div className="bg-[#F7941C] text-white sticky top-0 z-10">
         <div className="px-4 py-4 flex items-center justify-between">
@@ -20,15 +21,13 @@ const Header = ({ title, icon, onAction }) => {
                 >
                     {icon}
                 </div>
-                {
-                    !publicroutes.includes(location.pathname) && (
-                        <Link to="/redeem">
-                            <div className="flex items-center justify-end">
-                                <img src={coin} alt="redeem-icon" className="w-6 h-auto" />
-                            </div>
-                        </Link>
-                    )
-                }
+                {!isPublicRoute && (
+                    <Link to="/redeem">
+                        <div className="flex items-center justify-end">
+                            <img src={coin} alt="redeem-icon" className="w-6 h-auto" />
+                        </div>
+                    </Link>
+                )}
             </div>
         </div>
     </div>

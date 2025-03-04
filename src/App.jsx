@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { useState, useEffect } from "react";
 import ChallengesPage from "./pages/Challenges";
 import MemberProgramPage from "./pages/MemberProgram";
 import Home from "./pages/Home";
@@ -28,9 +29,29 @@ import Success from "./pages/PaymentSuccess";
 import Failure from "./pages/PaymentFailure";
 import ComingSoonProductPage from "./pages/ComingSoon";
 import PublicLayout from "./layout/PublicLayout";
-
+import NoNetworkPage from "./pages/NoNetworkPage";
 
 function App() {
+
+  const [isOnline, setIsOnline] = useState(navigator.onLine);
+
+  useEffect(() => {
+    const handleOnline = () => setIsOnline(true);
+    const handleOffline = () => setIsOnline(false);
+
+    window.addEventListener("online", handleOnline);
+    window.addEventListener("offline", handleOffline);
+
+    return () => {
+      window.removeEventListener("online", handleOnline);
+      window.removeEventListener("offline", handleOffline);
+    };
+  }, []);
+
+  if (!isOnline) {
+    return <NoNetworkPage />;
+  }
+
   return (
     <>
       <Toaster />
@@ -45,8 +66,8 @@ function App() {
               <Route path="/termsandcondition" element={<TermsAndCondition />} />
               <Route path="/privacypolicy" element={<PrivacyPolicy />} />
               <Route path="/refund" element={<Refund />} />
-              <Route path="/success" element={<Success />}/>
-              <Route path="/failure" element={<Failure />}/>
+              <Route path="/success" element={<Success />} />
+              <Route path="/failure" element={<Failure />} />
             </Route>
 
             {/* Protected Routes */}
@@ -67,7 +88,7 @@ function App() {
                 <Route path="/challengehistory" element={<SubmissionHistory />} />
                 <Route path="/redeemhistory" element={<RedeemHistory />} />
                 <Route path="/pruchaseHistory" element={<PurchaseHistory />} />
-                <Route path="/memberprogram" element={ <ComingSoonProductPage/> } />
+                <Route path="/memberprogram" element={<ComingSoonProductPage />} />
               </Route>
             </Route>
           </Routes>
