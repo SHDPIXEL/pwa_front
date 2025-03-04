@@ -27,6 +27,7 @@ import PurchaseHistory from "./pages/PurchaseHistory";
 import Success from "./pages/PaymentSuccess";
 import Failure from "./pages/PaymentFailure";
 import ComingSoonProductPage from "./pages/ComingSoon";
+import PublicLayout from "./layout/PublicLayout";
 
 
 function App() {
@@ -37,7 +38,7 @@ function App() {
         <UserProvider>
           <Routes>
             {/* Public Route (Home) */}
-            <Route path="/" element={<Layout />}>
+            <Route path="/" element={<PublicLayout />}>
               <Route index element={<Home />} />
               <Route path="/login" element={<Login />} />
               <Route path="/splash" element={<SplashScreen />} />

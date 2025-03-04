@@ -5,6 +5,9 @@ import coin from "../assets/images/Coin_b.png";
 
 
 const Header = ({ title, icon, onAction }) => {
+
+    const publicroutes = ["/privacypolicy","/termsandcondition","/refund"]
+
     return <div className="bg-[#F7941C] text-white sticky top-0 z-10">
         <div className="px-4 py-4 flex items-center justify-between">
             <h1 className="text-xl font-semibold tracking-wide">{title}</h1>
