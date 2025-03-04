@@ -458,8 +458,7 @@ const Home = () => {
                   {registerWithPhone ? "Email Address" : "Phone Number"}
                 </button>
                 <p className="text-center text-xs text-gray-500 px-6 mb-5">
-                  By signing up I agree to the Terms of Services and Privacy Policy
-                  including usage of cookies.
+                  By signing up I agree to the <a href="/termsandcondition" className="text-[#F7941C] underline">Terms of Services</a> and <a href="/privacypolicy" className="text-[#F7941C] underline">Privacy Policy</a> including usage of cookies.
                 </p>
                 <p
                   onClick={() => navigate("/login")}

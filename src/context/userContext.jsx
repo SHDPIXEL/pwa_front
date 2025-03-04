@@ -23,7 +23,7 @@ export const UserProvider = ({ children }) => {
     } catch (error) {
       console.error("Failed to fetch user details:", error);
       setUserData(null); // Clear user data on failure
-      const isPublicRoute = ["/", "/login"].includes(location.pathname);
+      const isPublicRoute = ["/", "/login","/termsandcondition","/privacypolicy","/refund"].includes(location.pathname);
       if (!isPublicRoute) {
         // Redirect to "/" only if not on a public route
         toast.error("Session expired. Please log in again."); // Optional feedback
