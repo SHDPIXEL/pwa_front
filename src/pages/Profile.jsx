@@ -81,6 +81,8 @@ const Profile = () => {
     }
   }, [userData]);
 
+  console.log(userData)
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
 
@@ -197,7 +199,7 @@ const Profile = () => {
   return (
     <div className="min-h-[100dvh] flex flex-col bg-gray-50">
       <Header
-        title="Profile"
+        title={isEditing ? "Update Profile" : "Profile" }
         icon={<UserPen className="w-6 h-6" />}
         onAction={() => setIsEditing(!isEditing)}
         extraContent={
@@ -303,7 +305,8 @@ const Profile = () => {
                     }`}
                     value={formData.phone}
                     onChange={handleInputChange}
-                    disabled={!isEditing}
+                    // disabled={!isEditing}
+                    disabled = {userData.phone ? true : !isEditing}
                     aria-label="Phone number"
                   />
                 </div>
@@ -321,7 +324,8 @@ const Profile = () => {
                     }`}
                     value={formData.email}
                     onChange={handleInputChange}
-                    disabled={!isEditing}
+                    // disabled={!isEditing}
+                    disabled = {userData.email ? true : !isEditing}
                     aria-label="Email"
                   />
                 </div>

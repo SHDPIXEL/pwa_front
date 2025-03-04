@@ -210,7 +210,7 @@ const useAuth = (fetchUserDetails, navigate) => {
       }
     } catch (error) {
       console.error("Login error:", error);
-      toast.error(error.response?.data?.message || "Login failed. Check your connection.");
+      toast.error(error.response?.data?.message || "Login failed", error);
     } finally {
       setIsLoading(false);
     }
