@@ -85,7 +85,6 @@ const ChallengeDetails = () => {
     }));
 
     const participation = [
-        "Register for the challenge through the form",
         "Share your progress through images/videos",
         "Complete this challenge to earn reward",
     ];
