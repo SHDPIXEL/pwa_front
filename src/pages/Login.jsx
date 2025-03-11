@@ -5,6 +5,7 @@ import { useUser } from "../context/userContext";
 import Loader from "../components/Loader";
 import useAuth from "../auth/useAuth";
 import { Eye, EyeClosed } from "lucide-react";
+import ContactModal from "../components/ContactUsModal";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -13,6 +14,8 @@ const Login = () => {
   const [resendTimer, setResendTimer] = useState(60);
   const [isResendDisabled, setIsResendDisabled] = useState(true);
   const [isVisible, setIsVisible] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
 
   const { fetchUserDetails } = useUser();
   const { isLoading, handleLogin, handleLoginOtpVerify, resendLoginOtp } = useAuth(fetchUserDetails, navigate);
@@ -203,10 +206,17 @@ const Login = () => {
             {/* Sign Up Link */}
             <p
               onClick={() => navigate("/")}
-              className="text-center text-xs px-6 pb-10 text-[#F7941C] font-semibold tracking-wide cursor-pointer"
+              className="text-center text-xs px-6 pb-3 text-[#F7941C] font-semibold tracking-wide cursor-pointer"
             >
               Don't have an account?
             </p>
+            <p
+              className="text-center text-xs px-6 mb-3 text-[#F7941C] cursor-pointer hover:underline font-semibold"
+              onClick={() => setIsModalOpen(true)}
+            >
+              If you have any queries, please contact us
+            </p>
+            {isModalOpen && <ContactModal onClose={() => setIsModalOpen(false)} />}
           </div>
         </div>
       </div>

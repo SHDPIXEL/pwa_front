@@ -7,6 +7,7 @@ import { useUser } from "../context/userContext";
 import Loader from "../components/Loader";
 import useAuth from "../auth/useAuth";
 import { Eye, EyeClosed } from "lucide-react";
+import ContactModal from "../components/ContactUsModal";
 
 const Home = () => {
   const [isSplashVisible, setIsSplashVisible] = useState(true);
@@ -27,6 +28,7 @@ const Home = () => {
   const [resendTimer, setResendTimer] = useState(60);
   const [canResend, setCanResend] = useState(false);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const navigate = useNavigate();
   const { fetchUserDetails } = useUser();
@@ -163,22 +165,20 @@ const Home = () => {
               <div className="flex justify-center pb-5">
                 <div className="bg-white shadow-xs border border-gray-200 rounded-xl py-1 px-1 inline-flex gap-1">
                   <button
-                    className={`relative px-6 py-2 text-xs font-semibold rounded-xl transition-all ${
-                      activeTab === "Dr"
+                    className={`relative px-6 py-2 text-xs font-semibold rounded-xl transition-all ${activeTab === "Dr"
                         ? "bg-[#F7941C] text-white shadow-md"
                         : "text-gray-700 hover:bg-gray-100"
-                    }`}
+                      }`}
                     onClick={() => setActiveTab("Dr")}
                     aria-pressed={activeTab === "Dr"}
                   >
                     Doctor
                   </button>
                   <button
-                    className={`relative px-6 py-2 text-xs font-semibold rounded-xl transition-all ${
-                      activeTab === "Patient"
+                    className={`relative px-6 py-2 text-xs font-semibold rounded-xl transition-all ${activeTab === "Patient"
                         ? "bg-[#F7941C] text-white shadow-md"
                         : "text-gray-700 hover:bg-gray-100"
-                    }`}
+                      }`}
                     onClick={() => setActiveTab("Patient")}
                     aria-pressed={activeTab === "Patient"}
                   >
@@ -292,9 +292,8 @@ const Home = () => {
                           aria-label="Male"
                         />
                         <div
-                          className={`w-4 h-4 rounded-full border border-[#F7941C] flex items-center justify-center transition-all ${
-                            gender === "male" ? "bg-[#F7941C]" : "bg-white"
-                          }`}
+                          className={`w-4 h-4 rounded-full border border-[#F7941C] flex items-center justify-center transition-all ${gender === "male" ? "bg-[#F7941C]" : "bg-white"
+                            }`}
                         >
                           {gender === "male" && (
                             <div className="w-2 h-2 rounded-full bg-[#F7941C]"></div>
@@ -313,9 +312,8 @@ const Home = () => {
                           aria-label="Female"
                         />
                         <div
-                          className={`w-4 h-4 rounded-full border border-[#F7941C] flex items-center justify-center transition-all ${
-                            gender === "female" ? "bg-[#F7941C]" : "bg-white"
-                          }`}
+                          className={`w-4 h-4 rounded-full border border-[#F7941C] flex items-center justify-center transition-all ${gender === "female" ? "bg-[#F7941C]" : "bg-white"
+                            }`}
                         >
                           {gender === "female" && (
                             <div className="w-2 h-2 rounded-full bg-F7941C"></div>
@@ -348,9 +346,8 @@ const Home = () => {
                   onClick={() =>
                     handleRegister(formData, activeTab, registerWithPhone, selectedState)
                   }
-                  className={`w-full text-white py-3 rounded-xl mb-4 active:bg-gray-900 transition-opacity ${
-                    isLoading ? "bg-gray-700" : "bg-black"
-                  }`}
+                  className={`w-full text-white py-3 rounded-xl mb-4 active:bg-gray-900 transition-opacity ${isLoading ? "bg-gray-700" : "bg-black"
+                    }`}
                   aria-label="Continue"
                 >
                   {isLoading ? <Loader isCenter={false} /> : "Continue"}
@@ -383,11 +380,10 @@ const Home = () => {
                     <button
                       onClick={handleResendOtp}
                       disabled={!canResend || isLoading}
-                      className={`w-full text-[#F7941C] py-2 rounded-xl transition-opacity ${
-                        !canResend || isLoading
+                      className={`w-full text-[#F7941C] py-2 rounded-xl transition-opacity ${!canResend || isLoading
                           ? "opacity-50 cursor-not-allowed"
                           : "hover:bg-gray-100"
-                      }`}
+                        }`}
                       aria-label={canResend ? "Resend OTP" : `Resend OTP in ${resendTimer}s`}
                     >
                       {isLoading ? (
@@ -457,9 +453,16 @@ const Home = () => {
                 >
                   {registerWithPhone ? "Email Address" : "Phone Number"}
                 </button>
-                <p className="text-center text-xs text-gray-500 px-6 mb-5">
+                <p className="text-center text-xs text-gray-500 px-6 mb-2">
                   By signing up I agree to the <a href="/termsandcondition" className="text-[#F7941C] underline">Terms of Services</a> and <a href="/privacypolicy" className="text-[#F7941C] underline">Privacy Policy</a> including usage of cookies.
                 </p>
+                <p
+                  className="text-center text-xs px-6 mb-5 text-[#F7941C] cursor-pointer hover:underline"
+                  onClick={() => setIsModalOpen(true)}
+                >
+                  If you have any queries, please contact us
+                </p>
+                {isModalOpen && <ContactModal onClose={() => setIsModalOpen(false)} />}
                 <p
                   onClick={() => navigate("/login")}
                   className="text-center text-xs px-6 pb-10 text-[#F7941C] font-semibold tracking-wide cursor-pointer"
