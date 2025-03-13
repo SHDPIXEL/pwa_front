@@ -166,7 +166,7 @@ const Welcome = () => {
                 </button>}
 
                 {/* Action 2 - Member Program */}
-                <Link to={"/memberprogram"}>
+                {/* <Link to={"/memberprogram"}>
                     <div className="flex flex-col items-center">
                         <div className="w-20 h-20 flex items-center justify-center bg-[#F7941C] text-white rounded-full">
                             <User className="w-10 h-10" />
@@ -174,7 +174,7 @@ const Welcome = () => {
                         <p className="mt-2 text-base text-black">Privileged Member</p>
                         <p className="text-base text-black">Program</p>
                     </div>
-                </Link>
+                </Link> */}
 
                 {/* Action 3 - Free Diet Consultation */}
                 <Link to={"/dietconsultation"}>
