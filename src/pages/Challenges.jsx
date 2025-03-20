@@ -22,7 +22,6 @@ const ChallengesPage = () => {
         const weeksResponse = await api.get("/user/weeks");
         const weeksData = weeksResponse.data || [];
         const activeaWeeks = weeksResponse.data.filter(week => week.status === "Active");
-        console.log("weeks Data", weeksData)
 
         // Fetch completed challenges (handling 404 error separately)
         let completedIds = [];

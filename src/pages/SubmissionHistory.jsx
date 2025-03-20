@@ -134,7 +134,6 @@ const SubmissionHistory = () => {
         const fetchHistory = async () => {
             try {
                 const response = await api.get(`/user/get/challengeForm`);
-                console.log("Raw challenge data:", response.data);
 
                 const dataArray = Array.isArray(response.data)
                     ? response.data
@@ -142,7 +141,6 @@ const SubmissionHistory = () => {
                     ? response.data.data
                     : [response.data]; // Wrap in an array if it's a single object
 
-                console.log("Processed data array:", dataArray);
 
                 // Transform the data with error handling and image path extraction
                 const transformedData = dataArray.map((item) => {
@@ -171,7 +169,6 @@ const SubmissionHistory = () => {
                 });
 
                 setSubmissions(transformedData);
-                console.log("Transformed submissions:", transformedData);
             } catch (error) {
                 console.error("Fetch error:", error);
                 toast.error("Error in fetching user history");

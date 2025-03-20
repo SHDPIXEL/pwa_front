@@ -22,7 +22,6 @@ const FirstLogin = () => {
   // Redirect if no user data after loading
   useEffect(() => {
     if (!loading && !userData) {
-      console.log("No user data found after loading, redirecting to /");
       navigate("/", { replace: true });
     }
   }, [loading, userData, navigate]);

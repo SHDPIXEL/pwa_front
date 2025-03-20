@@ -8,10 +8,8 @@ const PayUPayment = ({ setToggle, form, hash, transactionId }) => {
         document.getElementById("payu-form").submit();
     }, []);
 
-    console.log(transactionId)
 
     const { userData, setUserData, loading } = useUser();
-    console.log(userData,"user data")
 
 
 

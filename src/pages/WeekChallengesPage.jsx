@@ -21,7 +21,6 @@ const WeekChallengesPage = () => {
         setIsLoading(true);
         const response = await api.get(`/user/challenges/${weekId}`);
         setAllChallenges(response.data);
-        console.log("week challenges", response.data)
       } catch (error) {
         console.error("Error fetching challenges:", error);
       } finally {

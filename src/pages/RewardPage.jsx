@@ -18,7 +18,6 @@ const RewardPage = () => {
     try {
       const response = await api.post("/user/redeem", { rewardId: id });
 
-      console.log("API Response:", response);
 
       if (response.status === 400) {
         toast.error(response.data?.error || "Unable to redeem reward.");
@@ -57,7 +56,6 @@ const RewardPage = () => {
   };
 
   const imageUrl = extractImagePath(reward.reward_image);
-  console.log(imageUrl);
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">

@@ -100,10 +100,8 @@ const RedeemPage = () => {
     const fetchAllRewards = async () => {
       try {
         const response = await api.get("/user/rewards");
-        console.log("All rewards:", response.data);
         if (response?.data) {
           const activeRewards = response.data.filter(reward => reward.status === "Active");
-          console.log("Active rewards:", activeRewards);
           setAllRewards(activeRewards);
         } else {
           console.error("Invalid response structure", response);
@@ -118,7 +116,6 @@ const RedeemPage = () => {
     const fetchClaimedRewards = async () => {
       try {
         const response = await api.get("/user/get/redeem");
-        console.log("Claimed rewards response:", response.data);
         if (response?.data?.redeemedRewardIds) {
           setClaimedRewardIds(response.data.redeemedRewardIds);
         } else {

@@ -30,6 +30,8 @@ import Failure from "./pages/PaymentFailure";
 import ComingSoonProductPage from "./pages/ComingSoon";
 import PublicLayout from "./layout/PublicLayout";
 import NoNetworkPage from "./pages/NoNetworkPage";
+import PaymentPage from "./pages/PaymentQR";
+import ThankYouProduct from "./pages/ThankyouProduct";
 
 function App() {
 
@@ -75,7 +77,7 @@ function App() {
               <Route path="/" element={<Layout />}>
                 <Route path="/Challenges" element={<ChallengesPage />} />
                 <Route path="/challenges/week/:weekId" element={<WeekChallengesPage />} />
-                {/* <Route path="/memberprogram" element={<MemberProgramPage />} /> */}
+                <Route path="/memberprogram" element={<MemberProgramPage />} />
                 <Route path="/redeem" element={<RedeemPage />} />
                 <Route path="/welcome" element={<Welcome />} />
                 <Route path="/challenges/week/:weekId/:challengeId" element={<ChallengeDetails />} />
@@ -88,7 +90,9 @@ function App() {
                 <Route path="/challengehistory" element={<SubmissionHistory />} />
                 <Route path="/redeemhistory" element={<RedeemHistory />} />
                 <Route path="/pruchaseHistory" element={<PurchaseHistory />} />
-                <Route path="/memberprogram" element={<ComingSoonProductPage />} />
+                <Route path="/payment" element={<PaymentPage />} />
+                <Route path="/thank-you-product" element={<ThankYouProduct />} />
+                {/* <Route path="/memberprogram" element={<ComingSoonProductPage />} /> */}
               </Route>
             </Route>
           </Routes>

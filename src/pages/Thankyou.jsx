@@ -90,5 +90,4 @@ const ThankYouPage = () => {
         </div>
     );
 };
-
 export default ThankYouPage;

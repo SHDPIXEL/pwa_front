@@ -32,7 +32,6 @@ const MemberProgramPage = () => {
         setIsLoading(true);
         setError(null); // Reset error state
         const response = await api.get("user/products");
-        console.log("Product data:", response.data);
         setProductDetails(response.data);
       } catch (error) {
         console.error("Error fetching products:", error);

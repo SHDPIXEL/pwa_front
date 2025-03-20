@@ -30,7 +30,6 @@ const ChallengeDetails = () => {
     const location = useLocation();
     const { challenge: ChallengeDetails } = location.state || {};
 
-    console.log("challenge id",ChallengeDetails.id)
 
     // Fetch user details on mount
     useEffect(() => {
@@ -181,7 +180,6 @@ const ChallengeDetails = () => {
                 },
             });
 
-            console.log("submission data", submissionData)
 
             if (response.status === 200 || response.status === 201) {
                 setMessage(true);

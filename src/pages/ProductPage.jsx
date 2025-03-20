@@ -68,7 +68,6 @@ const ProductPage = () => {
         try {
             setIsLoading(true);
             const response = await api.post("/auth/user/hash", data);
-            console.log("data sent during hash", data)
             setHash(response.data.hash.hash);
             setTransactionId(response.data.hash.txnid);
             // setShowPaymentForm(true);
@@ -100,7 +99,6 @@ const ProductPage = () => {
 
             if (response.status === 200) {
                 toast.success("Payment successful!");
-                console.log("Temp Payment Response:", response.data);
 
                 // Map response data to orderDetails structure expected by ThankYouPage
                 const orderDetails = {
@@ -126,6 +124,44 @@ const ProductPage = () => {
     if (!userData) {
         return <Loader />;  // Show loader while user data is being fetched
     }
+
+
+    const handleBuyNow = async () => {
+        const productData = {
+            productId: product.id,
+            quantity,
+            price: product.price,
+            amount: (product.price * quantity).toFixed(2),
+            name: product.name,
+            image: product.image
+        };
+
+        try {
+            const response = await api.post("/auth/user/order", productData);
+
+            if (response?.status === 201 && response.data?.order) {
+                const orderDetails = response.data.order;
+
+                navigate("/payment", {
+                    state: {
+                        productData,
+                        orderId: orderDetails.orderId,
+                        orderStatus: orderDetails.status,
+                        orderAmount: orderDetails.amount,
+                        orderQuantity: orderDetails.quantity
+                    }
+                });
+
+                toast.success("Order created successfully!");
+            } else {
+                throw new Error("Failed to create order");
+            }
+        } catch (error) {
+            console.error("Error in creating order:", error);
+            toast.error("Error in creating order");
+        }
+    };
+
 
     return (
         <div className="min-h-screen bg-gray-50 flex flex-col">
@@ -192,7 +228,7 @@ const ProductPage = () => {
                     </div>
                 )}
                 <div className="p-4">
-                    <button
+                    {/* <button
                         onClick={handleSubmit}
                         // onClick={handleTempPayment}
                         className="w-full bg-[#F7941C] text-white py-3 rounded-xl flex items-center justify-center gap-2 font-medium active:bg-amber-600"
@@ -209,7 +245,15 @@ const ProductPage = () => {
                                 Buy Now • ₹{(product.price * quantity).toLocaleString()}
                             </div>
                         )}
+                    </button> */}
+
+                    <button
+                        onClick={handleBuyNow}
+                        className="w-full bg-[#F7941C] text-white py-3 rounded-xl flex items-center justify-center gap-2 font-medium mt-4"
+                    >
+                        <CreditCard className="w-5 h-5" /> Buy Now • ₹{(product.price * quantity).toLocaleString()}
                     </button>
+
                 </div>
             </div>
             {/* Render PayUPayment outside the button when showPaymentForm is true */}

@@ -2,9 +2,11 @@
 import axios from "axios";
 
 export const API_BASE_URL = "https://2ej9ufdjyb.ap-south-1.awsapprunner.com/";
-// export const API_BASE_URL = "http://192.168.1.11:4040";
+// export const API_BASE_URL = "http://192.168.203.244:4040";
 
 export const BASE_IMAGE_URL = "https://2ej9ufdjyb.ap-south-1.awsapprunner.com"
+// export const BASE_IMAGE_URL = "http://192.168.203.244:4040"
+
 
 
 const api = axios.create({

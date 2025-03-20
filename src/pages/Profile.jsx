@@ -81,8 +81,6 @@ const Profile = () => {
     }
   }, [userData]);
 
-  console.log(userData)
-
   const handleInputChange = (e) => {
     const { name, value } = e.target;
 

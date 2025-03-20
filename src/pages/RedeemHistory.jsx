@@ -107,13 +107,10 @@ const RewardHistory = () => {
     const fetchHistory = async () => {
       try {
         const response = await api.get(`/user/get/redeem`);
-        console.log("Raw redeem history data:", response.data.redeemedRewardDetails);
 
         const dataArray = Array.isArray(response.data) ? response.data
           : Array.isArray(response.data?.redeemedRewardDetails) ? response.data.redeemedRewardDetails
             : [response.data]; 
-
-        console.log("Processed data array:", dataArray);
         
         // Transform the data if needed
         const transformedData = dataArray.map(item => ({
