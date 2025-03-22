@@ -3,8 +3,7 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import { ArrowLeft, Upload, CheckCircle } from "lucide-react";
 import Loader from "../components/Loader";
-import QRCode from "../assets/images/QRCode.png";
-import QRCodeFull from "../assets/images/QRCodeFull.png"
+import QRCodeFull from "../assets/images/brebootQr.png"
 import api from "../utils/Api";
 
 const PaymentPage = () => {
