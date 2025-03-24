@@ -2,10 +2,12 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import brebootSvg from "../assets/svg/BrebootLogo.svg";
 import { useUser } from "../context/userContext";
+import toast from "react-hot-toast";
 import Loader from "../components/Loader";
 import useAuth from "../auth/useAuth";
 import { Eye, EyeClosed } from "lucide-react";
 import ContactModal from "../components/ContactUsModal";
+import api from "../utils/Api";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -16,9 +18,9 @@ const Login = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-
   const { fetchUserDetails } = useUser();
-  const { isLoading, handleLogin, handleLoginOtpVerify, resendLoginOtp } = useAuth(fetchUserDetails, navigate);
+  const { isLoading, handleLogin, handleLoginOtpVerify, resendLoginOtp } =
+    useAuth(fetchUserDetails, navigate);
 
   const [formData, setFormData] = useState({
     phone: "",
@@ -68,8 +70,8 @@ const Login = () => {
   };
 
   const togglePasswordVisible = () => {
-    setIsVisible(!isVisible)
-  }
+    setIsVisible(!isVisible);
+  };
 
   return (
     <div className="min-h-[100dvh] flex flex-col overflow-hidden">
@@ -105,7 +107,9 @@ const Login = () => {
                     value={formData.phone}
                     maxLength={10}
                     onChange={handleFormChange}
-                    onInput={(e) => (e.target.value = e.target.value.replace(/\D/g, ""))}
+                    onInput={(e) =>
+                      (e.target.value = e.target.value.replace(/\D/g, ""))
+                    }
                   />
                 </div>
                 {showOtpInput && (
@@ -121,10 +125,13 @@ const Login = () => {
                     <button
                       onClick={handleResendOtp}
                       disabled={isResendDisabled || isLoading}
-                      className={`text-[#F7941C] font-semibold text-xs mt-2 ${isResendDisabled || isLoading ? "opacity-50" : ""
-                        }`}
+                      className={`text-[#F7941C] font-semibold text-xs mt-2 ${
+                        isResendDisabled || isLoading ? "opacity-50" : ""
+                      }`}
                     >
-                      {isResendDisabled ? `Resend OTP in ${resendTimer}s` : "Resend OTP"}
+                      {isResendDisabled
+                        ? `Resend OTP in ${resendTimer}s`
+                        : "Resend OTP"}
                     </button>
                   </div>
                 )}
@@ -153,8 +160,15 @@ const Login = () => {
                     value={formData.password}
                     onChange={handleFormChange}
                   />
-                  <button onClick={togglePasswordVisible} className="absolute inset-y-0 right-3 flex items-center">
-                    {isVisible ? <EyeClosed className="w-5 h-5 text-gray-500" /> : <Eye className="w-5 h-5 text-gray-500" />}
+                  <button
+                    onClick={togglePasswordVisible}
+                    className="absolute inset-y-0 right-3 flex items-center"
+                  >
+                    {isVisible ? (
+                      <EyeClosed className="w-5 h-5 text-gray-500" />
+                    ) : (
+                      <Eye className="w-5 h-5 text-gray-500" />
+                    )}
                   </button>
                 </div>
               </>
@@ -171,8 +185,9 @@ const Login = () => {
                     : handleLogin(formData, loginWithPhone, setShowOtpInput)
                   : handleLogin(formData, loginWithPhone, setShowOtpInput)
               }
-              className={`w-full bg-black text-white py-3 rounded-xl mb-4 active:bg-gray-900 transition-opacity ${isLoading ? "bg-gray-700" : "bg-black"
-                }`}
+              className={`w-full bg-black text-white py-3 rounded-xl mb-4 active:bg-gray-900 transition-opacity ${
+                isLoading ? "bg-gray-700" : "bg-black"
+              }`}
               disabled={isLoading}
             >
               {isLoading ? (
@@ -191,7 +206,9 @@ const Login = () => {
             {/* Divider */}
             {/* <div className="flex items-center justify-center gap-4 mb-4">
               <div className="h-px bg-gray-200 flex-1"></div>
-              <span className="text-gray-500 font-medium text-xs">or continue with</span>
+              <span className="text-gray-500 font-medium text-xs">
+                or continue with
+              </span>
               <div className="h-px bg-gray-200 flex-1"></div>
             </div> */}
 
@@ -204,6 +221,13 @@ const Login = () => {
             </button> */}
 
             {/* Sign Up Link */}
+            {/* Forgot Password Link */}
+            <p
+              className="text-center text-xs px-6 pb-6 text-[#F7941C] font-semibold tracking-wide cursor-pointer hover:underline"
+              onClick={() => navigate("/forgot-password")}
+            >
+              Forgot Password?
+            </p>
             <p
               onClick={() => navigate("/")}
               className="text-center text-xs px-6 pb-3 text-[#F7941C] font-semibold tracking-wide cursor-pointer"
@@ -216,7 +240,9 @@ const Login = () => {
             >
               If you have any queries, please contact us
             </p>
-            {isModalOpen && <ContactModal onClose={() => setIsModalOpen(false)} />}
+            {isModalOpen && (
+              <ContactModal onClose={() => setIsModalOpen(false)} />
+            )}
           </div>
         </div>
       </div>

@@ -32,6 +32,8 @@ import PublicLayout from "./layout/PublicLayout";
 import NoNetworkPage from "./pages/NoNetworkPage";
 import PaymentPage from "./pages/PaymentQR";
 import ThankYouProduct from "./pages/ThankyouProduct";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
 
 function App() {
 
@@ -64,6 +66,8 @@ function App() {
             <Route path="/" element={<PublicLayout />}>
               <Route index element={<Home />} />
               <Route path="/login" element={<Login />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
+              <Route path="/reset-password/:token" element={<ResetPassword />} />
               <Route path="/splash" element={<SplashScreen />} />
               <Route path="/termsandcondition" element={<TermsAndCondition />} />
               <Route path="/privacypolicy" element={<PrivacyPolicy />} />

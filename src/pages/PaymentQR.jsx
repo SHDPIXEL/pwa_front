@@ -3,6 +3,7 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import { ArrowLeft, Upload, CheckCircle, Landmark } from "lucide-react";
 import Loader from "../components/Loader";
+import QRCodeFull from "../assets/images/brebootQr.png"
 import QRCode from "../assets/images/QRCode.png";
 import QRCodeFull from "../assets/images/QRCodeFull.jpg"
 import api from "../utils/Api";
