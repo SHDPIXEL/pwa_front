@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import toast from "react-hot-toast";
-import { useParams, useNavigate } from "react-router-dom"; // Use useNavigate for navigation
+import { useParams, useNavigate, useSearchParams } from "react-router-dom"; // Use useNavigate for navigation
 import api from "../utils/Api";
 import brebootSvg from "../assets/svg/BrebootLogo.svg"; // Logo for branding
 
@@ -9,6 +9,7 @@ const ResetPassword = () => {
   const [newPassword, setNewPassword] = useState("");
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
   const navigate = useNavigate(); // Use navigate hook for navigation
+  const expires = useSearchParams.get("expires")
 
   const handleResetPassword = async () => {
     if (!newPassword || !confirmNewPassword) {
@@ -22,7 +23,7 @@ const ResetPassword = () => {
     }
 
     try {
-      const response = await api.post(`/auth/user/reset-password/${token}`, {
+      const response = await api.post(`/auth/user/reset-password/${token}?expires=${expires}`, {
         newPassword,
         confirmNewPassword,
       });
