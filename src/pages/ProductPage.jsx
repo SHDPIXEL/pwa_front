@@ -14,7 +14,7 @@ const ProductPage = () => {
     const [copied, setCopied] = useState(false);
     const [doctorCode, setDoctorCode] = useState("");
     const [isLoading, setIsLoading] = useState(false);
-    const [quantity, setQuantity] = useState(userType === "Dr" ? 100 : 1);
+    const [quantity, setQuantity] = useState(userType === "Dr" ? 5 : 2);
     const [hash, setHash] = useState("");
     const [transactionId, setTransactionId] = useState("");
     const [showPaymentForm, setShowPaymentForm] = useState(false); // New state to control PayUPayment rendering
@@ -210,7 +210,7 @@ const ProductPage = () => {
                             <div className="flex items-center gap-4">
                                 <button
                                     className="w-8 h-8 flex items-center justify-center border border-gray-300 rounded-lg active:bg-gray-100"
-                                    onClick={() => setQuantity((q) => (q > (userType === "Dr" ? 100 : 1) ? q - 1 : q))}
+                                    onClick={() => setQuantity((q) => (q > (userType === "Dr" ? 5 : 2) ? q - 1 : q))}
                                     disabled={isLoading}
                                 >
                                     -

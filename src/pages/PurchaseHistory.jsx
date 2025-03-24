@@ -4,9 +4,14 @@ import Header from "../components/Header";
 import api from "../utils/Api";
 import toast from "react-hot-toast";
 import Loader from "../components/Loader";
-import { CheckCircle, XCircle, Clock } from "lucide-react";
+import { CheckCircle, XCircle, Clock, ChevronDown, ChevronUp } from "lucide-react";
 
 const PurchaseCard = ({ purchase }) => {
+  const [showAddress, setShowAddress] = useState(false);
+
+  // Format the address to replace \r\n with spaces
+  const formattedAddress = purchase.address?.replace(/\r\n/g, " ") || "";
+
   return (
     <div className="bg-white p-4 rounded-2xl shadow-sm border border-gray-200 mb-4">
       <div className="flex gap-3">
@@ -25,7 +30,6 @@ const PurchaseCard = ({ purchase }) => {
           <h3 className="text-sm font-medium text-gray-800">{purchase.name}</h3>
           <p className="text-xs text-gray-500 mt-1">Order ID: {purchase.orderId}</p>
           <p className="text-xs text-gray-500 mt-1">Transaction ID: {purchase.transactionId}</p>
-          {/* <p className="text-xs text-gray-500 mt-1">Status: {purchase.status}</p> */}
 
           {/* Payment Verification Status */}
           <div className="mt-2 flex items-center gap-1">
@@ -40,10 +44,22 @@ const PurchaseCard = ({ purchase }) => {
               {purchase.paymentStatus === "Verified"
                 ? "Payment Verified"
                 : purchase.paymentStatus === "Verifying"
-                ? "Verification Pending"
-                : "Payment Failed"}
+                  ? "Verification Pending"
+                  : "Payment Failed"}
             </span>
           </div>
+
+          {/* View Address Option */}
+          <button
+            onClick={() => setShowAddress(!showAddress)}
+            className="text-xs text-gray-500 mt-2 flex items-center gap-1"
+          >
+            {showAddress ? "Hide Address" : "View Address"}
+            {showAddress ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+          </button>
+          {showAddress && (
+            <p className="text-xs text-gray-500 mt-1">{formattedAddress}</p>
+          )}
         </div>
       </div>
     </div>
@@ -69,7 +85,6 @@ const PurchaseHistory = () => {
         setLoading(false);
       }
     };
-
     fetchPurchases();
   }, []);
 

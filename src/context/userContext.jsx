@@ -21,6 +21,7 @@ export const UserProvider = ({ children }) => {
         throw new Error("No auth token found");
       }
       const response = await api.get("/user/getuserdetails");
+      console.log("response user", response.data)
       setUserData(response.data.user);
       localStorage.setItem("GenderType", response.data.user.gender);
     } catch (error) {

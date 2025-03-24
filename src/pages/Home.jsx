@@ -6,7 +6,6 @@ import { FormModal } from "../components/Modal";
 import { useUser } from "../context/userContext";
 import Loader from "../components/Loader";
 import useAuth from "../auth/useAuth";
-import { Eye, EyeClosed } from "lucide-react";
 import ContactModal from "../components/ContactUsModal";
 
 const Home = () => {
@@ -14,7 +13,6 @@ const Home = () => {
   const [checked, setChecked] = useState(true);
   const [activeTab, setActiveTab] = useState("Dr");
   const [gender, setGender] = useState("female");
-  const [registerWithPhone, setRegisterWithPhone] = useState(true);
   const [selectedState, setSelectedState] = useState("");
   const [formData, setFormData] = useState({
     name: "",
@@ -22,12 +20,11 @@ const Home = () => {
     email: "",
     referralCode: "",
     otp: "",
-    password: "",
-    gender: "female", // Sync with initial gender state
+    gender: "female",
+    state: "",
   });
   const [resendTimer, setResendTimer] = useState(60);
   const [canResend, setCanResend] = useState(false);
-  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const navigate = useNavigate();
@@ -37,12 +34,9 @@ const Home = () => {
     isLoading,
     showOtpModal,
     setShowOtpModal,
-    showPasswordModal,
-    setShowPasswordModal,
     handleRegister,
-    handlePasswordSubmit,
     handleOtpVerify,
-    resendLoginOtp, // Correct function name
+    resendLoginOtp,
   } = useAuth(fetchUserDetails, navigate);
 
   useEffect(() => {
@@ -68,11 +62,11 @@ const Home = () => {
   }, [showOtpModal, resendTimer]);
 
   const handleResendOtp = async () => {
-    const success = await resendLoginOtp(formData); // Fixed to use resendLoginOtp
+    const success = await resendLoginOtp(formData);
     if (success) {
       setResendTimer(60);
       setCanResend(false);
-      setFormData((prev) => ({ ...prev, otp: "" })); // Clear OTP field
+      setFormData((prev) => ({ ...prev, otp: "" }));
     }
   };
 
@@ -120,7 +114,7 @@ const Home = () => {
     setSelectedState(value);
     setFormData((prev) => ({ ...prev, state: value }));
   };
-
+  
   const handleFormChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value.trim() }));
@@ -130,21 +124,6 @@ const Home = () => {
     setGender(newGender);
     setFormData((prev) => ({ ...prev, gender: newGender }));
     localStorage.setItem("GenderType", newGender);
-  };
-
-  const toggleRegisterMethod = () => {
-    setRegisterWithPhone(!registerWithPhone);
-    setFormData((prev) => ({
-      ...prev,
-      phone: "",
-      email: "",
-      otp: "",
-      password: "",
-    }));
-  };
-
-  const togglePasswordVisible = () => {
-    setIsPasswordVisible(!isPasswordVisible);
   };
 
   return (
@@ -165,20 +144,22 @@ const Home = () => {
               <div className="flex justify-center pb-5">
                 <div className="bg-white shadow-xs border border-gray-200 rounded-xl py-1 px-1 inline-flex gap-1">
                   <button
-                    className={`relative px-6 py-2 text-xs font-semibold rounded-xl transition-all ${activeTab === "Dr"
+                    className={`relative px-6 py-2 text-xs font-semibold rounded-xl transition-all ${
+                      activeTab === "Dr"
                         ? "bg-[#F7941C] text-white shadow-md"
                         : "text-gray-700 hover:bg-gray-100"
-                      }`}
+                    }`}
                     onClick={() => setActiveTab("Dr")}
                     aria-pressed={activeTab === "Dr"}
                   >
                     Doctor
                   </button>
                   <button
-                    className={`relative px-6 py-2 text-xs font-semibold rounded-xl transition-all ${activeTab === "Patient"
+                    className={`relative px-6 py-2 text-xs font-semibold rounded-xl transition-all ${
+                      activeTab === "Patient"
                         ? "bg-[#F7941C] text-white shadow-md"
                         : "text-gray-700 hover:bg-gray-100"
-                      }`}
+                    }`}
                     onClick={() => setActiveTab("Patient")}
                     aria-pressed={activeTab === "Patient"}
                   >
@@ -205,41 +186,35 @@ const Home = () => {
                     />
                   </div>
                   <div className="flex items-center max-w-80 mx-auto bg-gray-50 border border-gray-200 rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-[#F7941C]/20 focus-within:border-[#F7941C]">
-                    {registerWithPhone ? (
-                      <>
-                        <div className="flex items-center justify-center gap-2 px-4 py-3 border-r border-gray-200 w-20">
-                          <span className="text-gray-700 font-semibold">+91</span>
-                        </div>
-                        <input
-                          className="flex-1 bg-transparent px-4 py-3 focus:outline-none no-spinner"
-                          type="tel"
-                          placeholder="Enter your phone number"
-                          value={formData.phone}
-                          name="phone"
-                          maxLength={10}
-                          onChange={handleFormChange}
-                          onInput={(e) => (e.target.value = e.target.value.replace(/\D/g, ""))}
-                          aria-label="Phone number"
-                        />
-                      </>
-                    ) : (
-                      <>
-                        <div className="flex items-center justify-center gap-2 px-4 py-3 border-r border-gray-200 w-20">
-                          <span className="text-gray-700 font-semibold">Email</span>
-                        </div>
-                        <input
-                          className="w-full bg-transparent px-4 py-3 focus:outline-none"
-                          type="email"
-                          placeholder="Enter your email address"
-                          value={formData.email}
-                          name="email"
-                          onChange={handleFormChange}
-                          aria-label="Email address"
-                        />
-                      </>
-                    )}
+                    <div className="flex items-center justify-center gap-2 px-4 py-3 border-r border-gray-200 w-20">
+                      <span className="text-gray-700 font-semibold">+91</span>
+                    </div>
+                    <input
+                      className="flex-1 bg-transparent px-4 py-3 focus:outline-none no-spinner"
+                      type="tel"
+                      placeholder="Enter your phone number"
+                      value={formData.phone}
+                      name="phone"
+                      maxLength={10}
+                      onChange={handleFormChange}
+                      onInput={(e) => (e.target.value = e.target.value.replace(/\D/g, ""))}
+                      aria-label="Phone number"
+                    />
                   </div>
-
+                  <div className="flex items-center max-w-80 mx-auto bg-gray-50 border border-gray-200 rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-[#F7941C]/20 focus-within:border-[#F7941C]">
+                    <div className="flex items-center justify-center gap-2 px-4 py-3 border-r border-gray-200 w-20">
+                      <span className="text-gray-700 font-semibold">Email</span>
+                    </div>
+                    <input
+                      className="flex-1 bg-transparent px-4 py-3 focus:outline-none"
+                      type="email"
+                      placeholder="Enter your email address"
+                      value={formData.email}
+                      name="email"
+                      onChange={handleFormChange}
+                      aria-label="Email address"
+                    />
+                  </div>
                   {activeTab === "Dr" && (
                     <div className="flex items-center w-80 pr-2 bg-gray-50 border border-gray-200 rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-[#F7941C]/20 focus-within:border-[#F7941C]">
                       <div className="flex items-center justify-center gap-2 px-4 py-3 border-r border-gray-200 w-20">
@@ -262,7 +237,6 @@ const Home = () => {
                       </select>
                     </div>
                   )}
-
                   {activeTab === "Patient" && (
                     <div className="flex items-center max-w-80 bg-gray-50 border border-gray-200 rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-[#F7941C]/20 focus-within:border-[#F7941C]">
                       <div className="flex items-center justify-center gap-2 px-4 py-3 border-r border-gray-200 w-20">
@@ -292,8 +266,9 @@ const Home = () => {
                           aria-label="Male"
                         />
                         <div
-                          className={`w-4 h-4 rounded-full border border-[#F7941C] flex items-center justify-center transition-all ${gender === "male" ? "bg-[#F7941C]" : "bg-white"
-                            }`}
+                          className={`w-4 h-4 rounded-full border border-[#F7941C] flex items-center justify-center transition-all ${
+                            gender === "male" ? "bg-[#F7941C]" : "bg-white"
+                          }`}
                         >
                           {gender === "male" && (
                             <div className="w-2 h-2 rounded-full bg-[#F7941C]"></div>
@@ -312,8 +287,9 @@ const Home = () => {
                           aria-label="Female"
                         />
                         <div
-                          className={`w-4 h-4 rounded-full border border-[#F7941C] flex items-center justify-center transition-all ${gender === "female" ? "bg-[#F7941C]" : "bg-white"
-                            }`}
+                          className={`w-4 h-4 rounded-full border border-[#F7941C] flex items-center justify-center transition-all ${
+                            gender === "female" ? "bg-[#F7941C]" : "bg-white"
+                          }`}
                         >
                           {gender === "female" && (
                             <div className="w-2 h-2 rounded-full bg-F7941C"></div>
@@ -343,11 +319,10 @@ const Home = () => {
                 </div>
                 <button
                   disabled={isLoading}
-                  onClick={() =>
-                    handleRegister(formData, activeTab, registerWithPhone, selectedState)
-                  }
-                  className={`w-full text-white py-3 rounded-xl mb-4 active:bg-gray-900 transition-opacity ${isLoading ? "bg-gray-700" : "bg-black"
-                    }`}
+                  onClick={() => handleRegister(formData, activeTab, true, selectedState)}
+                  className={`w-full text-white py-3 rounded-xl mb-4 active:bg-gray-900 transition-opacity ${
+                    isLoading ? "bg-gray-700" : "bg-black"
+                  }`}
                   aria-label="Continue"
                 >
                   {isLoading ? <Loader isCenter={false} /> : "Continue"}
@@ -365,10 +340,10 @@ const Home = () => {
                     />
                     <button
                       onClick={() =>
-                        handleOtpVerify(formData, activeTab, registerWithPhone, selectedState)
+                        handleOtpVerify(formData, activeTab, true, selectedState)
                       }
                       className="w-full bg-orange-500 text-white py-3 rounded-xl mb-2"
-                      disabled={isLoading} // Updated to use isLoading
+                      disabled={isLoading}
                       aria-label="Verify OTP"
                     >
                       {isLoading ? (
@@ -380,10 +355,11 @@ const Home = () => {
                     <button
                       onClick={handleResendOtp}
                       disabled={!canResend || isLoading}
-                      className={`w-full text-[#F7941C] py-2 rounded-xl transition-opacity ${!canResend || isLoading
+                      className={`w-full text-[#F7941C] py-2 rounded-xl transition-opacity ${
+                        !canResend || isLoading
                           ? "opacity-50 cursor-not-allowed"
                           : "hover:bg-gray-100"
-                        }`}
+                      }`}
                       aria-label={canResend ? "Resend OTP" : `Resend OTP in ${resendTimer}s`}
                     >
                       {isLoading ? (
@@ -396,65 +372,16 @@ const Home = () => {
                     </button>
                   </FormModal>
                 )}
-                {showPasswordModal && (
-                  <FormModal
-                    title="Set Your Password"
-                    onClose={() => setShowPasswordModal(false)}
-                  >
-                    <div className="relative">
-                      <input
-                        className="w-full px-4 py-3 border rounded mb-2 pr-10"
-                        type={isPasswordVisible ? "text" : "password"}
-                        name="password"
-                        placeholder="Enter Password"
-                        value={formData.password}
-                        onChange={handleFormChange}
-                        aria-label="Password"
-                      />
-                      <button
-                        onClick={togglePasswordVisible}
-                        className="absolute top-[calc(50%-2.5px)] right-3 -translate-y-1/2 flex items-center justify-center"
-                        aria-label={isPasswordVisible ? "Hide password" : "Show password"}
-                      >
-                        {isPasswordVisible ? (
-                          <EyeClosed className="w-5 h-5 text-gray-500" />
-                        ) : (
-                          <Eye className="w-5 h-5 text-gray-500" />
-                        )}
-                      </button>
-                    </div>
-                    <button
-                      onClick={() =>
-                        handlePasswordSubmit(formData, activeTab, selectedState)
-                      }
-                      className="w-full bg-orange-500 text-white py-3 rounded-xl"
-                      disabled={isLoading} // Updated to use isLoading
-                      aria-label="Submit password"
-                    >
-                      {isLoading ? (
-                        <Loader BorderColor="border-white" isCenter={false} />
-                      ) : (
-                        "Submit"
-                      )}
-                    </button>
-                  </FormModal>
-                )}
-                <div className="flex items-center justify-center gap-4 mb-4">
-                  <div className="h-px bg-gray-200 flex-1"></div>
-                  <span className="text-gray-500 font-medium text-xs">
-                    or continue with
-                  </span>
-                  <div className="h-px bg-gray-200 flex-1"></div>
-                </div>
-                <button
-                  onClick={toggleRegisterMethod}
-                  className="w-full text-gray-700 border border-gray-400 py-3 rounded-xl mb-8 active:bg-gray-200 transition-opacity"
-                  aria-label={registerWithPhone ? "Switch to email" : "Switch to phone"}
-                >
-                  {registerWithPhone ? "Email Address" : "Phone Number"}
-                </button>
                 <p className="text-center text-xs text-gray-500 px-6 mb-2">
-                  By signing up I agree to the <a href="/termsandcondition" className="text-[#F7941C] underline">Terms of Services</a> and <a href="/privacypolicy" className="text-[#F7941C] underline">Privacy Policy</a> including usage of cookies.
+                  By signing up I agree to the{" "}
+                  <a href="/termsandcondition" className="text-[#F7941C] underline">
+                    Terms of Services
+                  </a>{" "}
+                  and{" "}
+                  <a href="/privacypolicy" className="text-[#F7941C] underline">
+                    Privacy Policy
+                  </a>{" "}
+                  including usage of cookies.
                 </p>
                 <p
                   className="text-center text-xs px-6 mb-5 text-[#F7941C] cursor-pointer hover:underline"

@@ -7,6 +7,7 @@ import Loader from "../components/Loader";
 import { BASE_IMAGE_URL } from "../utils/Api";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import { useUser } from "../context/userContext";
 
 const MemberProgramPage = () => {
   const [userType, setUserType] = useState(null);
@@ -14,6 +15,7 @@ const MemberProgramPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null); // Added for error state
   const navigate = useNavigate();
+  const { userData } = useUser();
 
   useEffect(() => {
     const user = localStorage.getItem("userType") || "Patient"; // Default to "Patient" if not set
@@ -32,6 +34,7 @@ const MemberProgramPage = () => {
         setIsLoading(true);
         setError(null); // Reset error state
         const response = await api.get("user/products");
+        console.log("product data", response.data)
         setProductDetails(response.data);
       } catch (error) {
         console.error("Error fetching products:", error);
@@ -45,9 +48,13 @@ const MemberProgramPage = () => {
   }, []);
 
   const getDisplayPrice = (product) => {
-    const basePrice = product.price;
-    return basePrice
+    // If the user is NOT a doctor and doesn't have a code, use priceForUser if it exists
+    if (userType !== "Dr" && !userData?.code) {
+      return product.priceForUser || product.price;
+    }
+    return product.price;
   };
+
 
   const getDiscountPercentage = (product) => {
     if (!product.oldPrice || product.oldPrice <= product.price) return 0;
@@ -75,11 +82,11 @@ const MemberProgramPage = () => {
               productDetails
                 .filter((product) => product.status === "Active")
                 .map((product) => {
-                  const displayPrice = getDisplayPrice(product);
+                  const displayPrice = getDisplayPrice(product);  // Updated to use the new logic
                   const discountPercentage = getDiscountPercentage(product);
                   const imageUrl = product.product_image
                     ? `${BASE_IMAGE_URL}/${product.product_image.replace(/^"|"$/g, "")}`
-                    : "/fallback-image.jpg"; // Add a fallback image
+                    : "/fallback-image.jpg";
 
                   return (
                     <ProductCard
@@ -87,7 +94,7 @@ const MemberProgramPage = () => {
                       id={product.id}
                       name={product.name}
                       price={displayPrice}
-                      originalPrice={product.oldPrice || null} // Pass null if no oldPrice
+                      originalPrice={product.oldPrice || null}
                       image={imageUrl}
                       discount={discountPercentage > 0 ? `${discountPercentage}% OFF` : null}
                       description={product.description}

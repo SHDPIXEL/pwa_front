@@ -189,19 +189,19 @@ const Login = () => {
             </button>
 
             {/* Divider */}
-            <div className="flex items-center justify-center gap-4 mb-4">
+            {/* <div className="flex items-center justify-center gap-4 mb-4">
               <div className="h-px bg-gray-200 flex-1"></div>
               <span className="text-gray-500 font-medium text-xs">or continue with</span>
               <div className="h-px bg-gray-200 flex-1"></div>
-            </div>
+            </div> */}
 
             {/* Toggle Method Button */}
-            <button
+            {/* <button
               onClick={toggleLoginMethod}
               className="w-full text-gray-700 border border-gray-400 py-3 rounded-xl mb-8 active:bg-gray-200 transition-opacity"
             >
               {loginWithPhone ? "Email Address" : "Phone Number"}
-            </button>
+            </button> */}
 
             {/* Sign Up Link */}
             <p

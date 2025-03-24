@@ -1,10 +1,10 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import toast from "react-hot-toast";
-import { ArrowLeft, Upload, CheckCircle } from "lucide-react";
+import { ArrowLeft, Upload, CheckCircle, Landmark } from "lucide-react";
 import Loader from "../components/Loader";
 import QRCode from "../assets/images/QRCode.png";
-import QRCodeFull from "../assets/images/QRCodeFull.png"
+import QRCodeFull from "../assets/images/QRCodeFull.jpg"
 import api from "../utils/Api";
 
 const PaymentPage = () => {
@@ -15,6 +15,14 @@ const PaymentPage = () => {
   const [transactionId, setTransactionId] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [previewUrl, setPreviewUrl] = useState(null);
+  const [address, setAddress] = useState("");
+  const [state, setState] = useState("");
+  const [city, setCity] = useState("");
+  const [pincode, setPincode] = useState("");
+  const [landMark, setLandMark] = useState("");
+  const [gstNumber, setGstNumber] = useState("");
+
+
 
   const handleScreenshotUpload = (e) => {
     const file = e.target.files[0];
@@ -28,10 +36,43 @@ const PaymentPage = () => {
     }
   };
 
-
   const handleSubmit = async () => {
-    if (!screenshot || !transactionId.trim()) {
-      toast.error("Please upload a screenshot and enter the transaction ID.");
+    // Address validation: At least 10 characters, no special characters like !@#$%^&*
+    const addressRegex = /^[A-Za-z0-9\s,.'-]{10,}$/;
+
+    // State and City validation: Minimum 3 letters, only alphabets and spaces
+    const stateCityRegex = /^[A-Za-z\s]{3,}$/;
+
+    // Pincode validation: Exactly 5 or 6 digits
+    const pincodeRegex = /^[0-9]{5,6}$/;
+
+    if (!address.trim() || !addressRegex.test(address)) {
+      toast.error("Please enter a valid address with at least 10 characters.");
+      return;
+    }
+
+    if (!state.trim() || !stateCityRegex.test(state)) {
+      toast.error("Please enter a valid state with at least 3 letters.");
+      return;
+    }
+
+    if (!city.trim() || !stateCityRegex.test(city)) {
+      toast.error("Please enter a valid city with at least 3 letters.");
+      return;
+    }
+
+    if (!pincode.trim() || !pincodeRegex.test(pincode)) {
+      toast.error("Please enter a valid 5 or 6-digit pincode.");
+      return;
+    }
+
+    if (!screenshot) {
+      toast.error("Please upload a screenshot to proceed.");
+      return;
+    }
+
+    if (!transactionId.trim()) {
+      toast.error("Please enter the transaction ID to proceed.");
       return;
     }
 
@@ -43,7 +84,16 @@ const PaymentPage = () => {
       formData.append("paymentScreenshot", screenshot);
       formData.append("orderId", orderId);
       formData.append("name", productData.name);
-      formData.append("image", productData.image)
+      formData.append("image", productData.image);
+
+      // Constructing the address string dynamically
+      let fullAddress = `${address}, ${city}, ${state}, ${pincode}`;
+      if (landMark) fullAddress += `,${landMark}`;
+      if (gstNumber) fullAddress += `, ${gstNumber}`;
+
+      formData.append("address", fullAddress);
+
+
 
       const response = await api.post("/auth/user/payment", formData, {
         headers: {
@@ -51,11 +101,10 @@ const PaymentPage = () => {
         },
       });
 
-
       if (response.status === 201) {
         toast.success("Payment submitted successfully!");
 
-        // Redirect to Thank You page with order and transaction details
+        // Redirect to Thank You page
         navigate("/thank-you-product", {
           state: {
             orderId: orderId,
@@ -68,8 +117,6 @@ const PaymentPage = () => {
 
       if (error.response) {
         console.error("Response error:", error.response.data);
-      } else if (error.request) {
-        console.error("No response received:", error.request);
       }
 
       toast.error("Error in submitting payment review");
@@ -101,11 +148,11 @@ const PaymentPage = () => {
       {/* Header */}
       <div className="sticky top-0 z-10 bg-white border-b border-gray-100 px-4 py-3 flex items-center">
         {/* <button
-          onClick={() => navigate(-1)}
-          className="mr-4"
-        >
-          <ArrowLeft className="w-5 h-5 text-gray-700" />
-        </button> */}
+            onClick={() => navigate(-1)}
+            className="mr-4"
+          >
+            <ArrowLeft className="w-5 h-5 text-gray-700" />
+          </button> */}
         <h1 className="text-lg font-bold text-gray-900">Payment</h1>
       </div>
 
@@ -146,12 +193,87 @@ const PaymentPage = () => {
             <h2 className="text-lg font-semibold text-gray-900 mb-3">Payment Instructions</h2>
             <ol className="space-y-2 text-gray-700 text-sm pl-5 list-decimal">
               <li>Scan the QR code below to pay the exact amount</li>
+              <li>Add your Address and other details</li>
               <li>Complete the payment using any UPI app (PhonePe, Google Pay, Paytm, etc.)</li>
               <li>Take a screenshot of your successful payment</li>
               <li>Upload the screenshot and enter the transaction ID below</li>
               <li>Submit for review</li>
             </ol>
           </div>
+
+          <div className="bg-white rounded-xl shadow-sm p-4 mb-4">
+            {/* Address Field */}
+            <label className="block text-sm font-medium text-gray-700 mb-2">Address *</label>
+            <textarea
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
+              className="w-full p-3 h-20 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#F7941C] focus:border-[#F7941C] outline-none resize-none"
+              placeholder="Enter your address"
+              required
+              minLength={10}
+              title="Address must be at least 10 characters long"
+            />
+
+            {/* Landmark Field */}
+            {/* Landmark Field */}
+            <label className="block text-sm font-medium text-gray-700 mb-2 mt-3">Landmark</label>
+            <input
+              value={landMark}
+              onChange={(e) => setLandMark(e.target.value)} // Updated this line
+              className="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#F7941C] focus:border-[#F7941C] outline-none"
+              placeholder="Any near Landmark"
+            />
+
+
+            {/* City Field */}
+            <label className="block text-sm font-medium text-gray-700 mb-2 mt-3">City *</label>
+            <input
+              value={city}
+              onChange={(e) => setCity(e.target.value)}
+              className="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#F7941C] focus:border-[#F7941C] outline-none"
+              placeholder="Enter your city"
+              required
+              minLength={3}
+              title="City must be at least 3 characters long"
+            />
+
+
+            {/* State Field */}
+            <label className="block text-sm font-medium text-gray-700 mb-2 mt-3">State *</label>
+            <input
+              value={state}
+              onChange={(e) => setState(e.target.value)}
+              className="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#F7941C] focus:border-[#F7941C] outline-none"
+              placeholder="Enter your state"
+              required
+              minLength={3}
+              title="State must be at least 3 characters long"
+            />
+
+            {/* Pincode Field */}
+            <label className="block text-sm font-medium text-gray-700 mb-2 mt-3">Pincode *</label>
+            <input
+              value={pincode}
+              onChange={(e) => setPincode(e.target.value)}
+              className="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#F7941C] focus:border-[#F7941C] outline-none"
+              placeholder="Enter your pincode"
+              required
+              pattern="^[0-9]{5,6}$"
+              title="Please enter a valid 5 or 6-digit pincode"
+            />
+
+            {/* GST Number Field */}
+            <label className="block text-sm font-medium text-gray-700 mb-2 mt-3">GST No.</label>
+            <input
+              value={gstNumber}
+              onChange={(e) => setGstNumber(e.target.value)} // Updated this line
+              className="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#F7941C] focus:border-[#F7941C] outline-none"
+              placeholder="Enter your GST number here"
+            />
+
+          </div>
+
+
 
           {/* QR Code */}
           <div className="bg-white rounded-xl shadow-sm p-4 mb-4 flex flex-col items-center">
@@ -179,7 +301,7 @@ const PaymentPage = () => {
               <label className="block text-sm font-medium text-gray-700 mb-2">Upload Payment Screenshot</label>
               <div
                 className={`border-2 ${previewUrl ? 'border-[#F7941C]' : 'border-dashed border-gray-300'} 
-                rounded-xl p-4 flex flex-col items-center justify-center bg-gray-50`}
+                  rounded-xl p-4 flex flex-col items-center justify-center bg-gray-50`}
               >
                 <input
                   type="file"
