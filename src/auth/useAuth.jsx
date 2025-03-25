@@ -38,7 +38,7 @@ const useAuth = (fetchUserDetails, navigate) => {
       const payload = {
         name: formData.name.trim(),
         phone: registerWithPhone ? formData.phone : null,
-        email: !registerWithPhone ? formData.email : null,
+        email: formData.email.trim(),
         code: activeTab !== "Dr" ? formData.referralCode?.toUpperCase() : null,
         gender: formData.gender || null, // Default to null if empty
         userType: activeTab === "Dr" ? "Doctor" : "OtherUser",
@@ -76,7 +76,7 @@ const useAuth = (fetchUserDetails, navigate) => {
       setIsLoading(true);
       const payload = {
         name: formData.name.trim(),
-        email: formData.email,
+        email: formData.email.trim(),
         password: formData.password,
         gender: formData.gender || null,
         userType: activeTab === "Dr" ? "Doctor" : "OtherUser",
@@ -114,7 +114,7 @@ const useAuth = (fetchUserDetails, navigate) => {
         name: formData.name.trim(),
         gender: formData.gender || null,
         phone: registerWithPhone ? formData.phone : null,
-        email: !registerWithPhone ? formData.email : null,
+        email: formData.email.trim(),
         otp: formData.otp,
         password: !registerWithPhone ? formData.password : null,
         userType: activeTab === "Dr" ? "Doctor" : "OtherUser",
@@ -173,7 +173,7 @@ const useAuth = (fetchUserDetails, navigate) => {
       const payload = loginWithPhone
         ? {
             phone: formData.phone,
-            email: null,
+            email: formData.email,
             otp: null,
             password: null,
           }
@@ -226,7 +226,7 @@ const useAuth = (fetchUserDetails, navigate) => {
       setIsLoading(true);
       const payload = {
         phone: formData.phone,
-        email: null,
+        email: formData.email,
         otp: formData.otp,
         password: null,
       };
@@ -274,7 +274,7 @@ const useAuth = (fetchUserDetails, navigate) => {
       setIsLoading(true);
       const payload = {
         phone: formData.phone,
-        email: null,
+        email: formData.email,
         otp: null,
         password: null,
       };
