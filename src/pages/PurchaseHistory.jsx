@@ -1,24 +1,42 @@
 import React, { useState, useEffect } from "react";
 import { BottomNavBarMemberProgram } from "../components/BottomNavBar";
 import Header from "../components/Header";
-import api from "../utils/Api";
+import api, { API_BASE_URL } from "../utils/Api"; // Ensure API_BASE_URL is imported
 import toast from "react-hot-toast";
 import Loader from "../components/Loader";
-import { CheckCircle, XCircle, Clock, ChevronDown, ChevronUp } from "lucide-react";
+import { CheckCircle, XCircle, Clock, ChevronDown, ChevronUp, Download } from "lucide-react";
 
 const PurchaseCard = ({ purchase }) => {
   const [showAddress, setShowAddress] = useState(false);
 
+  // Ensure full URL for images and invoice
+  const imageUrl = purchase.image.startsWith("http") ? purchase.image : `${API_BASE_URL}${purchase.image}`;
+  const invoiceUrl = purchase.invoiceUrl ? `${API_BASE_URL}${purchase.invoiceUrl}` : null;
+
   // Format the address to replace \r\n with spaces
   const formattedAddress = purchase.address?.replace(/\r\n/g, " ") || "";
 
+  // Function to handle invoice download
+  const downloadInvoice = () => {
+    if (invoiceUrl) {
+      const link = document.createElement("a");
+      link.href = invoiceUrl;
+      link.setAttribute("download", `Invoice-${purchase.orderId}.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } else {
+      toast.error("Invoice not available");
+    }
+  };
+
   return (
-    <div className="bg-white p-4 rounded-2xl shadow-sm border border-gray-200 mb-4">
+    <div className="bg-white p-4 rounded-2xl shadow-sm border border-gray-200 mb-4 flex items-center justify-between">
       <div className="flex gap-3">
         {/* Product Image */}
         <div className="w-20 h-20 bg-gray-100 rounded-lg overflow-hidden">
           <img
-            src={purchase.image}
+            src={imageUrl}
             alt={purchase.name}
             className="w-full h-full object-cover"
             onError={(e) => (e.target.src = "/placeholder-image.jpg")}
@@ -44,8 +62,8 @@ const PurchaseCard = ({ purchase }) => {
               {purchase.paymentStatus === "Verified"
                 ? "Payment Verified"
                 : purchase.paymentStatus === "Verifying"
-                  ? "Verification Pending"
-                  : "Payment Failed"}
+                ? "Verification Pending"
+                : "Payment Failed"}
             </span>
           </div>
 
@@ -57,11 +75,16 @@ const PurchaseCard = ({ purchase }) => {
             {showAddress ? "Hide Address" : "View Address"}
             {showAddress ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
           </button>
-          {showAddress && (
-            <p className="text-xs text-gray-500 mt-1">{formattedAddress}</p>
-          )}
+          {showAddress && <p className="text-xs text-gray-500 mt-1">{formattedAddress}</p>}
         </div>
       </div>
+
+      {/* Download Invoice Icon */}
+      {invoiceUrl && (
+        <button onClick={downloadInvoice} className="text-blue-500 hover:text-blue-700">
+          <Download size={20} />
+        </button>
+      )}
     </div>
   );
 };
