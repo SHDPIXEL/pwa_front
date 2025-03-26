@@ -188,6 +188,8 @@ const ChallengeDetails = () => {
         },
       });
 
+      console.log("data",response.data)
+
       if (response.status === 200 || response.status === 201) {
         setMessage(true);
         toast.success("Challenge submitted successfully!");
