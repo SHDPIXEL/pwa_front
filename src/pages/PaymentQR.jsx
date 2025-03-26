@@ -43,8 +43,8 @@ const PaymentPage = () => {
     // State and City validation: Minimum 3 letters, only alphabets and spaces
     const stateCityRegex = /^[A-Za-z\s]{3,}$/;
 
-    // Pincode validation: Exactly 5 or 6 digits
-    const pincodeRegex = /^[0-9]{5,6}$/;
+    // Pincode validation: Exactly 6 digits
+    const pincodeRegex = /^[0-9]{6}$/;
 
     if (!address.trim() || !addressRegex.test(address)) {
       toast.error("Please enter a valid address with at least 10 characters.");
@@ -62,7 +62,7 @@ const PaymentPage = () => {
     }
 
     if (!pincode.trim() || !pincodeRegex.test(pincode)) {
-      toast.error("Please enter a valid 5 or 6-digit pincode.");
+      toast.error("Please enter a valid 6-digit pincode.");
       return;
     }
 
@@ -86,12 +86,18 @@ const PaymentPage = () => {
       formData.append("name", productData.name);
       formData.append("image", productData.image);
 
-      // Constructing the address string dynamically
-      let fullAddress = `${address}, ${city}, ${state}, ${pincode}`;
-      if (landMark) fullAddress += `,${landMark}`;
-      if (gstNumber) fullAddress += `, ${gstNumber}`;
+      const addressObj = {
+        address,
+        city,
+        state,
+        pincode,
+      };
 
-      formData.append("address", fullAddress);
+      if (landMark) addressObj.landMark = landMark;
+      if (gstNumber) addressObj.gstNumber = gstNumber;
+
+      // Stringify the address object before appending
+      formData.append("address", JSON.stringify(addressObj));
 
 
 
