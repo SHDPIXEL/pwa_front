@@ -222,12 +222,12 @@ const Login = () => {
 
             {/* Sign Up Link */}
             {/* Forgot Password Link */}
-            <p
+            {/* <p
               className="text-center text-xs px-6 pb-6 text-[#F7941C] font-semibold tracking-wide cursor-pointer hover:underline"
               onClick={() => navigate("/forgot-password")}
             >
               Forgot Password?
-            </p>
+            </p> */}
             <p
               onClick={() => navigate("/")}
               className="text-center text-xs px-6 pb-3 text-[#F7941C] font-semibold tracking-wide cursor-pointer"

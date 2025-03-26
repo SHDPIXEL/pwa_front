@@ -89,7 +89,6 @@ const RedeemPage = () => {
           await fetchUserDetails();
         } catch (error) {
           console.error("Error in fetching user data", error);
-          toast.error("Error in fetching user Details");
         }
       }
     };

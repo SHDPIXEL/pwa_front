@@ -29,7 +29,6 @@ const Home = () => {
 
   const navigate = useNavigate();
   const { fetchUserDetails } = useUser();
-
   const {
     isLoading,
     showOtpModal,
@@ -114,7 +113,7 @@ const Home = () => {
     setSelectedState(value);
     setFormData((prev) => ({ ...prev, state: value }));
   };
-  
+
   const handleFormChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value.trim() }));
@@ -131,10 +130,10 @@ const Home = () => {
       {isSplashVisible ? (
         <SplashScreen />
       ) : (
-        <div className="min-h-[100dvh] flex flex-col overflow-hidden">
+        <div className="min-h-screen flex flex-col">
           <div className="w-full bg-[#F7941C] text-white flex items-center justify-between py-4 text-sm px-4 z-50 mb-5"></div>
-          <div className="flex-1 overflow-hidden flex flex-col items-center justify-center px-10">
-            <div className="w-full flex flex-col">
+          <div className="flex-1 flex flex-col items-center px-4 sm:px-10 overflow-y-auto">
+            <div className="w-full flex flex-col items-center">
               <div className="flex flex-col items-center mb-4">
                 <img src={brebootSvg} alt="Breboot Logo" className="w-auto h-26 mb-3" />
                 <h2 className="text-xl font-bold text-gray-800">
@@ -167,240 +166,238 @@ const Home = () => {
                   </button>
                 </div>
               </div>
-              <div className="max-h-[100dvh]">
-                <div className="space-y-6 mb-4 text-sm flex flex-col items-center">
-                  <div className="flex items-center max-w-80 bg-gray-50 border border-gray-200 rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-[#F7941C]/20 focus-within:border-[#F7941C]">
-                    <div className="flex items-center justify-center gap-2 px-4 py-3 border-r border-gray-200 w-20">
-                      <span className="text-gray-700 font-semibold">
-                        {activeTab === "Dr" ? "Dr" : "Others"}
-                      </span>
-                    </div>
-                    <input
-                      className="flex-1 bg-transparent px-4 py-3 focus:outline-none"
-                      type="text"
-                      name="name"
-                      placeholder="Enter your name"
-                      value={formData.name}
-                      onChange={handleFormChange}
-                      aria-label="Name"
-                    />
-                  </div>
-                  <div className="flex items-center max-w-80 mx-auto bg-gray-50 border border-gray-200 rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-[#F7941C]/20 focus-within:border-[#F7941C]">
-                    <div className="flex items-center justify-center gap-2 px-4 py-3 border-r border-gray-200 w-20">
-                      <span className="text-gray-700 font-semibold">+91</span>
-                    </div>
-                    <input
-                      className="flex-1 bg-transparent px-4 py-3 focus:outline-none no-spinner"
-                      type="tel"
-                      placeholder="Enter your phone number"
-                      value={formData.phone}
-                      name="phone"
-                      maxLength={10}
-                      onChange={handleFormChange}
-                      onInput={(e) => (e.target.value = e.target.value.replace(/\D/g, ""))}
-                      aria-label="Phone number"
-                    />
-                  </div>
-                  <div className="flex items-center max-w-80 mx-auto bg-gray-50 border border-gray-200 rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-[#F7941C]/20 focus-within:border-[#F7941C]">
-                    <div className="flex items-center justify-center gap-2 px-4 py-3 border-r border-gray-200 w-20">
-                      <span className="text-gray-700 font-semibold">Email</span>
-                    </div>
-                    <input
-                      className="flex-1 bg-transparent px-4 py-3 focus:outline-none"
-                      type="email"
-                      placeholder="Enter your email address"
-                      value={formData.email}
-                      name="email"
-                      onChange={handleFormChange}
-                      aria-label="Email address"
-                    />
-                  </div>
-                  {activeTab === "Dr" && (
-                    <div className="flex items-center w-80 pr-2 bg-gray-50 border border-gray-200 rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-[#F7941C]/20 focus-within:border-[#F7941C]">
-                      <div className="flex items-center justify-center gap-2 px-4 py-3 border-r border-gray-200 w-20">
-                        <span className="text-gray-700 font-semibold">State</span>
-                      </div>
-                      <select
-                        className="flex-1 bg-transparent px-4 py-3 focus:outline-none"
-                        value={selectedState}
-                        onChange={handleStateChange}
-                        aria-label="Select state"
-                      >
-                        <option value="" disabled>
-                          Select State
-                        </option>
-                        {states.map((state) => (
-                          <option key={state} value={state}>
-                            {state}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                  )}
-                  {activeTab === "Patient" && (
-                    <div className="flex items-center max-w-80 bg-gray-50 border border-gray-200 rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-[#F7941C]/20 focus-within:border-[#F7941C]">
-                      <div className="flex items-center justify-center gap-2 px-4 py-3 border-r border-gray-200 w-20">
-                        <span className="text-gray-700 font-semibold">Code</span>
-                      </div>
-                      <input
-                        className="flex-1 bg-transparent px-4 py-3 focus:outline-none uppercase"
-                        type="text"
-                        placeholder="Enter referral code"
-                        value={formData.referralCode}
-                        name="referralCode"
-                        onChange={handleFormChange}
-                        aria-label="Referral code"
-                      />
-                    </div>
-                  )}
-                  <div className="flex flex-col items-center w-full">
-                    <div className="flex gap-4">
-                      <label className="flex items-center gap-2 cursor-pointer">
-                        <input
-                          type="radio"
-                          name="gender"
-                          value="male"
-                          checked={gender === "male"}
-                          onChange={() => handleGenderChange("male")}
-                          className="hidden"
-                          aria-label="Male"
-                        />
-                        <div
-                          className={`w-4 h-4 rounded-full border border-[#F7941C] flex items-center justify-center transition-all ${
-                            gender === "male" ? "bg-[#F7941C]" : "bg-white"
-                          }`}
-                        >
-                          {gender === "male" && (
-                            <div className="w-2 h-2 rounded-full bg-[#F7941C]"></div>
-                          )}
-                        </div>
-                        <span className="text-gray-600">Male</span>
-                      </label>
-                      <label className="flex items-center gap-2 cursor-pointer">
-                        <input
-                          type="radio"
-                          name="gender"
-                          value="female"
-                          checked={gender === "female"}
-                          onChange={() => handleGenderChange("female")}
-                          className="hidden"
-                          aria-label="Female"
-                        />
-                        <div
-                          className={`w-4 h-4 rounded-full border border-[#F7941C] flex items-center justify-center transition-all ${
-                            gender === "female" ? "bg-[#F7941C]" : "bg-white"
-                          }`}
-                        >
-                          {gender === "female" && (
-                            <div className="w-2 h-2 rounded-full bg-F7941C"></div>
-                          )}
-                        </div>
-                        <span className="text-gray-600">Female</span>
-                      </label>
-                    </div>
-                  </div>
-                  <label className="flex items-center gap-3 mb-8 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={checked}
-                      onChange={() => setChecked(!checked)}
-                      className="hidden"
-                      aria-label="Receive updates on WhatsApp"
-                    />
-                    <div className="w-3 h-3 rounded-full border border-[#F7941C] flex items-center justify-center transition-all">
-                      {checked && (
-                        <div className="w-1 h-1 rounded-full bg-[#F7941C]"></div>
-                      )}
-                    </div>
-                    <span className="text-xs text-gray-600">
-                      Receive updates and reminders on WhatsApp
+              <div className="w-full max-w-80 space-y-6 mb-4 text-sm flex flex-col items-center">
+                <div className="w-full flex items-center bg-gray-50 border border-gray-200 rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-[#F7941C]/20 focus-within:border-[#F7941C]">
+                  <div className="flex items-center justify-center gap-2 px-4 py-3 border-r border-gray-200 w-20 shrink-0">
+                    <span className="text-gray-700 font-semibold">
+                      {activeTab === "Dr" ? "Dr" : "Others"}
                     </span>
-                  </label>
+                  </div>
+                  <input
+                    className="flex-1 bg-transparent px-4 py-3 focus:outline-none"
+                    type="text"
+                    name="name"
+                    placeholder="Enter your name"
+                    value={formData.name}
+                    onChange={handleFormChange}
+                    aria-label="Name"
+                  />
                 </div>
-                <button
-                  disabled={isLoading}
-                  onClick={() => handleRegister(formData, activeTab, true, selectedState)}
-                  className={`w-full text-white py-3 rounded-xl mb-4 active:bg-gray-900 transition-opacity ${
-                    isLoading ? "bg-gray-700" : "bg-black"
-                  }`}
-                  aria-label="Continue"
-                >
-                  {isLoading ? <Loader isCenter={false} /> : "Continue"}
-                </button>
-                {showOtpModal && (
-                  <FormModal title="Enter OTP" onClose={() => setShowOtpModal(false)}>
-                    <input
-                      className="w-full px-4 py-3 border rounded mb-2"
-                      type="text"
-                      name="otp"
-                      placeholder="Enter OTP"
-                      value={formData.otp}
-                      onChange={handleFormChange}
-                      aria-label="OTP"
-                    />
-                    <button
-                      onClick={() =>
-                        handleOtpVerify(formData, activeTab, true, selectedState)
-                      }
-                      className="w-full bg-orange-500 text-white py-3 rounded-xl mb-2"
-                      disabled={isLoading}
-                      aria-label="Verify OTP"
+                <div className="w-full flex items-center bg-gray-50 border border-gray-200 rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-[#F7941C]/20 focus-within:border-[#F7941C]">
+                  <div className="flex items-center justify-center gap-2 px-4 py-3 border-r border-gray-200 w-20 shrink-0">
+                    <span className="text-gray-700 font-semibold">+91</span>
+                  </div>
+                  <input
+                    className="flex-1 bg-transparent px-4 py-3 focus:outline-none no-spinner"
+                    type="tel"
+                    placeholder="Enter your phone number"
+                    value={formData.phone}
+                    name="phone"
+                    maxLength={10}
+                    onChange={handleFormChange}
+                    onInput={(e) => (e.target.value = e.target.value.replace(/\D/g, ""))}
+                    aria-label="Phone number"
+                  />
+                </div>
+                <div className="w-full flex items-center bg-gray-50 border border-gray-200 rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-[#F7941C]/20 focus-within:border-[#F7941C]">
+                  <div className="flex items-center justify-center gap-2 px-4 py-3 border-r border-gray-200 w-20 shrink-0">
+                    <span className="text-gray-700 font-semibold">Email</span>
+                  </div>
+                  <input
+                    className="flex-1 bg-transparent px-4 py-3 focus:outline-none"
+                    type="email"
+                    placeholder="Enter your email address"
+                    value={formData.email}
+                    name="email"
+                    onChange={handleFormChange}
+                    aria-label="Email address"
+                  />
+                </div>
+                {activeTab === "Dr" && (
+                  <div className="w-full flex items-center bg-gray-50 border border-gray-200 rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-[#F7941C]/20 focus-within:border-[#F7941C]">
+                    <div className="flex items-center justify-center gap-2 px-4 py-3 border-r border-gray-200 w-20 shrink-0">
+                      <span className="text-gray-700 font-semibold">State</span>
+                    </div>
+                    <select
+                      className="flex-1 bg-transparent px-4 py-3 focus:outline-none"
+                      value={selectedState}
+                      onChange={handleStateChange}
+                      aria-label="Select state"
                     >
-                      {isLoading ? (
-                        <Loader BorderColor="border-white" isCenter={false} />
-                      ) : (
-                        "Verify OTP"
-                      )}
-                    </button>
-                    <button
-                      onClick={handleResendOtp}
-                      disabled={!canResend || isLoading}
-                      className={`w-full text-[#F7941C] py-2 rounded-xl transition-opacity ${
-                        !canResend || isLoading
-                          ? "opacity-50 cursor-not-allowed"
-                          : "hover:bg-gray-100"
-                      }`}
-                      aria-label={canResend ? "Resend OTP" : `Resend OTP in ${resendTimer}s`}
-                    >
-                      {isLoading ? (
-                        <Loader isCenter={false} />
-                      ) : canResend ? (
-                        "Resend OTP"
-                      ) : (
-                        `Resend OTP in ${resendTimer}s`
-                      )}
-                    </button>
-                  </FormModal>
+                      <option value="" disabled>
+                        Select State
+                      </option>
+                      {states.map((state) => (
+                        <option key={state} value={state}>
+                          {state}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
                 )}
-                <p className="text-center text-xs text-gray-500 px-6 mb-2">
-                  By signing up I agree to the{" "}
-                  <a href="/termsandcondition" className="text-[#F7941C] underline">
-                    Terms of Services
-                  </a>{" "}
-                  and{" "}
-                  <a href="/privacypolicy" className="text-[#F7941C] underline">
-                    Privacy Policy
-                  </a>{" "}
-                  including usage of cookies.
-                </p>
-                <p
-                  className="text-center text-xs px-6 mb-5 text-[#F7941C] cursor-pointer hover:underline"
-                  onClick={() => setIsModalOpen(true)}
-                >
-                  If you have any queries, please contact us
-                </p>
-                {isModalOpen && <ContactModal onClose={() => setIsModalOpen(false)} />}
-                <p
-                  onClick={() => navigate("/login")}
-                  className="text-center text-xs px-6 pb-10 text-[#F7941C] font-semibold tracking-wide cursor-pointer"
-                  role="button"
-                  tabIndex={0}
-                  onKeyDown={(e) => e.key === "Enter" && navigate("/login")}
-                  aria-label="Already a user? Login"
-                >
-                  Already a user?
-                </p>
+                {activeTab === "Patient" && (
+                  <div className="w-full flex items-center bg-gray-50 border border-gray-200 rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-[#F7941C]/20 focus-within:border-[#F7941C]">
+                    <div className="flex items-center justify-center gap-2 px-4 py-3 border-r border-gray-200 w-20 shrink-0">
+                      <span className="text-gray-700 font-semibold">Code</span>
+                    </div>
+                    <input
+                      className="flex-1 bg-transparent px-4 py-3 focus:outline-none uppercase"
+                      type="text"
+                      placeholder="Enter referral code"
+                      value={formData.referralCode}
+                      name="referralCode"
+                      onChange={handleFormChange}
+                      aria-label="Referral code"
+                    />
+                  </div>
+                )}
+                <div className="flex flex-col items-center w-full">
+                  <div className="flex gap-4">
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="radio"
+                        name="gender"
+                        value="male"
+                        checked={gender === "male"}
+                        onChange={() => handleGenderChange("male")}
+                        className="hidden"
+                        aria-label="Male"
+                      />
+                      <div
+                        className={`w-4 h-4 rounded-full border border-[#F7941C] flex items-center justify-center transition-all ${
+                          gender === "male" ? "bg-[#F7941C]" : "bg-white"
+                        }`}
+                      >
+                        {gender === "male" && (
+                          <div className="w-2 h-2 rounded-full bg-[#F7941C]"></div>
+                        )}
+                      </div>
+                      <span className="text-gray-600">Male</span>
+                    </label>
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="radio"
+                        name="gender"
+                        value="female"
+                        checked={gender === "female"}
+                        onChange={() => handleGenderChange("female")}
+                        className="hidden"
+                        aria-label="Female"
+                      />
+                      <div
+                        className={`w-4 h-4 rounded-full border border-[#F7941C] flex items-center justify-center transition-all ${
+                          gender === "female" ? "bg-[#F7941C]" : "bg-white"
+                        }`}
+                      >
+                        {gender === "female" && (
+                          <div className="w-2 h-2 rounded-full bg-[#F7941C]"></div>
+                        )}
+                      </div>
+                      <span className="text-gray-600">Female</span>
+                    </label>
+                  </div>
+                </div>
+                <label className="flex items-center gap-3 mb-8 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={checked}
+                    onChange={() => setChecked(!checked)}
+                    className="hidden"
+                    aria-label="Receive updates on WhatsApp"
+                  />
+                  <div className="w-3 h-3 rounded-full border border-[#F7941C] flex items-center justify-center transition-all">
+                    {checked && (
+                      <div className="w-1 h-1 rounded-full bg-[#F7941C]"></div>
+                    )}
+                  </div>
+                  <span className="text-xs text-gray-600">
+                    Receive updates and reminders on WhatsApp
+                  </span>
+                </label>
               </div>
+              <button
+                disabled={isLoading}
+                onClick={() => handleRegister(formData, activeTab, true, selectedState)}
+                className={`w-full max-w-80 text-white py-3 rounded-xl mb-4 active:bg-gray-900 transition-opacity ${
+                  isLoading ? "bg-gray-700" : "bg-black"
+                }`}
+                aria-label="Continue"
+              >
+                {isLoading ? <Loader isCenter={false} /> : "Continue"}
+              </button>
+              {showOtpModal && (
+                <FormModal title="Enter OTP" onClose={() => setShowOtpModal(false)}>
+                  <input
+                    className="w-full px-4 py-3 border rounded mb-2"
+                    type="text"
+                    name="otp"
+                    placeholder="Enter OTP"
+                    value={formData.otp}
+                    onChange={handleFormChange}
+                    aria-label="OTP"
+                  />
+                  <button
+                    onClick={() =>
+                      handleOtpVerify(formData, activeTab, true, selectedState)
+                    }
+                    className="w-full bg-orange-500 text-white py-3 rounded-xl mb-2"
+                    disabled={isLoading}
+                    aria-label="Verify OTP"
+                  >
+                    {isLoading ? (
+                      <Loader BorderColor="border-white" isCenter={false} />
+                    ) : (
+                      "Verify OTP"
+                    )}
+                  </button>
+                  <button
+                    onClick={handleResendOtp}
+                    disabled={!canResend || isLoading}
+                    className={`w-full text-[#F7941C] py-2 rounded-xl transition-opacity ${
+                      !canResend || isLoading
+                        ? "opacity-50 cursor-not-allowed"
+                        : "hover:bg-gray-100"
+                    }`}
+                    aria-label={canResend ? "Resend OTP" : `Resend OTP in ${resendTimer}s`}
+                  >
+                    {isLoading ? (
+                      <Loader isCenter={false} />
+                    ) : canResend ? (
+                      "Resend OTP"
+                    ) : (
+                      `Resend OTP in ${resendTimer}s`
+                    )}
+                  </button>
+                </FormModal>
+              )}
+              <p className="text-center text-xs text-gray-500 px-6 mb-2">
+                By signing up I agree to the{" "}
+                <a href="/termsandcondition" className="text-[#F7941C] underline">
+                  Terms of Services
+                </a>{" "}
+                and{" "}
+                <a href="/privacypolicy" className="text-[#F7941C] underline">
+                  Privacy Policy
+                </a>{" "}
+                including usage of cookies.
+              </p>
+              <p
+                className="text-center text-xs px-6 mb-5 text-[#F7941C] cursor-pointer hover:underline"
+                onClick={() => setIsModalOpen(true)}
+              >
+                If you have any queries, please contact us
+              </p>
+              {isModalOpen && <ContactModal onClose={() => setIsModalOpen(false)} />}
+              <p
+                onClick={() => navigate("/login")}
+                className="text-center text-xs px-6 pb-10 text-[#F7941C] font-semibold tracking-wide cursor-pointer"
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => e.key === "Enter" && navigate("/login")}
+                aria-label="Already a user? Login"
+              >
+                Already a user?
+              </p>
             </div>
           </div>
         </div>

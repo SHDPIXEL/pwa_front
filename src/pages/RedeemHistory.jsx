@@ -126,7 +126,6 @@ const RewardHistory = () => {
         setRedeemHistory(transformedData);
       } catch (error) {
         console.error("Fetch error:", error);
-        toast.error("Error in fetching redemption history");
       } finally {
         setLoading(false);
       }

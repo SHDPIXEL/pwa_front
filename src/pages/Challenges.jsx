@@ -78,7 +78,6 @@ const ChallengesPage = () => {
         setWeeks(updatedWeeks);
       } catch (error) {
         console.error("Error in fetching challenges", error);
-        toast.error("Error in fetching challenges"); // Avoid passing `error` directly to `toast.error`
       } finally {
         setIsLoading(false);
       }

@@ -31,7 +31,7 @@ const BottomNavBar = ({ variant = "default" }) => {
   }
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-white shadow-lg border-t border-gray-100">
+    <div className="fixed bottom-0 left-0 right-0 bg-white shadow-lg border-t border-gray-100 pb-5">
       <div className="flex justify-around items-center p-3 max-w-md mx-auto">
         {navItems.map((item) => (
           <button

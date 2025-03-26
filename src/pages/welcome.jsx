@@ -80,7 +80,7 @@ const Welcome = () => {
       }
 
     return (
-        <div className="min-h-[100dvh] flex flex-col items-center">
+        <div className="min-h-[100dvh] flex flex-col items-center pb-7">
             {/* Header */}
             <div className="w-full bg-[#F7941C] text-white flex items-center justify-between py-4 text-sm px-4 z-50">
                 <div className="flex items-center space-x-2 font-semibold">

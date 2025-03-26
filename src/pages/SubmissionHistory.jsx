@@ -171,7 +171,6 @@ const SubmissionHistory = () => {
                 setSubmissions(transformedData);
             } catch (error) {
                 console.error("Fetch error:", error);
-                toast.error("Error in fetching user history");
             } finally {
                 setLoading(false);
             }

@@ -24,7 +24,7 @@ const ForgotPassword = () => {
       toast(response.data.message);
       setShowForgotPassword(false); // Hide the form after successful submission
     } catch (error) {
-      console.log("Error", error);
+      console.error("Error", error);
       toast(
         error.response?.data?.message || "Something went wrong. Try again."
       );

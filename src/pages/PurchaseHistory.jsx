@@ -97,7 +97,6 @@ const PurchaseHistory = () => {
     const fetchPurchases = async () => {
       try {
         const response = await api.get(`/user/payments`);
-        console.log("Purchase history:", response.data);
 
         const purchaseDetails = response.data?.payments || [];
         setPurchases(purchaseDetails);
