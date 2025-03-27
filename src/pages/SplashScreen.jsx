@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
-// import breebootLogo from "../assets/images/Breboot.png"
 import brebootSvg from "../assets/svg/BrebootLogo.svg";
-
-
+import ParentLogo from "../assets/images/Parent-Logo.png";
 
 const SplashScreen = ({ onFinish }) => {
   const [fadeOut, setFadeOut] = useState(false);
@@ -19,14 +17,21 @@ const SplashScreen = ({ onFinish }) => {
 
   return (
     <div
-      className={`fixed inset-0 flex flex-col items-center justify-between bg-white transition-opacity duration-500 ${fadeOut ? "opacity-0 pointer-events-none" : "opacity-100"
-        }`}
+      className={`fixed inset-0 flex flex-col items-center justify-around bg-white transition-opacity duration-500 ${
+        fadeOut ? "opacity-0 pointer-events-none" : "opacity-100"
+      }`}
     >
       {/* Centered Logo */}
-      <div className="flex flex-1 items-center justify-center">
-        <img src={brebootSvg} alt="Logo" className="w-52" />
+      <div className="flex items-center justify-center">
+        <img src={brebootSvg} alt="Logo" className="w-72" />
       </div>
 
+      {/* Parent Logo & Text at the Bottom */}
+      <div className="pb-6 flex flex-col items-center text-gray-600 text-xs">
+        <img src={ParentLogo} alt="Parent Logo" className="w-72 mb-2" />
+        <p>Breboot is a health and wellness initiative by Celagenex</p>
+        <p>and both domains and TM are owned by Celagenex</p>
+      </div>
     </div>
   );
 };
